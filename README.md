@@ -23,13 +23,13 @@ Pastikan perangkat lunak berikut sudah terinstal dan berjalan:
     Ini penting agar library Python proyek ini tidak bentrok dengan proyek lain.
     ```bash
     # Perintah untuk membuat environment bernama 'venv'
-    python -m venv env
+    python -m venv venv
 
     # Perintah untuk mengaktifkan environment
     # --> Jika Anda menggunakan MacOS atau Linux:
-    source env/bin/activate
+    source venv/bin/activate
     # --> Jika Anda menggunakan Windows:
-    env\Scripts\activate
+    venv\Scripts\activate
     ```
     *(Jika berhasil, Anda akan melihat tulisan `(venv)` di awal baris perintah terminal Anda)*
 
