@@ -79,11 +79,16 @@ Kembali ke terminal (pastikan `(venv)` masih aktif).
     python manage.py migrate
     ```
 
-2.  **Isi Data Awal (Seed Users & Groups):**
+2.  **Isi Data Awal (Seed Users, Groups, Schedule):**
     Perintah ini mengisi data awal seperti akun admin default.
     ```bash
     python manage.py seed_groups
     python manage.py seed_users
+    python manage.py seed_lab_schedules
+    ```
+    Atau bisa langsung 
+    ```bash
+    python manage.py seed_all
     ```
 
 3.  **Jalankan Server Pengembangan Lokal:**

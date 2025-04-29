@@ -15,7 +15,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['group']
+        fields = ["group"]
 
 
 class ProfileSerializer(BaseUserSerializer):
@@ -23,17 +23,42 @@ class ProfileSerializer(BaseUserSerializer):
 
     class Meta(BaseUserSerializer.Meta):
         fields = [
-            'id', 'password', 'last_login', 'is_superuser', 'username', 'student_id', 'employee_id',
-            'first_name', 'last_name', 'email', 'is_active', 'is_staff', 'date_joined', 
-            'face_image', 'face_uploaded', 'avatar', 'group', 'created_at', 'updated_at'
+            "id",
+            "password",
+            "last_login",
+            "is_superuser",
+            "username",
+            "student_id",
+            "employee_id",
+            "first_name",
+            "last_name",
+            "email",
+            "is_active",
+            "is_staff",
+            "date_joined",
+            "face_image",
+            "face_uploaded",
+            "avatar",
+            "group",
+            "created_at",
+            "updated_at",
         ]
         read_only_fields = [
-            'id', 'last_login', 'is_superuser', 'username', 'is_active', 'is_staff', 'date_joined',
-            'face_uploaded', 'group', 'created_at', 'updated_at'
+            "id",
+            "last_login",
+            "is_superuser",
+            "username",
+            "is_active",
+            "is_staff",
+            "date_joined",
+            "face_uploaded",
+            "group",
+            "created_at",
+            "updated_at",
         ]
 
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         if password:
@@ -44,12 +69,20 @@ class ProfileSerializer(BaseUserSerializer):
 
 class UserListSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'username', 'first_name', 'last_name', 'avatar', 'group']
+        fields = ["id", "username", "first_name", "last_name", "avatar", "group"]
 
 
 class UserDetailSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
         fields = [
-            'id', 'username', 'email', 'first_name', 'last_name', 
-            'student_id', 'employee_id', 'is_active', 'avatar', 'group'
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "student_id",
+            "employee_id",
+            "is_active",
+            "avatar",
+            "group",
         ]

@@ -6,6 +6,7 @@ import random
 fake = Faker()
 User = get_user_model()
 
+
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
@@ -18,7 +19,11 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
     def student_id(self):
-        return fake.unique.random_number(digits=10) if random.choice([True, False]) else None
+        return (
+            fake.unique.random_number(digits=10)
+            if random.choice([True, False])
+            else None
+        )
 
     @factory.lazy_attribute
     def employee_id(self):
