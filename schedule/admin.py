@@ -1,10 +1,8 @@
 from django.contrib import admin
-from import_export.admin import ImportExportMixin
 from .models import LabSchedule
 
-
 @admin.register(LabSchedule)
-class LabScheduleAdmin(ImportExportMixin, admin.ModelAdmin):
+class LabScheduleAdmin(admin.ModelAdmin):
     list_display = (
         "activity_type",
         "schedule_date",
