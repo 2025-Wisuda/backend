@@ -61,3 +61,4 @@ class UserAdmin(ImportExportMixin, BaseUserAdmin):
             {"fields": ("last_login", "date_joined", "created_at", "updated_at")},
         ),
     )
+    readonly_fields = ("created_at", "updated_at")

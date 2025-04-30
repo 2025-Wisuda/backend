@@ -202,3 +202,6 @@ from import_export.formats.base_formats import CSV, XLSX
 IMPORT_EXPORT_FORMATS = [CSV, XLSX]
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 IMPORT_EXPORT_SKIP_ADMIN_LOG = False
+
+LANGUAGE_CODE = "id"
+TIME_ZONE = "Asia/Jakarta"
