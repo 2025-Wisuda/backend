@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-twp2(^-7etm)=8r$mmyvrd^6&p_sj0d59x1rk_xb-w)&($&5x=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,9 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_api_key',
+    'drf_spectacular',
+    'django_filters',
+    'corsheaders',
+    'guardian',
+    'custom_auth',
+    'docs',
+    'import_export',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -124,3 +135,69 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.CustomPageNumberPagination",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_PERMISSION_CLASSES": (
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework_api_key.permissions.HasAPIKey',
+    ),
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
+    'ALLOWED_VERSIONS': ['v1'], 
+    'VERSION_PARAM': 'version',
+    'DEFAULT_VERSION': 'v1',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+}
+
+APPEND_SLASH = False
+
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', 
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Laboratory API',
+    'DESCRIPTION': 'API for Laboratory',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/api/v1/',
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            # "JWT Token": {
+            #     "type": "http",
+            #     "scheme": "bearer",
+            #     "bearerFormat": "JWT",
+            # },
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-Api-Key",
+            },
+        }
+    },
+    'SECURITY': [
+        # {'JWT Token': []},
+        {'ApiKeyAuth': []}, 
+    ],
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+        'defaultModelsExpandDepth': -1,
+    },
+}
+
+API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
+AUTH_USER_MODEL = 'custom_auth.User'
+
+from import_export.formats.base_formats import CSV, XLSX
+
+IMPORT_EXPORT_FORMATS = [CSV, XLSX]
+IMPORT_EXPORT_USE_TRANSACTIONS = True  
+IMPORT_EXPORT_SKIP_ADMIN_LOG = False
