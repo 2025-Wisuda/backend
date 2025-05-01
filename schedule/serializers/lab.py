@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import LabSchedule
+from schedule.models import LabSchedule
 from datetime import datetime
 
 
@@ -68,14 +68,26 @@ class LabScheduleDetailSerializer(serializers.ModelSerializer):
                 )
 
         if schedule_date and start_time and end_time:
-            overlapping_schedule = LabSchedule.objects.filter(
-                schedule_date=schedule_date, is_active=True
-            ).filter(start_time__lt=end_time, end_time__gt=start_time)
+            start_dt = datetime.combine(schedule_date, start_time)
+            end_dt = datetime.combine(schedule_date, end_time)
 
-            if overlapping_schedule.exists():
-                raise serializers.ValidationError(
-                    "The new schedule overlaps with an existing schedule."
+            overlapping_schedule = LabSchedule.objects.filter(
+                schedule_date=schedule_date,
+                is_active=True,
+            ).exclude(id=self.instance.id if self.instance else None)
+
+            for schedule in overlapping_schedule:
+                existing_start = datetime.combine(
+                    schedule.schedule_date, schedule.start_time
                 )
+                existing_end = datetime.combine(
+                    schedule.schedule_date, schedule.end_time
+                )
+
+                if (start_dt < existing_end) and (end_dt > existing_start):
+                    raise serializers.ValidationError(
+                        "The new schedule overlaps with an existing schedule."
+                    )
 
         return data
 
@@ -100,42 +112,3 @@ class LabScheduleListSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["activity_type_display"]
-
-
-class LabScheduleApprovalSerializer(serializers.ModelSerializer):
-    activity_type_display = serializers.CharField(
-        source="get_activity_type_display", read_only=True
-    )
-
-    class Meta:
-        model = LabSchedule
-        fields = [
-            "id",
-            "activity_type",
-            "activity_type_display",
-            "activity_description",
-            "schedule_date",
-            "start_time",
-            "end_time",
-            "created_by",
-            "is_active",
-            "approval_status",
-            "approved_by",
-            "approval_time",
-            "created_at",
-            "updated_at",
-        ]
-        read_only_fields = [
-            "activity_type",
-            "activity_type_display",
-            "activity_description",
-            "schedule_date",
-            "start_time",
-            "end_time",
-            "created_by",
-            "is_active",
-            "approved_by",
-            "approval_time",
-            "created_at",
-            "updated_at",
-        ]

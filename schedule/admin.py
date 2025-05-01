@@ -69,9 +69,6 @@ class LabScheduleAdmin(admin.ModelAdmin):
         "created_by",
         "created_at",
         "updated_at",
-        "approval_status",
-        "approved_by",
-        "approval_time",
     )
 
     def make_inactive(self, request, queryset):
