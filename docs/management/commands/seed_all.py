@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from custom_auth.management.commands.seed_users import seed_users
 from custom_auth.management.commands.seed_groups import seed_groups
 from schedule.management.commands.seed_lab_schedules import seed_lab_schedules
+from schedule.management.commands.seed_duty_schedules import seed_duty_schedules
 
 
 class Command(BaseCommand):
@@ -27,5 +28,11 @@ class Command(BaseCommand):
             seed_lab_schedules()
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Error seeding LabSchedules: {e}"))
+
+        try:
+            self.stdout.write(self.style.SUCCESS("Seeding DutySchedule data..."))
+            seed_duty_schedules()
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"Error seeding DutySchedules: {e}"))
 
         self.stdout.write(self.style.SUCCESS("Seeding completed!"))

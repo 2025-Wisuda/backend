@@ -1,9 +1,10 @@
 from django import forms
 from django.contrib import admin
-from .models import LabSchedule
-from .serializers import LabScheduleDetailSerializer
+from schedule.models import LabSchedule
+from schedule.serializers import LabScheduleDetailSerializer
 from rest_framework import serializers
 from datetime import datetime
+from utils import bulk_update_is_active
 
 
 class LabScheduleAdminForm(forms.ModelForm):
@@ -71,25 +72,23 @@ class LabScheduleAdmin(admin.ModelAdmin):
         "updated_at",
     )
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if request.user.is_superuser:
+            return queryset
+        return queryset.filter(is_active=True)
+
     def make_inactive(self, request, queryset):
-        rows_updated = queryset.update(is_active=False)
-        if rows_updated == 1:
-            message_bit = "1 jadwal dihapus (ditandai tidak aktif)."
-        else:
-            message_bit = f"{rows_updated} jadwal dihapus (ditandai tidak aktif)."
+        message_bit = bulk_update_is_active(queryset, active=False)
         self.message_user(request, message_bit)
 
-    make_inactive.short_description = "Hapus Jadwal (Tandai Tidak Aktif)"
+    make_inactive.short_description = "Tandai tidak aktif (Hapus)"
 
     def make_active(self, request, queryset):
-        rows_updated = queryset.update(is_active=True)
-        if rows_updated == 1:
-            message_bit = "1 jadwal dipulihkan (ditandai aktif)."
-        else:
-            message_bit = f"{rows_updated} jadwal dipulihkan (ditandai aktif)."
+        message_bit = bulk_update_is_active(queryset, active=True)
         self.message_user(request, message_bit)
 
-    make_active.short_description = "Pulihkan Jadwal (Tandai Aktif)"
+    make_active.short_description = "Tandai aktif (Pulihkan)"
 
     def save_model(self, request, obj, form, change):
         if not change:

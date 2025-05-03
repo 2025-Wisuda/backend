@@ -1,0 +1,48 @@
+from django.db import models
+import uuid
+from django.conf import settings
+from schedule.utils import generate_duty_dates
+from datetime import time
+
+
+class DutySchedule(models.Model):
+    class Days(models.TextChoices):
+        MONDAY = "monday", "Senin"
+        TUESDAY = "tuesday", "Selasa"
+        WEDNESDAY = "wednesday", "Rabu"
+        THURSDAY = "thursday", "Kamis"
+        FRIDAY = "friday", "Jumat"
+        SATURDAY = "saturday", "Sabtu"
+        SUNDAY = "sunday", "Minggu"
+
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID"
+    )
+    teaching_assistants = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="duty_schedules",
+        blank=True,
+        verbose_name="Asisten Laboratorium",
+    )
+    days = models.CharField(
+        max_length=50, choices=Days.choices, blank=True, null=True, verbose_name="Hari"
+    )
+    start_date = models.DateField(blank=False, null=False, verbose_name="Tanggal Mulai")
+    end_date = models.DateField(blank=False, null=False, verbose_name="Tanggal Selesai")
+    start_time = models.TimeField(default=time(7, 30), verbose_name="Waktu Mulai")
+    end_time = models.TimeField(default=time(16, 0), verbose_name="Waktu Selesai")
+    is_active = models.BooleanField(default=True, verbose_name="Aktif")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Waktu Dibuat")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Waktu Diperbarui")
+
+    class Meta:
+        db_table = "duty_schedule"
+        ordering = ["start_date"]
+        verbose_name = "Jadwal Piket"
+        verbose_name_plural = "Jadwal Piket"
+
+    def assign_duty_dates(self):
+        generate_duty_dates(self)
+
+    def __str__(self):
+        return f"{self.days} {self.start_time}–{self.end_time}"

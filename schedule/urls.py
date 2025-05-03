@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import LabScheduleViewSet, LabScheduleApprovalViewSet
+from .views import LabScheduleViewSet, LabScheduleApprovalViewSet, DutyScheduleViewSet
 
 urlpatterns = [
     path(
@@ -23,5 +23,15 @@ urlpatterns = [
         "schedules/lab/<uuid:pk>/approval",
         LabScheduleApprovalViewSet.as_view({"put": "update"}),
         name="lab-schedule-approval",
+    ),
+    path(
+        "schedules/duty",
+        DutyScheduleViewSet.as_view({"get": "list"}),
+        name="duty-schedules-list",
+    ),
+    path(
+        "schedules/duty/<uuid:pk>",
+        DutyScheduleViewSet.as_view({"get": "retrieve"}),
+        name="duty-schedule-detail",
     ),
 ]

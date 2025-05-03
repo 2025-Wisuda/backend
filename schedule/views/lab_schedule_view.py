@@ -61,13 +61,17 @@ class LabScheduleViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         if not (instance.created_by == request.user):
-            raise PermissionDenied("You do not have permission to update this schedule.")
+            raise PermissionDenied(
+                "You do not have permission to update this schedule."
+            )
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
         if not (instance.created_by == request.user):
-            raise PermissionDenied("You do not have permission to update this schedule.")
+            raise PermissionDenied(
+                "You do not have permission to update this schedule."
+            )
         return super().partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
@@ -77,5 +81,7 @@ class LabScheduleViewSet(viewsets.ModelViewSet):
             or request.user.is_staff
             or request.user.is_superuser
         ):
-            raise PermissionDenied("You do not have permission to delete this schedule.")
+            raise PermissionDenied(
+                "You do not have permission to delete this schedule."
+            )
         return super().destroy(request, *args, **kwargs)
