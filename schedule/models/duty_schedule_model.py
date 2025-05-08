@@ -1,11 +1,11 @@
 from django.db import models
-import uuid
 from django.conf import settings
 from schedule.utils import generate_duty_dates
 from datetime import time
+from core.models import BaseModel
 
 
-class DutySchedule(models.Model):
+class DutySchedule(BaseModel):
     class Days(models.TextChoices):
         MONDAY = "monday", "Senin"
         TUESDAY = "tuesday", "Selasa"
@@ -15,9 +15,6 @@ class DutySchedule(models.Model):
         SATURDAY = "saturday", "Sabtu"
         SUNDAY = "sunday", "Minggu"
 
-    id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID"
-    )
     teaching_assistants = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name="duty_schedules",
@@ -31,9 +28,6 @@ class DutySchedule(models.Model):
     end_date = models.DateField(blank=False, null=False, verbose_name="Tanggal Selesai")
     start_time = models.TimeField(default=time(7, 30), verbose_name="Waktu Mulai")
     end_time = models.TimeField(default=time(16, 0), verbose_name="Waktu Selesai")
-    is_active = models.BooleanField(default=True, verbose_name="Aktif")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Waktu Dibuat")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Waktu Diperbarui")
 
     class Meta:
         db_table = "duty_schedule"

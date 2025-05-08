@@ -1,11 +1,13 @@
 from rest_framework import serializers
 from schedule.models import LabSchedule
+from custom_auth.serializers import UserListSerializer
 
 
 class LabScheduleListSerializer(serializers.ModelSerializer):
     activity_type_display = serializers.CharField(
         source="get_activity_type_display", read_only=True
     )
+    created_by = UserListSerializer(read_only=True)
 
     class Meta:
         model = LabSchedule

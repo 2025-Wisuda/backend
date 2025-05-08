@@ -1,12 +1,9 @@
 from django.db import models
-import uuid
+from core.models import BaseModel
 from .duty_schedule_model import DutySchedule
 
 
-class DutyDate(models.Model):
-    id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID"
-    )
+class DutyDate(BaseModel):
     schedule = models.ForeignKey(
         DutySchedule,
         on_delete=models.CASCADE,
@@ -14,8 +11,6 @@ class DutyDate(models.Model):
         verbose_name="Jadwal Piket",
     )
     duty_date = models.DateField(verbose_name="Tanggal Piket")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Waktu Dibuat")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Waktu Diperbarui")
 
     class Meta:
         db_table = "duty_date"
