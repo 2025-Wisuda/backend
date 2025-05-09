@@ -1,5 +1,6 @@
 from datetime import datetime, time, date
 from rest_framework import serializers
+from schedule.models import DutySchedule
 
 
 def validate_duty_schedule_fields(data, instance=None):
@@ -7,10 +8,11 @@ def validate_duty_schedule_fields(data, instance=None):
     end_time = data.get("end_time") or (instance.end_time if instance else None)
     start_date = data.get("start_date") or (instance.start_date if instance else None)
     end_date = data.get("end_date") or (instance.end_date if instance else None)
-    
+    days = data.get("days") or (instance.days if instance else None)
+
     min_time = time(7, 30)
     max_time = time(18, 0)
-    
+
     if start_time and (start_time < min_time or start_time > max_time):
         raise serializers.ValidationError("Start time must be between 07:30 and 18:00.")
     if end_time and (end_time < min_time or end_time > max_time):
@@ -27,5 +29,16 @@ def validate_duty_schedule_fields(data, instance=None):
             raise serializers.ValidationError(
                 "Start date and time must be in the future."
             )
+
+    if days:
+        existing = DutySchedule.objects.filter(days=days, is_active=True)
+        if instance:
+            existing = existing.exclude(id=instance.id)
+        if existing.exists():
+            display = dict(DutySchedule.Days.choices).get(days, days)
+            raise serializers.ValidationError(
+                f"The selected days ({display}) are already assigned to another schedule."
+            )
+            
 
     return data

@@ -5,6 +5,9 @@ from schedule.serializers import DutyScheduleDetailSerializer
 from rest_framework import serializers
 from schedule.utils import generate_duty_dates
 from utils import bulk_update_is_active
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class DutyScheduleAdminForm(forms.ModelForm):
@@ -64,11 +67,14 @@ class DutyScheduleAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-
         if request.user.is_superuser:
             return queryset
-
         return queryset.filter(is_active=True)
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "teaching_assistants":
+            kwargs["queryset"] = User.objects.filter(is_staff=True)
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
     def make_inactive(self, request, queryset):
         message_bit = bulk_update_is_active(queryset, active=False)

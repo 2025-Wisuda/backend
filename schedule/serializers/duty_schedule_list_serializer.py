@@ -14,8 +14,6 @@ class DutyScheduleListSerializer(serializers.ModelSerializer):
             "days_display",
             "start_date",
             "end_date",
-            "start_time",
-            "end_time",
             "teaching_assistants",
             "created_at",
             "updated_at",
