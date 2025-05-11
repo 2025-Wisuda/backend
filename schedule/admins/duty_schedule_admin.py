@@ -40,15 +40,13 @@ class DutyScheduleAdmin(admin.ModelAdmin):
     list_filter = (
         "is_active",
         "days",
-        "start_date",
-        "end_date",
     )
-    search_fields = ("days", "start_date", "end_date")
+    search_fields = ("days", "teaching_assistants")
     ordering = ("start_date", "start_time")
     actions = ["make_inactive", "make_active"]
     fieldsets = (
         (
-            None,
+            "Informasi Jadwal Piket",
             {
                 "fields": (
                     "days",
@@ -57,11 +55,10 @@ class DutyScheduleAdmin(admin.ModelAdmin):
                     "start_time",
                     "end_time",
                     "teaching_assistants",
-                    "is_active",
                 )
             },
         ),
-        ("Important Dates", {"fields": ("created_at", "updated_at")}),
+        ("Tanggal Penting", {"fields": ("created_at", "updated_at")}),
     )
     readonly_fields = ("created_at", "updated_at")
 
@@ -69,7 +66,9 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if request.user.is_superuser:
             return queryset
-        return queryset.filter(is_active=True)
+        elif request.user.is_staff:
+            return queryset.filter(is_active=True)
+        return queryset.none()
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "teaching_assistants":
@@ -80,13 +79,18 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         message_bit = bulk_update_is_active(queryset, active=False)
         self.message_user(request, message_bit)
 
-    make_inactive.short_description = "Tandai tidak aktif (Hapus)"
+    make_inactive.short_description = "Hapus"
 
     def make_active(self, request, queryset):
+        if not request.user.is_superuser:
+            self.message_user(
+                request, "Only superusers can perform this action.", level="error"
+            )
+            return
         message_bit = bulk_update_is_active(queryset, active=True)
         self.message_user(request, message_bit)
 
-    make_active.short_description = "Tandai aktif (Pulihkan)"
+    make_active.short_description = "Pulihkan"
 
     def save_model(self, request, obj, form, change):
         if not change:

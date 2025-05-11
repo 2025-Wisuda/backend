@@ -1,5 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiTypes, extend_schema_field
 
 
 class CustomPageNumberPagination(PageNumberPagination):
@@ -23,3 +24,54 @@ class CustomPageNumberPagination(PageNumberPagination):
                 },
             }
         )
+
+    @extend_schema_field(
+        {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {"type": "object"},
+                },
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "pagination": {
+                            "type": "object",
+                            "properties": {
+                                "next": {"type": "string", "nullable": True},
+                                "previous": {"type": "string", "nullable": True},
+                                "total_items": {"type": "integer"},
+                                "total_pages": {"type": "integer"},
+                                "current_page": {"type": "integer"},
+                                "page_size": {"type": "integer"},
+                            },
+                        },
+                    },
+                },
+            },
+        }
+    )
+    def get_paginated_response_schema(self, schema):
+        return {
+            "type": "object",
+            "properties": {
+                "data": schema,
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "pagination": {
+                            "type": "object",
+                            "properties": {
+                                "next": {"type": "string", "nullable": True},
+                                "previous": {"type": "string", "nullable": True},
+                                "total_items": {"type": "integer"},
+                                "total_pages": {"type": "integer"},
+                                "current_page": {"type": "integer"},
+                                "page_size": {"type": "integer"},
+                            },
+                        },
+                    },
+                },
+            },
+        }

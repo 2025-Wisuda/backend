@@ -8,7 +8,7 @@ from schedule.validators import validate_duty_schedule_fields
 class DutyScheduleDetailSerializer(serializers.ModelSerializer):
     days_display = serializers.CharField(source="days", read_only=True)
     duty_dates = DutyDateNestedSerializer(many=True, read_only=True)
-    teaching_assistants = UserListSerializer(many=True, read_only=True)
+    teaching_assistants = UserListSerializer(many=True)
 
     class Meta:
         model = DutySchedule
@@ -22,14 +22,10 @@ class DutyScheduleDetailSerializer(serializers.ModelSerializer):
             "end_time",
             "duty_dates",
             "teaching_assistants",
-            "is_active",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
-            "days_display",
-            "duty_dates",
-            "teaching_assistants",
             "created_at",
             "updated_at",
         ]

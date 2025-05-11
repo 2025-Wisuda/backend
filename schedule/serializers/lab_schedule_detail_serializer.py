@@ -23,7 +23,6 @@ class LabScheduleDetailSerializer(serializers.ModelSerializer):
             "start_time",
             "end_time",
             "created_by",
-            "is_active",
             "approval_status",
             "approved_by",
             "approval_time",
@@ -31,13 +30,14 @@ class LabScheduleDetailSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = [
-            "activity_type_display",
+            "activity_type",
+            "activity_description",
+            "schedule_date",
+            "start_time",
+            "end_time",
             "created_by",
             "created_at",
             "updated_at",
-            "is_active",
-            "approval_status",
-            "approved_by",
             "approval_time",
         ]
 

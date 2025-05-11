@@ -39,6 +39,5 @@ def validate_duty_schedule_fields(data, instance=None):
             raise serializers.ValidationError(
                 f"The selected days ({display}) are already assigned to another schedule."
             )
-            
 
     return data

@@ -31,11 +31,12 @@ class LabScheduleAdmin(admin.ModelAdmin):
     form = LabScheduleAdminForm
     list_display = (
         "activity_type",
+        "activity_description",
         "schedule_date",
         "start_time",
         "end_time",
-        "is_active",
         "approval_status",
+        "is_active",
     )
     list_filter = (
         "is_active",
@@ -45,10 +46,9 @@ class LabScheduleAdmin(admin.ModelAdmin):
     )
     search_fields = ("activity_description", "activity_type", "schedule_date")
     ordering = ("schedule_date", "start_time")
-    actions = ["make_inactive", "make_active"]
     fieldsets = (
         (
-            None,
+            "Detail Jadwal",
             {
                 "fields": (
                     "activity_type",
@@ -57,17 +57,30 @@ class LabScheduleAdmin(admin.ModelAdmin):
                     "start_time",
                     "end_time",
                     "created_by",
-                    "is_active",
+                )
+            },
+        ),
+        (
+            "Detail Persetujuan",
+            {
+                "fields": (
                     "approval_status",
                     "approved_by",
                     "approval_time",
                 )
             },
         ),
-        ("Important Dates", {"fields": ("created_at", "updated_at")}),
+        ("Tanggal Penting", {"fields": ("created_at", "updated_at")}),
     )
     readonly_fields = (
+        "activity_type",
+        "activity_description",
+        "schedule_date",
+        "start_time",
+        "end_time",
         "created_by",
+        "approved_by",
+        "approval_time",
         "created_at",
         "updated_at",
     )
@@ -76,19 +89,12 @@ class LabScheduleAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if request.user.is_superuser:
             return queryset
-        return queryset.filter(is_active=True)
+        elif request.user.is_staff:
+            return queryset.filter(is_active=True)
+        return queryset.none()
 
-    def make_inactive(self, request, queryset):
-        message_bit = bulk_update_is_active(queryset, active=False)
-        self.message_user(request, message_bit)
-
-    make_inactive.short_description = "Tandai tidak aktif (Hapus)"
-
-    def make_active(self, request, queryset):
-        message_bit = bulk_update_is_active(queryset, active=True)
-        self.message_user(request, message_bit)
-
-    make_active.short_description = "Tandai aktif (Pulihkan)"
+    def has_add_permission(self, request):
+        return False
 
     def save_model(self, request, obj, form, change):
         if not change:

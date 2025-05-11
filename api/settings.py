@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "docs",
     "import_export",
     "schedule",
+    "course",
 ]
 
 MIDDLEWARE = [

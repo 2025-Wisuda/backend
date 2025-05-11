@@ -1,0 +1,11 @@
+from django.apps import AppConfig
+
+
+class CourseConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "course"
+    verbose_name = "Manajemen Praktikum"
+
+    def ready(self):
+        import course.admins
+        import course.signals

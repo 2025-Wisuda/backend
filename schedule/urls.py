@@ -4,7 +4,11 @@ from .views import LabScheduleViewSet, LabScheduleApprovalViewSet, DutyScheduleV
 urlpatterns = [
     path(
         "schedules/lab",
-        LabScheduleViewSet.as_view({"get": "list", "post": "create"}),
+        LabScheduleViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
         name="lab-schedules-list",
     ),
     path(
@@ -12,16 +16,13 @@ urlpatterns = [
         LabScheduleViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
             }
         ),
         name="lab-schedule-detail",
     ),
     path(
         "schedules/lab/<uuid:pk>/approval",
-        LabScheduleApprovalViewSet.as_view({"put": "update"}),
+        LabScheduleApprovalViewSet.as_view({"patch": "partial_update"}),
         name="lab-schedule-approval",
     ),
     path(
@@ -33,5 +34,10 @@ urlpatterns = [
         "schedules/duty/<uuid:pk>",
         DutyScheduleViewSet.as_view({"get": "retrieve"}),
         name="duty-schedule-detail",
+    ),
+    path(
+        "schedules/lab/availability",
+        LabScheduleViewSet.as_view({"get": "availability"}),
+        name="lab-schedule-availability",
     ),
 ]

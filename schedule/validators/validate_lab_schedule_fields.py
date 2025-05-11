@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from schedule.models import LabSchedule
-from datetime import datetime
-from datetime import time
+from datetime import datetime, time
 
 
 def validate_lab_schedule_fields(data, instance=None):
@@ -23,6 +22,7 @@ def validate_lab_schedule_fields(data, instance=None):
 
     min_time = time(7, 30)
     max_time = time(18, 0)
+
     if start_time and (start_time < min_time or start_time > max_time):
         raise serializers.ValidationError("Start time must be between 07:30 and 18:00.")
     if end_time and (end_time < min_time or end_time > max_time):
@@ -46,9 +46,7 @@ def validate_lab_schedule_fields(data, instance=None):
         ).exclude(id=instance.id if instance else None)
 
         for schedule in overlapping_schedule:
-            existing_start = datetime.combine(
-                schedule.schedule_date, schedule.start_time
-            )
+            existing_start = datetime.combine(schedule.schedule_date, schedule.start_time)
             existing_end = datetime.combine(schedule.schedule_date, schedule.end_time)
 
             if (start_dt < existing_end) and (end_dt > existing_start):
