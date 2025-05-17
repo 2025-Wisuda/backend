@@ -18,6 +18,7 @@ drf-spectacular==0.28.0
 et-xmlfile==2.0.0
 factory-boy==3.3.3
 Faker==35.2.2
+gunicorn==23.0.0
 importlib-resources==6.4.5
 inflection==0.5.1
 jsonschema==4.23.0
@@ -33,6 +34,7 @@ pycparser==2.22
 PyJWT==2.9.0
 PyMySQL==1.1.1
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
 pytz==2025.2
 PyYAML==6.0.2
 referencing==0.35.1
