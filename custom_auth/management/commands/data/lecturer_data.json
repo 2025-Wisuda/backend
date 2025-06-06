@@ -1,0 +1,27 @@
+[
+    {
+        "first_name": "Dr. Ahmad",
+        "last_name": "Wibowo",
+        "employee_number": "DOC001"
+    },
+    {
+        "first_name": "Prof. Siti",
+        "last_name": "Rahayu",
+        "employee_number": "DOC002"
+    },
+    {
+        "first_name": "Dr. Budi",
+        "last_name": "Santoso",
+        "employee_number": "DOC003"
+    },
+    {
+        "first_name": "Prof. Indira",
+        "last_name": "Sari",
+        "employee_number": "DOC004"
+    },
+    {
+        "first_name": "Dr. Reza",
+        "last_name": "Pratama",
+        "employee_number": "DOC005"
+    }
+]

@@ -1,16 +1,14 @@
-from django.urls import path
-from .views import (
-    LoginView,
-    RefreshTokenView,
-    ProfileView,
-    UserListView,
-    UserDetailView,
-)
+"""
+Main URLs for custom_auth app.
+
+Includes both authentication and user management endpoints.
+"""
+
+from django.urls import include, path
+
+app_name = "custom_auth"
 
 urlpatterns = [
-    path("auth/login", LoginView.as_view(), name="login"),
-    path("auth/refresh-token", RefreshTokenView.as_view(), name="refresh-token"),
-    path("users/me", ProfileView.as_view(), name="profile"),
-    path("users", UserListView.as_view(), name="user-list"),
-    path("users/<uuid:pk>", UserDetailView.as_view(), name="user-detail"),
+    path("auth", include("custom_auth.rest.urls.auth_urls", namespace="auth")),
+    path("", include("custom_auth.rest.urls.user_urls", namespace="users")),
 ]

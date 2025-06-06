@@ -1,0 +1,52 @@
+[
+    {
+        "first_name": "Student",
+        "last_name": "Alpha",
+        "student_id": "2315061001"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Beta",
+        "student_id": "2315061002"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Gamma",
+        "student_id": "2315061003"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Delta",
+        "student_id": "2315061004"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Epsilon",
+        "student_id": "2315061005"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Zeta",
+        "student_id": "2315061006"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Eta",
+        "student_id": "2315061007"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Theta",
+        "student_id": "2315061008"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Iota",
+        "student_id": "2315061009"
+    },
+    {
+        "first_name": "Student",
+        "last_name": "Kappa",
+        "student_id": "2315061010"
+    }
+]

@@ -1,64 +1,11 @@
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import Group
-from import_export.admin import ImportExportMixin
-from .models import User
-from .resources import UserResource
+"""Expose selected admin components for external use."""
 
+from .admins.group_admin import GroupAdmin
+from .admins.user_admin import UserAdmin
+from .admins.user_resource import UserResource
 
-@admin.register(User)
-class UserAdmin(ImportExportMixin, BaseUserAdmin):
-    resource_class = UserResource
-    model = User
-    list_display = (
-        "username",
-        "email",
-        "first_name",
-        "last_name",
-        "is_active",
-    )
-    list_filter = ("is_staff", "is_active", "groups")
-    search_fields = ("username", "email", "student_id", "employee_id")
-    ordering = ("username", "first_name", "last_name")
-    fieldsets = (
-        (None, {"fields": ("username", "password")}),
-        (
-            "Personal Information",
-            {
-                "fields": (
-                    "first_name",
-                    "last_name",
-                    "email",
-                    "student_id",
-                    "employee_id",
-                    "avatar",
-                )
-            },
-        ),
-        (
-            "Face Recognition",
-            {
-                "fields": (
-                    "face_image",
-                    "face_uploaded",
-                )
-            },
-        ),
-        (
-            "Permissions",
-            {
-                "fields": (
-                    "is_active",
-                    "is_staff",
-                    "is_superuser",
-                    "groups",
-                    "user_permissions",
-                )
-            },
-        ),
-        (
-            "Important Dates",
-            {"fields": ("last_login", "date_joined", "created_at", "updated_at")},
-        ),
-    )
-    readonly_fields = ("created_at", "updated_at")
+__all__ = [
+    "GroupAdmin",
+    "UserAdmin",
+    "UserResource",
+]
