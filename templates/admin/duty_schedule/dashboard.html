@@ -1,0 +1,379 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<div id="dashboard-modules" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:24px;">
+    <div class="module" style="padding:0;background:none;box-shadow:none;">
+        <div id="total-attendance-card" style="position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:160px;border-radius:18px;padding:32px 24px;margin-bottom:8px;box-shadow:0 4px 24px 0 rgba(68,126,155,0.08);background:var(--total-bg,linear-gradient(135deg,rgba(68,126,155,0.13) 0%,rgba(251,191,36,0.10) 100%));transition:background 0.3s;">
+            <div style="position:absolute;top:18px;right:18px;">
+                <span id="total-badge" style="font-size:0.85em;padding:3px 12px;border-radius:12px;background:var(--badge-bg,rgba(68,126,155,0.18));color:var(--badge-color,#447e9b);font-weight:600;letter-spacing:0.5px;">Total</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:28px;">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;background:var(--icon-bg,rgba(68,126,155,0.10));border-radius:50%;">
+                    <svg width="38" height="38" fill="none" viewBox="0 0 38 38">
+                        <path d="M19 9C13.48 9 9 13.48 9 19s4.48 10 10 10 10-4.48 10-10S24.52 9 19 9zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="var(--icon-stroke,#447e9b)" fill-opacity="0.8"/>
+                        <path d="M19 13c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="var(--icon-stroke,#447e9b)"/>
+                        <path d="M19 15c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z" fill="var(--icon-stroke,#447e9b)" fill-opacity="0.6"/>
+                    </svg>
+                </span>
+                <div style="text-align:left;">
+                    <span id="total-attendance-count" style="font-size:2.8em;font-weight:700;line-height:1.1;color:var(--total-color,#447e9b);letter-spacing:1px;">{{ total_attendance }}</span>
+                    <div style="font-size:1.1em;color:var(--total-label,#447e9b);letter-spacing:0.5px;margin-top:2px;">Attendance Records</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="module">
+        <h2>Upcoming Duties</h2>
+        <div class="module-content">
+            {% if upcoming_duties %}
+                <ul class="grp-listing">
+                    {% for duty in upcoming_duties %}
+                    <li>
+                        <strong>{{ duty.date|date:"M d, Y" }}</strong>
+                        &nbsp;|&nbsp; {{ duty.start_time|time:"H:i" }} - {{ duty.end_time|time:"H:i" }}
+                        &nbsp;|&nbsp; {{ duty.laboratory_assistant.get_full_name|default:duty.laboratory_assistant.username }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="help">No upcoming duties</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="module">
+        <h2>Monthly Trends</h2>
+        <div class="module-content">
+            <canvas id="monthlyChart" height="220"></canvas>
+        </div>
+    </div>
+    <div class="module">
+        <h2>Attendance Status Distribution</h2>
+        <div class="module-content">
+            <canvas id="statusChart" height="220"></canvas>
+        </div>
+    </div>
+    <div class="module">
+        <h2>Weekly Attendance Patterns</h2>
+        <div class="module-content">
+            <canvas id="weekdayChart" height="220"></canvas>
+        </div>
+    </div>
+    <div class="module">
+        <h2>Top Assistant Performance</h2>
+        <div class="module-content">
+            <canvas id="assistantChart" height="220"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function isDarkMode() {
+    const theme = document.documentElement.dataset.theme;
+    if (theme === 'dark') {
+        return true;
+    } else if (theme === 'light') {
+        return false;
+    } else {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+}
+
+function getChartColors() {
+    if (isDarkMode()) {
+        return {
+            monthly: {
+                border: 'rgba(96,165,250,1)',
+                background: 'rgba(30,41,59,1)',
+                font: 'rgba(203,213,225,0.9)',
+                grid: 'rgba(100,116,139,0.3)',
+                legend: 'rgba(203,213,225,0.85)',
+                point: 'rgba(96,165,250,1)'
+            },
+            status: {
+                bar: [
+                    'rgba(52,211,153,0.92)', 'rgba(251,191,36,0.92)', 'rgba(248,113,113,0.92)',
+                    'rgba(167,139,250,0.92)', 'rgba(244,114,182,0.92)', 'rgba(250,204,21,0.92)'
+                ],
+                font: 'rgba(203,213,225,0.9)',
+                grid: 'rgba(100,116,139,0.3)',
+                legend: 'rgba(203,213,225,0.85)'
+            },
+            weekday: {
+                bar: [
+                    'rgba(167,139,250,0.92)', 'rgba(96,165,250,0.92)', 'rgba(251,191,36,0.92)',
+                    'rgba(52,211,153,0.92)', 'rgba(248,113,113,0.92)', 'rgba(244,114,182,0.92)', 'rgba(250,204,21,0.92)'
+                ],
+                font: 'rgba(203,213,225,0.9)',
+                grid: 'rgba(100,116,139,0.3)',
+                legend: 'rgba(203,213,225,0.85)'
+            },
+            assistant: {
+                bar: [
+                    'rgba(96,165,250,0.92)', 'rgba(251,191,36,0.92)', 'rgba(248,113,113,0.92)',
+                    'rgba(52,211,153,0.92)', 'rgba(167,139,250,0.92)', 'rgba(244,114,182,0.92)', 'rgba(250,204,21,0.92)'
+                ],
+                font: 'rgba(203,213,225,0.9)',
+                legend: 'rgba(203,213,225,0.85)'
+            }
+        };
+    } else {
+        return {
+            monthly: {
+                border: '#447e9b',
+                background: '#f7fafc',
+                font: '#22223b',
+                grid: '#e5e7eb',
+                legend: '#22223b',
+                point: '#447e9b'
+            },
+            status: {
+                bar: [
+                    '#34d399', '#fbbf24', '#f87171',
+                    '#a78bfa', '#f472b6', '#facc15'
+                ],
+                font: '#22223b',
+                grid: '#e5e7eb',
+                legend: '#22223b'
+            },
+            weekday: {
+                bar: [
+                    '#a78bfa', '#447e9b', '#fbbf24',
+                    '#34d399', '#f87171', '#f472b6', '#facc15'
+                ],
+                font: '#22223b',
+                grid: '#e5e7eb',
+                legend: '#22223b'
+            },
+            assistant: {
+                bar: [
+                    '#447e9b', '#fbbf24', '#f87171',
+                    '#34d399', '#a78bfa', '#f472b6', '#facc15'
+                ],
+                font: '#22223b',
+                legend: '#22223b'
+            }
+        };
+    }
+}
+
+function renderAllCharts() {
+    const colors = getChartColors();
+    const monthlyData = JSON.parse('{{ monthly_data|safe }}');
+    const statusData = JSON.parse('{{ status_data|safe }}');
+    const weekdayData = JSON.parse('{{ weekday_data|safe }}');
+    const assistantData = JSON.parse('{{ assistant_data|safe }}');
+
+    // Monthly Trend Chart
+    const monthlyCtx = document.getElementById('monthlyChart');
+    if (monthlyCtx && monthlyData.length > 0) {
+        if (monthlyCtx.chart) monthlyCtx.chart.destroy();
+        monthlyCtx.chart = new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: monthlyData.map(item => item.month),
+                datasets: [{
+                    label: 'Attendance Records',
+                    data: monthlyData.map(item => item.count),
+                    borderColor: colors.monthly.border,
+                    backgroundColor: colors.monthly.background,
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                    pointBackgroundColor: colors.monthly.point,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, labels: { color: colors.monthly.legend } },
+                    tooltip: { 
+                        bodyColor: colors.monthly.font, 
+                        titleColor: colors.monthly.font, 
+                        backgroundColor: isDarkMode() ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)',
+                        borderColor: isDarkMode() ? 'rgba(100,116,139,0.4)' : 'rgba(203,213,225,0.4)',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: colors.monthly.font }, grid: { color: colors.monthly.grid } },
+                    x: { grid: { display: false }, ticks: { color: colors.monthly.font } }
+                }
+            }
+        });
+    }
+
+    // Status Distribution Chart
+    const statusCtx = document.getElementById('statusChart');
+    if (statusCtx && statusData.length > 0) {
+        if (statusCtx.chart) statusCtx.chart.destroy();
+        statusCtx.chart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: statusData.map(item => item.status),
+                datasets: [{
+                    label: 'Attendance Status',
+                    data: statusData.map(item => item.count),
+                    backgroundColor: colors.status.bar.slice(0, statusData.length),
+                    borderWidth: 2,
+                    borderColor: isDarkMode() ? 'rgba(30,41,59,1)' : '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: colors.status.legend } },
+                    tooltip: { 
+                        bodyColor: colors.status.font, 
+                        titleColor: colors.status.font, 
+                        backgroundColor: isDarkMode() ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)',
+                        borderColor: isDarkMode() ? 'rgba(100,116,139,0.4)' : 'rgba(203,213,225,0.4)',
+                        borderWidth: 1
+                    }
+                }
+            }
+        });
+    }
+
+    // Weekly Patterns Chart
+    const weekdayCtx = document.getElementById('weekdayChart');
+    if (weekdayCtx && weekdayData.length > 0) {
+        if (weekdayCtx.chart) weekdayCtx.chart.destroy();
+        weekdayCtx.chart = new Chart(weekdayCtx, {
+            type: 'bar',
+            data: {
+                labels: weekdayData.map(item => item.day),
+                datasets: [{
+                    label: 'Attendance Records',
+                    data: weekdayData.map(item => item.count),
+                    backgroundColor: colors.weekday.bar.slice(0, weekdayData.length),
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, labels: { color: colors.weekday.legend } },
+                    tooltip: { 
+                        bodyColor: colors.weekday.font, 
+                        titleColor: colors.weekday.font, 
+                        backgroundColor: isDarkMode() ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)',
+                        borderColor: isDarkMode() ? 'rgba(100,116,139,0.4)' : 'rgba(203,213,225,0.4)',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: colors.weekday.font }, grid: { color: colors.weekday.grid } },
+                    x: { grid: { display: false }, ticks: { color: colors.weekday.font } }
+                }
+            }
+        });
+    }
+
+    // Assistant Performance Chart
+    const assistantCtx = document.getElementById('assistantChart');
+    if (assistantCtx && assistantData.length > 0) {
+        if (assistantCtx.chart) assistantCtx.chart.destroy();
+        assistantCtx.chart = new Chart(assistantCtx, {
+            type: 'bar',
+            data: {
+                labels: assistantData.map(item => item.name),
+                datasets: [{
+                    label: 'Attendance Rate (%)',
+                    data: assistantData.map(item => item.attendance_rate),
+                    backgroundColor: colors.assistant.bar.slice(0, assistantData.length),
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, labels: { color: colors.assistant.legend } },
+                    tooltip: { 
+                        bodyColor: colors.assistant.font, 
+                        titleColor: colors.assistant.font, 
+                        backgroundColor: isDarkMode() ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.95)',
+                        borderColor: isDarkMode() ? 'rgba(100,116,139,0.4)' : 'rgba(203,213,225,0.4)',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 100,
+                        ticks: { color: colors.assistant.font }, 
+                        grid: { color: colors.assistant.grid } 
+                    },
+                    x: { grid: { display: false }, ticks: { color: colors.assistant.font } }
+                }
+            }
+        });
+    }
+}
+
+function setTotalAttendanceCardTheme() {
+    const dark = isDarkMode();
+    const root = document.getElementById('total-attendance-card');
+    if (!root) return;
+    if (dark) {
+        root.style.setProperty('--total-bg', 'linear-gradient(135deg,rgba(30,41,59,0.7) 0%,rgba(96,165,250,0.15) 100%)');
+        root.style.setProperty('--total-color', 'rgba(203,213,225,0.9)');
+        root.style.setProperty('--total-label', 'rgba(148,163,184,0.85)');
+        root.style.setProperty('--badge-bg', 'rgba(96,165,250,0.2)');
+        root.style.setProperty('--badge-color', 'rgba(203,213,225,0.9)');
+        root.style.setProperty('--icon-bg', 'rgba(96,165,250,0.15)');
+        root.style.setProperty('--icon-stroke', 'rgba(96,165,250,0.8)');
+    } else {
+        root.style.setProperty('--total-bg', 'linear-gradient(135deg,rgba(68,126,155,0.13) 0%,rgba(251,191,36,0.10) 100%)');
+        root.style.setProperty('--total-color', '#22223b');
+        root.style.setProperty('--total-label', '#447e9b');
+        root.style.setProperty('--badge-bg', 'rgba(68,126,155,0.18)');
+        root.style.setProperty('--badge-color', '#447e9b');
+        root.style.setProperty('--icon-bg', 'rgba(68,126,155,0.13)');
+        root.style.setProperty('--icon-stroke', '#447e9b');
+    }
+}
+
+function animateTotalAttendance() {
+    const el = document.getElementById('total-attendance-count');
+    if (!el) return;
+    const target = parseInt('{{ total_attendance }}', 10) || 0;
+    let current = 0;
+    const duration = 900;
+    const step = Math.max(1, Math.ceil(target / (duration / 16)));
+    function update() {
+        current += step;
+        if (current >= target) {
+            el.textContent = target.toLocaleString();
+        } else {
+            el.textContent = current.toLocaleString();
+            requestAnimationFrame(update);
+        }
+    }
+    update();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderAllCharts();
+    setTotalAttendanceCardTheme();
+    animateTotalAttendance();
+    // Dynamic update on dark mode toggle
+    const observer = new MutationObserver(() => {
+        renderAllCharts();
+        setTotalAttendanceCardTheme();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+});
+</script>
+{% endblock %} 

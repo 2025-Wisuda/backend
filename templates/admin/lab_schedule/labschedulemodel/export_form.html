@@ -1,0 +1,95 @@
+{% extends "admin/base_export_form.html" %}
+{% load i18n admin_urls static %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:lab_schedule_labschedulemodel_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; {% trans 'Export with Filters' %}
+</div>
+{% endblock %}
+
+{% block additional_filters %}
+    <div class="form-grid">
+        <div class="form-field">
+            {{ form.date_from.label_tag }}
+            {{ form.date_from }}
+            {% if form.date_from.help_text %}
+                <div class="help">{{ form.date_from.help_text }}</div>
+            {% endif %}
+            {% if form.date_from.errors %}
+                <ul class="errorlist">
+                    {% for error in form.date_from.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-field">
+            {{ form.date_to.label_tag }}
+            {{ form.date_to }}
+            {% if form.date_to.help_text %}
+                <div class="help">{{ form.date_to.help_text }}</div>
+            {% endif %}
+            {% if form.date_to.errors %}
+                <ul class="errorlist">
+                    {% for error in form.date_to.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-grid">
+        <div class="form-field">
+            {{ form.schedule_month.label_tag }}
+            {{ form.schedule_month }}
+            {% if form.schedule_month.help_text %}
+                <div class="help">{{ form.schedule_month.help_text }}</div>
+            {% endif %}
+            {% if form.schedule_month.errors %}
+                <ul class="errorlist">
+                    {% for error in form.schedule_month.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-field">
+            {{ form.schedule_year.label_tag }}
+            {{ form.schedule_year }}
+            {% if form.schedule_year.help_text %}
+                <div class="help">{{ form.schedule_year.help_text }}</div>
+            {% endif %}
+            {% if form.schedule_year.errors %}
+                <ul class="errorlist">
+                    {% for error in form.schedule_year.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-grid">
+        <div class="form-field">
+            {{ form.source_model.label_tag }}
+            {{ form.source_model }}
+            {% if form.source_model.help_text %}
+                <div class="help">{{ form.source_model.help_text }}</div>
+            {% endif %}
+            {% if form.source_model.errors %}
+                <ul class="errorlist">
+                    {% for error in form.source_model.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,6 @@
+username,first_name,last_name,email,group,student_number,employee_number,password
+student001,John,Doe,john.doe@example.com,Mahasiswa,2021001,,password123
+student002,Jane,Smith,jane.smith@example.com,Mahasiswa,2021002,,password123
+student003,Bob,Johnson,bob.johnson@example.com,Mahasiswa,2021003,,password123
+student004,Alice,Brown,alice.brown@example.com,Mahasiswa,2021004,,password123
+student005,Charlie,Wilson,charlie.wilson@example.com,Mahasiswa,2021005,,password123 

@@ -108,8 +108,8 @@ class ScheduleGenerator:
         end_date: date,
         days: List[str],
         time_slots: List[Dict[str, Any]],
-        activity_type: str = ActivityType.PRACTICUM.value,
-        activity_details: Optional[str] = None,
+        type: str = ActivityType.PRACTICUM.value,
+        details: Optional[str] = None,
         created_by=None,
         **kwargs
     ) -> List[Dict[str, Any]]:
@@ -121,8 +121,8 @@ class ScheduleGenerator:
             end_date: Tanggal berakhir
             days: List hari yang dipilih
             time_slots: List time slots [{'start_time': time(9,0), 'end_time': time(11,0)}]
-            activity_type: Jenis aktivitas
-            activity_details: Detail aktivitas
+            type: Jenis aktivitas
+            details: Detail aktivitas
             created_by: User yang create
             **kwargs: Additional fields
 
@@ -132,14 +132,14 @@ class ScheduleGenerator:
         dates = self.generate_dates(start_date, end_date, days)
         schedule_data = []
 
-        for schedule_date in dates:
+        for date in dates:
             for time_slot in time_slots:
                 schedule_item = {
-                    "scheduled_date": schedule_date,
+                    "scheduled_date": date,
                     "activity_start_time": time_slot["start_time"],
                     "activity_end_time": time_slot["end_time"],
-                    "lab_activity_type": activity_type,
-                    "lab_activity_details": activity_details,
+                    "lab_type": type,
+                    "lab_details": details,
                     "created_by": created_by,
                     **kwargs,  # Additional fields
                 }
@@ -223,7 +223,7 @@ class ScheduleGenerator:
 
 
 # Convenience functions
-def generate_lab_schedule_dates(
+def generate_lab_dates(
     start_date: date, end_date: date, days: List[str], **kwargs
 ) -> List[date]:
     """Convenience function untuk generate lab schedule dates."""
@@ -231,7 +231,7 @@ def generate_lab_schedule_dates(
     return generator.generate_dates(start_date, end_date, days, **kwargs)
 
 
-def generate_duty_schedule_dates(
+def generate_duty_dates(
     start_date: date, end_date: date, days: List[str], **kwargs
 ) -> List[date]:
     """Convenience function untuk generate duty schedule dates."""

@@ -8,11 +8,10 @@ filtering options and security controls.
 from datetime import datetime
 from typing import Any, Dict
 
+from core.enums.user_group_enum import UserGroup
 from django.contrib.auth import get_user_model
 from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
-
-from core.enums.user_group_enum import UserGroup
 from shared.export import BaseExportView
 from shared.utils.permission_config_utils import has_group_permission
 
@@ -52,14 +51,14 @@ class GuestVisitExportView(BaseExportView):
         - Order by visit date and time
         """
         queryset = self.model.objects.select_related(
-            "visitor_user", "host_user", "created_by", "updated_by"
+            "visitor", "created_by", "updated_by"
         )
 
         # Non-superusers only see active visits
-        if not getattr(request.user, 'is_superuser', False):
+        if not getattr(request.user, "is_superuser", False):
             queryset = queryset.filter(is_active=True)
 
-        return queryset.order_by("visit_date", "start_time")
+        return queryset.order_by("date", "start_time")
 
     def _apply_filters(self, queryset: QuerySet, form_data: Dict[str, Any]) -> QuerySet:
         """Apply filters based on form data."""
@@ -82,35 +81,35 @@ class GuestVisitExportView(BaseExportView):
         if year:
             queryset = queryset.filter(created_at__year=int(year))
 
-        # Visit-specific date filtering (visit_date)
+        # Visit-specific date filtering (date)
         visit_from = form_data.get("visit_date_from")
         visit_to = form_data.get("visit_date_to")
         visit_month = form_data.get("visit_month")
         visit_year = form_data.get("visit_year")
 
         if visit_from:
-            queryset = queryset.filter(visit_date__gte=visit_from)
+            queryset = queryset.filter(date__gte=visit_from)
 
         if visit_to:
-            queryset = queryset.filter(visit_date__lte=visit_to)
+            queryset = queryset.filter(date__lte=visit_to)
 
         if visit_month:
-            queryset = queryset.filter(visit_date__month=int(visit_month))
+            queryset = queryset.filter(date__month=int(visit_month))
 
         if visit_year:
-            queryset = queryset.filter(visit_date__year=int(visit_year))
+            queryset = queryset.filter(date__year=int(visit_year))
 
         # Visitor identity type filtering
         identity_type = form_data.get("visitor_identity_type")
         if identity_type:
-            queryset = queryset.filter(visitor_identity_type=identity_type)
+            queryset = queryset.filter(identity_type=identity_type)
 
-        # Host user filtering
+        # Created By filtering
         host_user_id = form_data.get("host_user")
         if host_user_id:
             try:
                 host_user = User.objects.get(id=host_user_id)
-                queryset = queryset.filter(host_user=host_user)
+                queryset = queryset.filter(created_by=host_user)
             except User.DoesNotExist:
                 pass
 
@@ -185,4 +184,4 @@ class GuestVisitExportView(BaseExportView):
             UserGroup.LABORATORY_HEAD,
             UserGroup.LABORATORY_TECHNICIAN,
         ]
-        return has_group_permission(request.user, allowed_groups) 
+        return has_group_permission(request.user, allowed_groups)

@@ -1,10 +1,4 @@
-"""
-Lab Schedule URLs for lab_schedule Aggregator.
-
-Provides routes for:
-- Lab schedule listing and detail views
-- Lab availability checking
-"""
+"""Lab schedule aggregator URL patterns with router configuration."""
 
 from rest_framework.routers import SimpleRouter
 

@@ -1,81 +1,129 @@
 """
-Django admin configuration for Lab Schedule Aggregator.
+Lab Schedule admin interface for viewing aggregated lab schedules with export-only functionality.
 
-Provides read-only admin interface for viewing all lab schedules aggregated
-from different booking types (LabAllocation, CourseSession, RoomBooking).
+This module provides a read-only administrative view of all lab schedules,
+aggregated from various booking sources like LabAllocation, CourseSession, and RoomBooking.
+It emphasizes data integrity by preventing direct CRUD operations on the aggregated data,
+as all information is synchronized from the source models.
+
+Key Business Rules:
+- Read-only Aggregator: Displays a consolidated view of lab schedules.
+- Export-Only: Allows data export with restrictions, no import or direct modification.
+- Data Source: Aggregates data from LabAllocation, CourseSession, RoomBooking models.
+- Role-Based Access: Export functionality is restricted to authorized lab employees.
+- Comprehensive Filtering: The custom export system supports advanced filtering options.
+
+Export Architecture:
+- Utilizes `LabScheduleResource` for defining exportable fields and data dehydration.
+- Leverages `LabScheduleExportView` for handling the export process with custom filters.
+- Ensures consistent field definitions and formatting for exported data.
 """
 
+from core.enums import UserGroup
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ExportMixin
-
-from shared.format.custom_xlsx_format import AutoFitXLSX
-from shared.utils.permission_config_utils import admin_laboratory_employee_only
+from shared.utils import (
+    AuditFieldMixin,
+    EnhancedExportAdminMixin,
+    ReadOnlyAggregatorMixin,
+    StandardExportFormatMixin,
+    SuperuserDataVisibilityMixin,
+)
 
 from ..models import LabScheduleModel
 from .lab_schedule_resource import LabScheduleResource
+from .views.lab_schedule_export_view import LabScheduleExportView
 
 
 @admin.register(LabScheduleModel)
-class LabScheduleAdmin(ExportMixin, admin.ModelAdmin):
+class LabScheduleAdmin(
+    EnhancedExportAdminMixin,
+    ReadOnlyAggregatorMixin,
+    StandardExportFormatMixin,
+    AuditFieldMixin,
+    SuperuserDataVisibilityMixin,
+    ExportMixin,
+    admin.ModelAdmin,
+):
     """
-    Simplified read-only admin for Lab Schedule aggregator with export-only functionality.
+    Admin interface for the LabScheduleModel, providing a read-only, export-only view
+    of aggregated lab schedules with role-based access control for exports.
 
-    This admin provides a view of all lab schedules aggregated from different
-    booking types. It's read-only since the actual scheduling is done in the
-    source models (LabAllocation, CourseSession, RoomBooking).
+    This admin class is designed to display data from `LabScheduleModel`, which acts
+    as an aggregator for various lab booking types. Therefore, direct creation,
+    modification, or deletion of schedule entries through this interface is disabled.
 
-    Export functionality allows generating reports of schedule data.
+    Security Features:
+    - Read-Only Aggregator: All fields are read-only as data is sourced from other models.
+    - Export Restrictions: Export operations are limited to users in specific lab employee groups.
+    - Data Visibility: Superusers see all entries; other users see only active entries.
+    - No Direct CRUD: `has_add_permission`, `has_change_permission`, `has_delete_permission`
+      are overridden to return `False`.
+
+    Export System:
+    - Integrates with `django-import-export` via `ExportMixin`.
+    - Uses `LabScheduleResource` as `resource_class` to define export fields and behavior.
+    - Provides a custom export view (`_export_with_filters_view`) that utilizes
+      `LabScheduleExportView` for advanced filtering (e.g., by date range, activity type).
+    - The standard export action is overridden to redirect to this custom filtered export.
     """
 
     resource_class = LabScheduleResource
 
+    # Enhanced export configuration
+    export_view_class = LabScheduleExportView
+    export_filtered_url_name = "lab_schedule_labschedulemodel_export_filtered"
+
+    def __init__(self, model, admin_site):
+        super().__init__(model, admin_site)
+
     list_display = [
-        "schedule_date",
+        "date",
         "time_display",
-        "activity_type",
-        "activity_detail_short",
+        "type",
+        "detail_short",
         "source_model",
     ]
 
     list_filter = [
         "source_model",
-        "activity_type",
-        "schedule_date",
+        "type",
+        "date",
     ]
 
     search_fields = [
-        "activity_type",
-        "activity_detail",
+        "type",
+        "detail",
     ]
 
     readonly_fields = (
-        "schedule_date",
+        "date",
         "start_time",
         "end_time",
         "source_model",
         "source_id",
-        "activity_type",
-        "activity_detail",
+        "type",
+        "detail",
         "created_by",
         "created_at",
         "updated_by",
         "updated_at",
     )
 
-    ordering = ["-schedule_date", "-start_time"]
-    date_hierarchy = "schedule_date"
+    ordering = ["-date", "-start_time"]
+    date_hierarchy = "date"
 
     fieldsets = (
         (
             _("Schedule Information"),
             {
                 "fields": (
-                    "schedule_date",
+                    "date",
                     "start_time",
                     "end_time",
-                    "activity_type",
-                    "activity_detail",
+                    "type",
+                    "detail",
                 )
             },
         ),
@@ -89,6 +137,7 @@ class LabScheduleAdmin(ExportMixin, admin.ModelAdmin):
                 "description": _(
                     "Information about the original booking that created this schedule entry."
                 ),
+                "classes": ("collapse",),
             },
         ),
         (
@@ -107,10 +156,6 @@ class LabScheduleAdmin(ExportMixin, admin.ModelAdmin):
         ),
     )
 
-    def get_readonly_fields(self, request, obj=None):
-        """All fields are readonly since this is an aggregator."""
-        return self.readonly_fields
-
     def time_display(self, obj):
         """Display formatted time range."""
         if obj.start_time and obj.end_time:
@@ -121,78 +166,43 @@ class LabScheduleAdmin(ExportMixin, admin.ModelAdmin):
 
     time_display.short_description = _("Time")
 
-    def activity_detail_short(self, obj):
+    def detail_short(self, obj):
         """Display shortened activity details."""
-        if obj.activity_detail:
-            return (
-                obj.activity_detail[:50] + "..."
-                if len(obj.activity_detail) > 50
-                else obj.activity_detail
-            )
+        if obj.detail:
+            return obj.detail[:50] + "..." if len(obj.detail) > 50 else obj.detail
         return "-"
 
-    activity_detail_short.short_description = _("Details")
+    detail_short.short_description = _("Details")
 
-    def get_queryset(self, request):
-        """
-        Optimize queryset with select_related.
+    def get_readonly_fields(self, request, obj=None):
+        """All fields are readonly since this is an aggregator."""
+        return self.readonly_fields
 
-        Show all data for superusers.
-        For non-superusers, show only entries where is_active=True.
-        """
-        qs = super().get_queryset(request).select_related("created_by", "updated_by")
+    def has_module_permission(self, request):
+        """Control module access based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group in UserGroup.laboratory_staff_employee_groups():
+            return True
+        elif request.user.group == UserGroup.LABORATORY_ASSISTANT.value:
+            return True
 
-        if not request.user.is_superuser:
-            qs = qs.filter(is_active=True)
-
-        return qs
-
-    def has_add_permission(self, request):
-        """Disable adding since this is an aggregator."""
         return False
 
-    def has_delete_permission(self, request, obj=None):
-        """Disable hard delete - this is a read-only aggregator."""
+    def has_view_permission(self, request, obj=None):
+        """Control view permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group in UserGroup.laboratory_staff_employee_groups():
+            return True
+        elif request.user.group == UserGroup.LABORATORY_ASSISTANT.value:
+            return True
         return False
 
-    def has_change_permission(self, request, obj=None):
-        """No editing allowed - this is a read-only aggregator."""
-        return False
-
-    def get_export_formats(self):
-        """Export formats available."""
-        formats = super().get_export_formats()
-        export_formats = [AutoFitXLSX]
-        for format_cls in formats:
-            if format_cls.__name__ != "XLSX":
-                export_formats.append(format_cls)
-        return export_formats
-
-    def export_action(self, request, *args, **kwargs):
-        """Export action - restricted to lab employees."""
-        # Check permissions manually
-        if not self._has_lab_employee_permission(request):
-            from django.contrib import messages
-            from django.shortcuts import redirect
-
-            messages.error(request, _("Only laboratory employees can export data"))
-            return redirect(request.META.get("HTTP_REFERER", "admin:index"))
-        return super().export_action(request, *args, **kwargs)
-
-    def _has_lab_employee_permission(self, request):
-        """Check if user has lab employee permissions."""
-        from core.enums.user_group_enum import UserGroup
-        from shared.utils.permission_config_utils import has_group_permission
-
-        allowed_groups = [
-            UserGroup.LABORATORY_TECHNICIAN,
-        ]
-        return has_group_permission(request.user, allowed_groups)
-
-    def get_import_formats(self):
-        """Disable import - this is export-only."""
-        return []
-
-    def has_import_permission(self, request):
-        """Disable import - this is export-only."""
+    def has_export_permission(self, request):
+        """Control export permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group in UserGroup.laboratory_staff_employee_groups():
+            return True
         return False

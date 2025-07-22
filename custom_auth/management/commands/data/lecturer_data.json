@@ -1,27 +1,17 @@
 [
     {
-        "first_name": "Dr. Ahmad",
-        "last_name": "Wibowo",
-        "employee_number": "DOC001"
+        "first_name": "Yessi",
+        "last_name": " Mulyani, S.T., M.T",
+        "employee_number": "197312262000122001"
     },
     {
-        "first_name": "Prof. Siti",
-        "last_name": "Rahayu",
-        "employee_number": "DOC002"
+        "first_name": "Puput",
+        "last_name": "Budi Wintoro, S.Kom., M.T.I.",
+        "employee_number": "198410312019031004"
     },
     {
-        "first_name": "Dr. Budi",
-        "last_name": "Santoso",
-        "employee_number": "DOC003"
-    },
-    {
-        "first_name": "Prof. Indira",
-        "last_name": "Sari",
-        "employee_number": "DOC004"
-    },
-    {
-        "first_name": "Dr. Reza",
-        "last_name": "Pratama",
-        "employee_number": "DOC005"
+        "first_name": "Rio",
+        "last_name": "Ariestia Pradipta, S.Kom, M.T.I",
+        "employee_number": "198603232019031013"
     }
 ]

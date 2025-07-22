@@ -1,0 +1,7 @@
+username,first_name,last_name,email,group,student_number,employee_number,password
+technician001,Bob,Wilson,bob.wilson@example.com,Teknisi Laboratorium,,T001,password123
+technician002,Emma,Davis,emma.davis@example.com,Teknisi Laboratorium,,T002,password123
+lecturer001,Charlie,Brown,charlie.brown@example.com,Dosen,,L001,password123
+lecturer002,Frank,Moore,frank.moore@example.com,Dosen,,L002,password123
+head001,Diana,Miller,diana.miller@example.com,Kepala Laboratorium,,H001,password123
+head002,Grace,Taylor,grace.taylor@example.com,Kepala Laboratorium,,H002,password123 

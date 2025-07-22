@@ -32,18 +32,18 @@ class LabScheduleModel(BaseModel):
     - Other models' validators check conflicts against this model
 
     Fields:
-        - schedule_date: Date of the scheduled activity
+        - date: Date of the scheduled activity
         - start_time: Start time of the activity
         - end_time: End time of the activity
         - source_model: Type of booking that created this entry
         - source_id: ID of the original booking record
-        - activity_type: Type of activity from source model
-        - activity_detail: Detailed description from source model
+        - type: Type of activity from source model
+        - detail: Detailed description from source model
         - created_by: User who created the original booking (from BaseModel)
     """
 
     # Basic schedule fields - defined directly, no mixin needed
-    schedule_date = models.DateField(
+    date = models.DateField(
         db_index=True,
         verbose_name=_("Schedule Date"),
         help_text=_("Date when the lab activity is scheduled"),
@@ -77,14 +77,14 @@ class LabScheduleModel(BaseModel):
     )
 
     # Activity information from source model
-    activity_type = models.CharField(
+    type = models.CharField(
         max_length=100,
         db_index=True,
         verbose_name=_("Activity Type"),
         help_text=_("Type of activity from the source model"),
     )
 
-    activity_detail = models.TextField(
+    detail = models.TextField(
         null=True,
         blank=True,
         verbose_name=_("Activity Detail"),
@@ -93,7 +93,7 @@ class LabScheduleModel(BaseModel):
 
     class Meta:
         db_table = "lab_schedule"
-        ordering = ["schedule_date", "start_time"]
+        ordering = ["date", "start_time"]
         verbose_name = _("Lab Schedule")
         verbose_name_plural = _("Lab Schedules")
 
@@ -102,11 +102,11 @@ class LabScheduleModel(BaseModel):
 
         # Index for efficient conflict detection queries
         indexes = [
-            models.Index(fields=["schedule_date", "start_time", "end_time"]),
+            models.Index(fields=["date", "start_time", "end_time"]),
         ]
 
     def __str__(self):
-        return f"{self.schedule_date} {self.start_time}-{self.end_time} - {self.source_model}"
+        return f"{self.date} {self.start_time}-{self.end_time} - {self.source_model}"
 
     @classmethod
     def sync_from_allocation(cls, allocation_instance):
@@ -128,11 +128,11 @@ class LabScheduleModel(BaseModel):
         if existing:
             if allocation_instance.is_active:
                 # Update existing entry with current allocation details
-                existing.schedule_date = allocation_instance.get_schedule_date()
+                existing.date = allocation_instance.get_date()
                 existing.start_time = allocation_instance.get_start_time()
                 existing.end_time = allocation_instance.get_end_time()
-                existing.activity_type = allocation_instance.allocation_type
-                existing.activity_detail = allocation_instance.allocation_details or ""
+                existing.type = allocation_instance.type
+                existing.detail = allocation_instance.detail or ""
                 existing.created_by = allocation_instance.created_by
                 existing.updated_by = allocation_instance.updated_by
                 existing.is_active = True
@@ -145,13 +145,13 @@ class LabScheduleModel(BaseModel):
             if allocation_instance.is_active:
                 # Create new aggregator entry if allocation is active
                 cls.objects.create(
-                    schedule_date=allocation_instance.get_schedule_date(),
+                    date=allocation_instance.get_date(),
                     start_time=allocation_instance.get_start_time(),
                     end_time=allocation_instance.get_end_time(),
                     source_model="LabAllocation",
                     source_id=str(allocation_instance.pk),
-                    activity_type=allocation_instance.allocation_type,
-                    activity_detail=allocation_instance.allocation_details or "",
+                    type=allocation_instance.type,
+                    detail=allocation_instance.detail or "",
                     created_by=allocation_instance.created_by,
                     updated_by=allocation_instance.updated_by,
                     is_active=True,
@@ -177,8 +177,70 @@ class LabScheduleModel(BaseModel):
 
     @classmethod
     def sync_from_course_session(cls, session_instance):
+        """
+        Synchronize a CourseSession instance with the aggregator.
 
-        pass
+        This method is called by signals when a CourseSession is saved or soft-deleted.
+        Instead of deleting entries physically, it updates the 'is_active' flag
+        to reflect the current active state of the session.
+
+        Args:
+            session_instance: Instance of CourseSessionModel to sync.
+        """
+        # Try to find existing aggregator entry for this session
+        existing = cls.objects.filter(
+            source_model="CourseSession", source_id=str(session_instance.pk)
+        ).first()
+
+        if existing:
+            if session_instance.is_active and session_instance.status != "cancelled":
+                # Update existing entry with new data
+                existing.date = session_instance.date
+                existing.start_time = session_instance.start_time
+                existing.end_time = session_instance.end_time
+                existing.type = session_instance.get_course()
+                existing.detail = session_instance.title
+                existing.created_by = session_instance.created_by
+                existing.updated_by = session_instance.updated_by
+                existing.is_active = True
+                existing.save()
+            else:
+                # Soft delete: mark as inactive instead of physical delete
+                existing.is_active = False
+                existing.save()
+        else:
+            if session_instance.is_active and session_instance.status != "cancelled":
+                # Create new aggregator entry if session is active and not cancelled
+                cls.objects.create(
+                    date=session_instance.date,
+                    start_time=session_instance.start_time,
+                    end_time=session_instance.end_time,
+                    source_model="CourseSession",
+                    source_id=str(session_instance.pk),
+                    type=session_instance.get_course(),
+                    detail=session_instance.title,
+                    created_by=session_instance.created_by,
+                    updated_by=session_instance.updated_by,
+                    is_active=True,
+                )
+
+    @classmethod
+    def remove_course_session(cls, session_id):
+        """
+        Soft remove a CourseSession entry from the aggregator.
+
+        This method sets 'is_active' to False instead of deleting the record.
+
+        Args:
+            session_id: Primary key of the CourseSession to remove.
+        """
+        entry = cls.objects.filter(
+            source_model="CourseSession", source_id=str(session_id)
+        ).first()
+
+        if entry:
+            entry.is_active = False
+            entry.save()
 
     @classmethod
     def sync_from_room_booking(cls, booking_instance):
@@ -197,10 +259,19 @@ class LabScheduleModel(BaseModel):
             source_model="RoomBooking", source_id=str(booking_instance.pk)
         ).first()
 
+        # Import here to avoid circular imports
+        from core.enums import ApprovalStatus
+
+        # Check if booking should be synced (active AND approved)
+        should_sync = (
+            booking_instance.is_active
+            and booking_instance.approval_status == ApprovalStatus.APPROVED.value
+        )
+
         if existing:
-            if booking_instance.is_active:
+            if should_sync:
                 # Update existing entry with current booking details
-                activity_detail = " - ".join(
+                detail = " - ".join(
                     filter(
                         None,
                         [
@@ -209,23 +280,23 @@ class LabScheduleModel(BaseModel):
                         ],
                     )
                 )
-                existing.schedule_date = booking_instance.get_schedule_date()
+                existing.date = booking_instance.get_date()
                 existing.start_time = booking_instance.get_start_time()
                 existing.end_time = booking_instance.get_end_time()
-                existing.activity_type = booking_instance.booking_type
-                existing.activity_detail = activity_detail
+                existing.type = booking_instance.booking_type
+                existing.detail = detail
                 existing.created_by = booking_instance.created_by
                 existing.updated_by = booking_instance.updated_by
                 existing.is_active = True
                 existing.save()
             else:
-                # Soft delete: mark as inactive instead of physical delete
+                # Mark as inactive if not approved or not active
                 existing.is_active = False
                 existing.save()
         else:
-            if booking_instance.is_active:
-                # Create new aggregator entry if booking is active
-                activity_detail = " - ".join(
+            if should_sync:
+                # Create new aggregator entry only if booking is active AND approved
+                detail = " - ".join(
                     filter(
                         None,
                         [
@@ -235,13 +306,13 @@ class LabScheduleModel(BaseModel):
                     )
                 )
                 cls.objects.create(
-                    schedule_date=booking_instance.get_schedule_date(),
+                    date=booking_instance.get_date(),
                     start_time=booking_instance.get_start_time(),
                     end_time=booking_instance.get_end_time(),
                     source_model="RoomBooking",
                     source_id=str(booking_instance.pk),
-                    activity_type=booking_instance.booking_type,
-                    activity_detail=activity_detail,
+                    type=booking_instance.booking_type,
+                    detail=detail,
                     created_by=booking_instance.created_by,
                     updated_by=booking_instance.updated_by,
                     is_active=True,

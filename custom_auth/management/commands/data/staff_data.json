@@ -1,22 +1,12 @@
 [
     {
-        "first_name": "Kepala",
+        "first_name": "Titin",
+        "last_name": "Yulianti",
+        "employee_number": "198807092019032015"
+    },
+    {
+        "first_name": "Teknisi",
         "last_name": "Laboratorium",
-        "employee_number": "KL001"
-    },
-    {
-        "first_name": "Teknisi",
-        "last_name": "Senior",
-        "employee_number": "TKN001"
-    },
-    {
-        "first_name": "Teknisi",
-        "last_name": "Junior",
-        "employee_number": "TKN002"
-    },
-    {
-        "first_name": "Admin",
-        "last_name": "Sistem",
-        "employee_number": "ADM001"
+        "employee_number": "202507230000000001"
     }
 ]

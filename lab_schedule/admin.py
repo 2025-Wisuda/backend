@@ -1,10 +1,7 @@
-"""Expose selected admin components for external use."""
+"""Admin interface exports for lab schedule management."""
 
-from .admins.admin_config import LabScheduleManagementAdminConfig
 from .admins.lab_schedule_admin import LabScheduleAdmin
-from .admins.lab_schedule_dashboard_admin import LabScheduleDashboardAdmin  # noqa
-
-LabScheduleManagementAdminConfig.configure_admin()
+from .admins.lab_schedule_dashboard_admin import LabScheduleDashboardAdmin
 
 __all__ = [
     "LabScheduleAdmin",

@@ -1,6 +1,14 @@
+"""
+Lab Schedule Dashboard Admin Interface.
+
+Provides dashboard analytics and visualization for laboratory scheduling data.
+Virtual admin interface that appears in sidebar for easy access to scheduling statistics.
+"""
+
 import json
 from datetime import timedelta
 
+from core.enums import UserGroup
 from django.contrib import admin
 from django.db.models import Count
 from django.shortcuts import render
@@ -20,6 +28,26 @@ class LabScheduleDashboardAdmin(admin.ModelAdmin):
     def get_model_perms(self, request):
         # Only show in sidebar, no add/change/delete/list
         return {"view": True}
+
+    def has_module_permission(self, request):
+        """Control module access based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group in UserGroup.laboratory_staff_employee_groups():
+            return True
+        elif request.user.group == UserGroup.LABORATORY_ASSISTANT.value:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        """Control view permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group in UserGroup.laboratory_staff_employee_groups():
+            return True
+        elif request.user.group == UserGroup.LABORATORY_ASSISTANT.value:
+            return True
+        return False
 
     def has_add_permission(self, request):
         return False
@@ -41,29 +69,28 @@ class LabScheduleDashboardAdmin(admin.ModelAdmin):
             }
         )
         # Add your dashboard context
-        today = timezone.now().date()
+        today = timezone.localtime().date()
         monthly_data = [
             {
                 "month": (today.replace(day=1) - timedelta(days=30 * i)).strftime(
                     "%b %Y"
                 ),
                 "count": LabScheduleModel.objects.filter(
-                    schedule_date__month=(today.month - i) % 12
+                    date__month=(today.month - i) % 12
                 ).count(),
             }
             for i in range(6)
         ][::-1]
         activity_data = list(
-            LabScheduleModel.objects.values("activity_type")
+            LabScheduleModel.objects.values("type")
             .annotate(count=Count("id"))
             .order_by("-count")[:5]
         )
         upcoming_schedules = LabScheduleModel.objects.filter(
-            schedule_date__range=[today, today + timedelta(days=7)]
-        ).order_by("schedule_date", "start_time")[:3]
-        # Add weekday_data (jadwal per hari)
+            date__range=[today, today + timedelta(days=7)]
+        ).order_by("date", "start_time")[:3]
         weekday_data = list(
-            LabScheduleModel.objects.extra({"weekday": "WEEKDAY(schedule_date)"})
+            LabScheduleModel.objects.extra({"weekday": "WEEKDAY(date)"})
             .values("weekday")
             .annotate(count=Count("id"))
         )
@@ -80,7 +107,6 @@ class LabScheduleDashboardAdmin(admin.ModelAdmin):
             }
             for i in range(7)
         ]
-        # Add source_data (jadwal per source_model)
         source_data = list(
             LabScheduleModel.objects.values("source_model")
             .annotate(count=Count("id"))
@@ -110,7 +136,6 @@ class LabScheduleDashboardAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def dashboard_view(self, request):
-        # Redirect to changelist so sidebar and table header always appear
         from django.shortcuts import redirect
 
         return redirect("../")

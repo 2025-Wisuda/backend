@@ -5,16 +5,20 @@ Provides admin interface for room booking requests from all user types
 with conditional field requirements and approval workflows.
 """
 
+from core.enums import BookingType, UserGroup
 from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ExportMixin
-
-from core.enums import BookingType, UserGroup
-from shared.format.custom_xlsx_format import AutoFitXLSX
-from shared.utils import create_activate_action, create_deactivate_action
+from shared.utils import (
+    AuditFieldMixin,
+    ExportOnlyMixin,
+    LabEmployeePermissionMixin,
+    StandardExportFormatMixin,
+)
 from shared.utils.admin_approval_utils import (
     create_approve_action,
     create_reject_action,
@@ -26,91 +30,62 @@ from .room_booking_resource import RoomBookingResource
 
 
 class RoomBookingAdminForm(forms.ModelForm):
-    """
-    Custom room booking admin form with conditional field requirements.
-    """
-
     class Meta:
         model = RoomBookingModel
-        fields = "__all__"
+        exclude = ["approved_by_user"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        request = getattr(self, "_request", None)
-        if request and hasattr(request, "user"):
-            user = request.user
+        if self.instance and self.instance.pk:
+            from core.enums import ApprovalStatus
 
-            if hasattr(user, "group"):
-                if UserGroup.is_student_group(user.group):
-                    self.fields["booking_type"].choices = [
-                        (BookingType.SEMINAR.value, BookingType.SEMINAR.label())
-                    ]
-                    self.fields["booking_type"].initial = BookingType.SEMINAR.value
+            if self.instance.approval_status != ApprovalStatus.PENDING.value:
+                self.fields["approval_status"].disabled = True
+                self.fields["approval_status"].help_text = (
+                    "Status cannot be changed after approval/rejection"
+                )
+
+        # Filter approval status choices to only show reject and approve
+        if "approval_status" in self.fields:
+            from core.enums import ApprovalStatus
+
+            self.fields["approval_status"].choices = [
+                choice
+                for choice in self.fields["approval_status"].choices
+                if choice[0]
+                in [ApprovalStatus.REJECTED.value, ApprovalStatus.APPROVED.value]
+            ]
 
     def clean(self):
-        """
-        Validate form based on booking type and user permissions.
-        """
-        cleaned_data = super().clean()
-        booking_type = cleaned_data.get("booking_type")
-        booker = cleaned_data.get("booker")
-
-        # Validate booking type permissions for user
-        if booker and hasattr(booker, "group"):
-            user_group = booker.group
-            if UserGroup.is_student_group(user_group):
-                if booking_type not in BookingType.student_allowed_types():
-                    raise forms.ValidationError(
-                        {
-                            "booking_type": _(
-                                "Students and assistants can only create seminar bookings."
-                            )
-                        }
-                    )
-
-        # Validate required fields for seminar bookings
-        if booking_type == BookingType.SEMINAR.value:
-            required_fields = [
-                "research_title",
-                "seminar_type",
-                "supervisor_main",
-                "examiner",
-            ]
-            errors = {}
-
-            for field in required_fields:
-                if not cleaned_data.get(field):
-                    field_label = self.fields[field].label
-                    errors[field] = _(
-                        f"{field_label} is required for seminar bookings."
-                    )
-
-            if errors:
-                raise forms.ValidationError(errors)
-
-        return cleaned_data
+        """Bypass approval validation - handle in save_model instead."""
+        # Skip ApprovalMixin validation
+        return super(forms.ModelForm, self).clean()
 
 
 @admin.register(RoomBookingModel)
-class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
+class RoomBookingAdmin(
+    StandardExportFormatMixin,
+    ExportOnlyMixin,
+    AuditFieldMixin,
+    ExportMixin,
+    admin.ModelAdmin,
+):
     resource_class = RoomBookingResource
     form = RoomBookingAdminForm
 
     list_display = [
         "booker_name",
         "booking_type",
-        "booking_date",
+        "date",
         "time_display",
-        "booking_approval_status",
+        "approval_status",
     ]
 
     list_filter = [
         "booking_type",
-        "booking_approval_status",
-        "booking_date",
+        "approval_status",
         "seminar_type",
-        ("booker__group", admin.ChoicesFieldListFilter),
     ]
 
     search_fields = [
@@ -125,58 +100,27 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = (
+        "booker",
+        "booking_type",
+        "purpose",
+        "date",
+        "start_time",
+        "end_time",
+        "seminar_type",
+        "research_title",
+        "supervisor_main",
+        "supervisor_secondary",
+        "examiner",
         "approval_timestamp",
+        "document_proof",
         "created_by",
         "created_at",
         "updated_by",
         "updated_at",
     )
 
-    ordering = ["-booking_date", "-booking_start_time"]
-    date_hierarchy = "booking_date"
-
-    add_fieldsets = (
-        (
-            _("Booking Information"),
-            {
-                "fields": (
-                    "booker",
-                    "booking_type",
-                    "purpose",
-                    "booking_date",
-                    "booking_start_time",
-                    "booking_end_time",
-                ),
-                "description": _(
-                    "Basic booking information required for all booking types."
-                ),
-            },
-        ),
-        (
-            _("Academic Details (Required for Seminars)"),
-            {
-                "classes": ("wide", "collapse"),
-                "fields": (
-                    "seminar_type",
-                    "research_title",
-                    "supervisor_main",
-                    "supervisor_secondary",
-                    "examiner",
-                ),
-                "description": _(
-                    "Academic information required for seminar bookings by students/assistants."
-                ),
-            },
-        ),
-        (
-            _("Additional Information"),
-            {
-                "classes": ("wide", "collapse"),
-                "fields": ("document_proof",),
-                "description": _("Optional supporting documents for the booking."),
-            },
-        ),
-    )
+    ordering = ["-date", "-start_time"]
+    date_hierarchy = "date"
 
     fieldsets = (
         (
@@ -186,10 +130,11 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
                     "booker",
                     "booking_type",
                     "purpose",
-                    "booking_date",
-                    "booking_start_time",
-                    "booking_end_time",
-                )
+                    "date",
+                    "start_time",
+                    "end_time",
+                ),
+                "classes": ("collapse",),
             },
         ),
         (
@@ -209,12 +154,10 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
             _("Approval Information"),
             {
                 "fields": (
-                    "booking_approval_status",
-                    "approved_by_user",
+                    "approval_status",
                     "approval_timestamp",
                     "approval_notes",
                 ),
-                "classes": ("collapse",),
             },
         ),
         (
@@ -250,11 +193,95 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
 
     def time_display(self, obj):
         """Display formatted time range."""
-        if obj.booking_start_time and obj.booking_end_time:
-            return f"{obj.booking_start_time.strftime('%H:%M')} - {obj.booking_end_time.strftime('%H:%M')}"
+        if obj.start_time and obj.end_time:
+            return (
+                f"{obj.start_time.strftime('%H:%M')} - {obj.end_time.strftime('%H:%M')}"
+            )
         return "-"
 
     time_display.short_description = _("Time")
+
+    def get_fieldsets(self, request, obj=None):
+        """Dynamic fieldsets berdasarkan status approval."""
+        from core.enums import ApprovalStatus
+
+        base_fieldsets = [
+            (
+                _("Booking Information"),
+                {
+                    "fields": (
+                        "booker",
+                        "booking_type",
+                        "purpose",
+                        "date",
+                        "start_time",
+                        "end_time",
+                    ),
+                    "classes": ("collapse",),
+                },
+            ),
+            (
+                _("Academic Details"),
+                {
+                    "fields": (
+                        "seminar_type",
+                        "research_title",
+                        "supervisor_main",
+                        "supervisor_secondary",
+                        "examiner",
+                    ),
+                    "classes": ("collapse",),
+                },
+            ),
+            (
+                _("Approval Status"),
+                {
+                    "fields": ("approval_status", "approval_notes"),
+                },
+            ),
+        ]
+
+        if obj and obj.approval_status in [
+            ApprovalStatus.APPROVED.value,
+            ApprovalStatus.REJECTED.value,
+        ]:
+            base_fieldsets.insert(
+                3,
+                (
+                    _("Approval Information"),
+                    {
+                        "fields": ("approval_timestamp",),
+                    },
+                ),
+            )
+
+        base_fieldsets.extend(
+            [
+                (
+                    _("Additional Information"),
+                    {
+                        "fields": ("document_proof",),
+                        "classes": ("collapse",),
+                    },
+                ),
+                (
+                    _("Important Dates"),
+                    {
+                        "fields": ("created_at", "updated_at"),
+                        "classes": ("collapse",),
+                    },
+                ),
+                (
+                    _("Audit Info"),
+                    {
+                        "fields": ("created_by", "updated_by"),
+                        "classes": ("collapse",),
+                    },
+                ),
+            ]
+        )
+
+        return base_fieldsets
 
     def get_queryset(self, request):
         """Optimize queryset with select_related."""
@@ -264,61 +291,81 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
             .select_related("booker", "approved_by_user", "created_by", "updated_by")
         )
 
-    def get_fieldsets(self, request, obj=None):
-        """Use different fieldsets for add vs change."""
-        if obj is None:  # Adding new object
-            return self.add_fieldsets
-        return super().get_fieldsets(request, obj)
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        """Customize ForeignKey fields."""
-        if db_field.name == "booker":
-            # Optimize booker field queryset
-            kwargs[
-                "queryset"
-            ] = db_field.related_model.objects.select_related().order_by(
-                "first_name", "last_name"
-            )
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def get_form(self, request, obj=None, **kwargs):
-        """Customize form to pass request context."""
-        form = super().get_form(request, obj, **kwargs)
-        form._request = request  # Pass request to form for user context
-        return form
-
     def save_model(self, request, obj, form, change):
-        """Set audit fields, and auto-approve if user is a lab technician."""
-        from core.enums import UserGroup
+        """Auto-set approval fields when technician changes status."""
+        from core.enums import ApprovalStatus
+        from django.contrib import messages
+        from django.utils import timezone
 
-        is_technician = (
-            hasattr(request.user, "group")
-            and request.user.group == UserGroup.LABORATORY_TECHNICIAN
-        )
+        # Auto-set approved_by_user if status requires it but field is empty
+        if (
+            obj.approval_status
+            in [ApprovalStatus.APPROVED.value, ApprovalStatus.REJECTED.value]
+            and not obj.approved_by_user
+        ):
+            obj.approved_by_user = request.user
 
-        if not change:
-            obj.created_by = request.user
-
-            # Auto approve if technician is the one who created the booking
-            if is_technician:
-                obj.booking_approval_status = "Disetujui"
+        if "approval_status" in form.changed_data:
+            if obj.approval_status in [
+                ApprovalStatus.APPROVED.value,
+                ApprovalStatus.REJECTED.value,
+            ]:
                 obj.approved_by_user = request.user
-
-        else:
-            # Jika approval status diubah dan user technician, update approved_by_user
-            if is_technician and "booking_approval_status" in form.changed_data:
-                obj.approved_by_user = request.user
+                obj.approval_timestamp = timezone.localtime()
+                if not obj.approval_notes:
+                    status_text = (
+                        _("approved")
+                        if obj.approval_status == ApprovalStatus.APPROVED.value
+                        else _("rejected")
+                    )
+                    obj.approval_notes = _("Booking {status} by technician").format(
+                        status=status_text
+                    )
 
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
+    def get_form(self, request, obj=None, **kwargs):
+        """Override form to bypass model validation for approval status changes."""
+        form = super().get_form(request, obj, **kwargs)
+
+        # Override the approve method to bypass conflict validation
+        if obj and hasattr(obj, "approve"):
+            original_approve = obj.approve
+
+            def bypass_approve(approved_by, notes=None):
+                """Bypass conflict validation for admin approval."""
+                from core.enums import ApprovalStatus
+                from django.utils import timezone
+
+                obj.approval_status = ApprovalStatus.APPROVED.value
+                obj.approved_by_user = approved_by
+                obj.approval_timestamp = timezone.localtime()
+                if notes:
+                    obj.approval_notes = notes
+                obj.save()
+
+            obj.approve = bypass_approve
+
+        return form
+
     @admin_laboratory_employee_only
     def approve_bookings(self, request, queryset):
         """Approve selected bookings - restricted to lab employees."""
+        from core.enums import ApprovalStatus
+        from django.utils import timezone
+
         approved_count = 0
+
         for booking in queryset:
-            if hasattr(booking, "approve"):
-                booking.approve(request.user)
+            if booking.approval_status == ApprovalStatus.PENDING.value:
+                booking.approval_status = ApprovalStatus.APPROVED.value
+                booking.approved_by_user = request.user
+                booking.approval_timestamp = timezone.localtime()
+                if not booking.approval_notes:
+                    booking.approval_notes = _("Booking approved by technician")
+                booking.updated_by = request.user
+                booking.save()
                 approved_count += 1
 
         self.message_user(
@@ -331,10 +378,20 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
     @admin_laboratory_employee_only
     def reject_bookings(self, request, queryset):
         """Reject selected bookings - restricted to lab employees."""
+        from core.enums import ApprovalStatus
+        from django.utils import timezone
+
         rejected_count = 0
+
         for booking in queryset:
-            if hasattr(booking, "reject"):
-                booking.reject(request.user)
+            if booking.approval_status == ApprovalStatus.PENDING.value:
+                booking.approval_status = ApprovalStatus.REJECTED.value
+                booking.approved_by_user = request.user
+                booking.approval_timestamp = timezone.localtime()
+                if not booking.approval_notes:
+                    booking.approval_notes = _("Booking rejected by technician")
+                booking.updated_by = request.user
+                booking.save()
                 rejected_count += 1
 
         self.message_user(
@@ -343,30 +400,6 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
         )
 
     reject_bookings.short_description = _("Reject Selected Bookings")
-
-    @admin_laboratory_employee_only
-    def activate_bookings(self, request, queryset):
-        """Restore selected bookings - restricted to lab employees."""
-        activate_action = create_activate_action(
-            model_name="booking",
-            superuser_only=False,
-            verbose_name=_("Restore Selected Bookings"),
-        )
-        return activate_action(self, request, queryset)
-
-    activate_bookings.short_description = _("Restore Selected Bookings")
-
-    @admin_laboratory_employee_only
-    def deactivate_bookings(self, request, queryset):
-        """Delete selected bookings - restricted to lab employees."""
-        deactivate_action = create_deactivate_action(
-            model_name="booking",
-            superuser_only=False,
-            verbose_name=_("Delete Selected Bookings"),
-        )
-        return deactivate_action(self, request, queryset)
-
-    deactivate_bookings.short_description = _("Delete Selected Bookings")
 
     def get_actions(self, request):
         """Control actions - remove hard delete, add approval actions."""
@@ -378,48 +411,115 @@ class RoomBookingAdmin(ExportMixin, admin.ModelAdmin):
     actions = [
         "approve_bookings",
         "reject_bookings",
-        "activate_bookings",
-        "deactivate_bookings",
     ]
-
-    def get_export_formats(self):
-        """Export formats available."""
-        formats = super().get_export_formats()
-        export_formats = [AutoFitXLSX]
-        for format_cls in formats:
-            if format_cls.__name__ != "XLSX":
-                export_formats.append(format_cls)
-        return export_formats
-
-    def export_action(self, request, *args, **kwargs):
-        """Export action - restricted to lab employees."""
-        # Check permissions manually
-        if not self._has_lab_employee_permission(request):
-            from django.contrib import messages
-            from django.shortcuts import redirect
-
-            messages.error(request, _("Only laboratory employees can export data"))
-            return redirect(request.META.get("HTTP_REFERER", "admin:index"))
-        return super().export_action(request, *args, **kwargs)
-
-    def _has_lab_employee_permission(self, request):
-        """Check if user has lab employee permissions."""
-        from core.enums.user_group_enum import UserGroup
-        from shared.utils.permission_config_utils import has_group_permission
-
-        allowed_groups = [
-            UserGroup.LABORATORY_TECHNICIAN,
-        ]
-        return has_group_permission(request.user, allowed_groups)
-
-    def get_import_formats(self):
-        """Disable import - this is export-only."""
-        return []
-
-    def has_import_permission(self, request):
-        """Disable import - this is export-only."""
-        return False
 
     def has_delete_permission(self, request, obj=None):
         """No hard delete - only soft delete via actions."""
         return False
+
+    def has_module_permission(self, request):
+        """Control module access based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_HEAD.value:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        """Control view permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_HEAD.value:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Control change permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_HEAD.value:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_export_permission(self, request):
+        """Control export permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_HEAD.value:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_add_permission(self, request):
+        """No add permission - edit only admin."""
+        return False
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        """Override change_view to bypass form validation for approval."""
+        from django.contrib import messages
+        from django.http import Http404, HttpResponseRedirect
+        from django.urls import reverse
+
+        # Get the object
+        obj = self.get_object(request, object_id)
+        if obj is None:
+            raise Http404(
+                _("%(name)s object with primary key %(key)r does not exist.")
+                % {
+                    "name": self.model._meta.verbose_name,
+                    "key": object_id,
+                }
+            )
+
+        # Handle POST request
+        if request.method == "POST":
+            # Get approval_status from POST data
+            approval_status = request.POST.get("approval_status")
+            approval_notes = request.POST.get("approval_notes", "")
+
+            if approval_status:
+                # Update approval fields directly like actions do
+                from core.enums import ApprovalStatus
+                from django.utils import timezone
+
+                obj.approval_status = approval_status
+                obj.approval_notes = approval_notes
+
+                if obj.approval_status in [
+                    ApprovalStatus.APPROVED.value,
+                    ApprovalStatus.REJECTED.value,
+                ]:
+                    obj.approved_by_user = request.user
+                    obj.approval_timestamp = timezone.localtime()
+                    if not obj.approval_notes:
+                        status_text = (
+                            _("approved")
+                            if obj.approval_status == ApprovalStatus.APPROVED.value
+                            else _("rejected")
+                        )
+                        obj.approval_notes = _("Booking {status} by technician").format(
+                            status=status_text
+                        )
+
+                obj.updated_by = request.user
+                obj.save()
+
+                messages.success(
+                    request,
+                    _("Room booking {status} successfully.").format(
+                        status=obj.approval_status
+                    ),
+                )
+                return HttpResponseRedirect(
+                    reverse("admin:room_booking_roombookingmodel_changelist")
+                )
+
+        # Use normal change_view for GET requests
+        return super().change_view(request, object_id, form_url, extra_context)

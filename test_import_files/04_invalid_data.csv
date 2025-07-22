@@ -1,0 +1,6 @@
+username,first_name,last_name,email,group,student_number,employee_number,password
+invalid001,John,Doe,john.doe@example.com,Mahasiswa,,,password123
+invalid002,Jane,Smith,jane.smith@example.com,Teknisi Laboratorium,2021001,T001,password123
+invalid003,Bob,Johnson,bob.johnson@example.com,Dosen,2021002,,password123
+invalid004,Alice,Brown,alice.brown@example.com,Mahasiswa,,T002,password123
+invalid005,Charlie,Wilson,charlie.wilson@example.com,InvalidGroup,2021003,T003,password123 

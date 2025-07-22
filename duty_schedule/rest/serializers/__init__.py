@@ -3,7 +3,9 @@ from .duty_attendance_serializer import (  # DutyOTPStatusSerializer
     DutyAttendanceClockOutSerializer,
     DutyAttendanceDetailSerializer,
     DutyAttendanceListSerializer,
+    DutyAttendanceManualOverrideSerializer,
     DutyAttendancePersonalSerializer,
+    DutyAttendanceStatisticsSerializer,
     DutyOTPSerializer,
 )
 from .duty_schedule_serializer import (
@@ -20,5 +22,7 @@ __all__ = [
     "DutyOTPSerializer",
     "DutyAttendanceClockInSerializer",
     "DutyAttendanceClockOutSerializer",
+    "DutyAttendanceManualOverrideSerializer",
+    "DutyAttendanceStatisticsSerializer",
     # "DutyOTPStatusSerializer",
 ]

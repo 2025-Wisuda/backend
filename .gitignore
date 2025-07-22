@@ -222,3 +222,15 @@ backups/
 # Logs
 logs/
 *.lo
+
+
+
+bahan/
+media/
+
+testing_ai_komprehensif/
+
+.env.production
+
+staticfiles/
+static/

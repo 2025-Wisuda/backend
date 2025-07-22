@@ -1,8 +1,8 @@
 """
-Authentication API schema definitions.
+Authentication API Schemas
 
-This module provides OpenAPI schema configurations for authentication endpoints
-using drf-spectacular decorators for automatic API documentation generation.
+OpenAPI schema definitions for authentication endpoints.
+Provides comprehensive documentation for password change and logout operations.
 """
 
 from drf_spectacular.utils import extend_schema
@@ -21,8 +21,8 @@ change_password_schema = extend_schema(
     responses=ResponseSchema.get_response_schema(
         AuthChangePasswordResponseSerializer, name="ChangePasswordResponse"
     ),
-    description="Change the password for the authenticated user",
-    summary="Change Password",
+    summary="Change password",
+    description="Change user password with validation.",
     operation_id="change_password",
 )
 
@@ -31,7 +31,7 @@ logout_schema = extend_schema(
     responses=ResponseSchema.get_response_schema(
         AuthLogoutResponseSerializer, name="LogoutResponse"
     ),
-    description="Logout the authenticated user and invalidate their session",
-    summary="Logout User",
+    summary="Logout user",
+    description="Logout user and invalidate session.",
     operation_id="logout_user",
 )

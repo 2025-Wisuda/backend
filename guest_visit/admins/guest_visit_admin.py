@@ -6,6 +6,7 @@ based on visitor type (manual entry vs registered user) and soft delete function
 """
 
 from core.enums import VisitorIdentityType
+from core.enums.user_group_enum import UserGroup
 from django import forms
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
@@ -17,7 +18,10 @@ from shared.utils import (
     create_activate_action,
     create_deactivate_action,
 )
-from shared.utils.permission_config_utils import admin_laboratory_employee_only
+from shared.utils.permission_config_utils import (
+    admin_laboratory_employee_only,
+    has_group_permission,
+)
 
 from ..models import GuestVisitModel
 from .guest_visit_resource import GuestVisitResource
@@ -75,7 +79,6 @@ class GuestVisitAdmin(
         "date",
         "time_display",
         "purpose_short",
-        "host_display",
     ]
 
     list_filter = [
@@ -128,7 +131,6 @@ class GuestVisitAdmin(
                     "start_time",
                     "end_time",
                     "purpose",
-                    "paraf",
                 ),
             },
         ),
@@ -158,8 +160,6 @@ class GuestVisitAdmin(
                     "start_time",
                     "end_time",
                     "purpose",
-                    "paraf",
-                    "staff",
                 ),
             },
         ),
@@ -205,14 +205,6 @@ class GuestVisitAdmin(
 
     time_display.short_description = _("Time")
 
-    def host_display(self, obj):
-        """Display host user name."""
-        if obj.staff:
-            return f"{obj.staff.first_name} {obj.staff.last_name}"
-        return "-"
-
-    host_display.short_description = _("Host")
-
     def get_fieldsets(self, request, obj=None):
         """Use different fieldsets for add vs change."""
         if obj is None:  # Adding new object
@@ -229,7 +221,7 @@ class GuestVisitAdmin(
         qs = (
             super()
             .get_queryset(request)
-            .select_related("visitor", "staff", "created_by", "updated_by")
+            .select_related("visitor", "created_by", "updated_by")
         )
 
         if not getattr(request.user, "is_superuser", False):
@@ -238,12 +230,9 @@ class GuestVisitAdmin(
         return qs
 
     def save_model(self, request, obj, form, change):
-        """Set created_by/updated_by and staff fields."""
+        """Set created_by/updated_by fields."""
         if not change:  # Creating new object
             obj.created_by = request.user
-            # Auto set staff to the person creating the visit
-            if not obj.staff:
-                obj.staff = request.user
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
@@ -271,15 +260,76 @@ class GuestVisitAdmin(
 
     deactivate_guest_visits.short_description = _("Delete Selected Guest Visits")
 
-    def get_actions(self, request):
-        """Control actions - remove hard delete, keep soft delete."""
-        actions = super().get_actions(request)
-        if "delete_selected" in actions:
-            del actions["delete_selected"]
-        return actions
-
-    actions = ["activate_guest_visits", "deactivate_guest_visits"]
-
     def has_delete_permission(self, request, obj=None):
         """Disable hard delete - use soft delete instead."""
         return False
+
+    def has_module_permission(self, request):
+        """Control module access."""
+        if getattr(request.user, "is_superuser", False):
+            return True
+
+        allowed_groups = [
+            UserGroup.LABORATORY_HEAD,
+            UserGroup.LABORATORY_TECHNICIAN,
+            UserGroup.LABORATORY_ASSISTANT,
+        ]
+        return has_group_permission(request.user, allowed_groups)
+
+    def has_view_permission(self, request, obj=None):
+        """Control view access."""
+        if getattr(request.user, "is_superuser", False):
+            return True
+
+        allowed_groups = [
+            UserGroup.LABORATORY_HEAD,
+            UserGroup.LABORATORY_TECHNICIAN,
+            UserGroup.LABORATORY_ASSISTANT,
+        ]
+        return has_group_permission(request.user, allowed_groups)
+
+    def has_add_permission(self, request):
+        """Control add access."""
+        if getattr(request.user, "is_superuser", False):
+            return True
+
+        # Only superuser and asisten can add
+        allowed_groups = [UserGroup.LABORATORY_ASSISTANT]
+        return has_group_permission(request.user, allowed_groups)
+
+    def has_change_permission(self, request, obj=None):
+        """Control change access."""
+        if getattr(request.user, "is_superuser", False):
+            return True
+
+        # Only superuser and asisten can change
+        allowed_groups = [UserGroup.LABORATORY_ASSISTANT]
+        return has_group_permission(request.user, allowed_groups)
+
+    def has_export_permission(self, request):
+        """Control export access."""
+        if getattr(request.user, "is_superuser", False):
+            return True
+
+        # Only superuser and asisten can export
+        allowed_groups = [UserGroup.LABORATORY_ASSISTANT]
+        return has_group_permission(request.user, allowed_groups)
+
+    def get_actions(self, request):
+        """Control actions based on permissions."""
+        actions = super().get_actions(request)
+
+        # Remove hard delete action
+        if "delete_selected" in actions:
+            del actions["delete_selected"]
+
+        # Control soft delete/restore actions
+        if not getattr(request.user, "is_superuser", False):
+            # Only asisten can use delete action (soft delete)
+            if not has_group_permission(request.user, [UserGroup.LABORATORY_ASSISTANT]):
+                if "deactivate_guest_visits" in actions:
+                    del actions["deactivate_guest_visits"]
+                if "activate_guest_visits" in actions:
+                    del actions["activate_guest_visits"]
+
+        return actions

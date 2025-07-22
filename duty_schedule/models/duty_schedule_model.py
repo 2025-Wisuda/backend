@@ -12,13 +12,12 @@ Features:
 - Integration with existing project validation patterns
 """
 
+from core import BaseModel, BulkScheduleMixin, DaysEnum, UserGroup
+from core.enums.bulk_days_enum import BulkDays
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from core import BaseModel, BulkScheduleMixin, DaysEnum, UserGroup
-from core.enums.bulk_days_enum import BulkDays
 from shared.constant import LabOperatingHoursConstant
 
 
@@ -37,16 +36,16 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
     - Integration with existing validation patterns
 
     Field Mapping (for BulkScheduleMixin):
-    - BULK_END_DATE_FIELD: 'duty_end_date'
-    - BULK_DAYS_FIELD: 'duty_days'
+    - BULK_END_DATE_FIELD: 'end_date'
+    - BULK_DAYS_FIELD: 'days'
     """
 
     # Field mapping for BulkScheduleMixin
-    BULK_END_DATE_FIELD = "duty_end_date"
-    BULK_DAYS_FIELD = "duty_days"
+    BULK_END_DATE_FIELD = "end_date"
+    BULK_DAYS_FIELD = "days"
 
     # Assistant assignment (many-to-many for multiple assistants)
-    duty_assistants = models.ManyToManyField(
+    laboratory_assistants = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name="bulk_duty_schedules",
         limit_choices_to={"groups__name": UserGroup.LABORATORY_ASSISTANT.value},
@@ -55,31 +54,31 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
     )
 
     # Date range for bulk generation
-    duty_start_date = models.DateField(
+    start_date = models.DateField(
         verbose_name=_("Duty Start Date"),
         help_text=_("Start date for the duty period"),
     )
 
-    duty_end_date = models.DateField(
+    end_date = models.DateField(
         verbose_name=_("Duty End Date"),
         help_text=_("End date for bulk generation"),
     )
 
     # Time range with defaults from lab hours
-    duty_start_time = models.TimeField(
+    start_time = models.TimeField(
         default=LabOperatingHoursConstant.START_TIME,
         verbose_name=_("Duty Start Time"),
         help_text=_("Start time for duty shifts"),
     )
 
-    duty_end_time = models.TimeField(
+    end_time = models.TimeField(
         default=LabOperatingHoursConstant.END_TIME,
         verbose_name=_("Duty End Time"),
         help_text=_("End time for duty shifts"),
     )
 
     # Days pattern for bulk generation
-    duty_days = models.CharField(
+    days = models.CharField(
         max_length=100,
         choices=BulkDays.choices(),
         verbose_name=_("Duty Days Pattern"),
@@ -103,22 +102,20 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
 
     class Meta:
         db_table = "duty_schedule"
-        ordering = ["duty_start_date", "duty_start_time"]
+        ordering = ["start_date", "start_time"]
         verbose_name = _("Duty Schedule (Bulk)")
         verbose_name_plural = _("Duty Schedules (Bulk)")
 
         # Index for efficient querying
         indexes = [
-            models.Index(fields=["duty_start_date", "duty_end_date"]),
+            models.Index(fields=["start_date", "end_date"]),
             models.Index(fields=["is_generated"]),
         ]
 
     def __str__(self):
         """String representation of the duty schedule."""
-        assistants_count = self.duty_assistants.count()
-        return (
-            f"{self.duty_days} ({self.duty_start_date} - {assistants_count} assistants)"
-        )
+        assistants_count = self.laboratory_assistants.count()
+        return f"{self.days} ({self.start_date} - {assistants_count} assistants)"
 
     def clean(self):
         """
@@ -138,26 +135,24 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
 
     def _validate_dates(self):
         """Validate date fields."""
-        if self.duty_end_date and self.duty_end_date < self.duty_start_date:
+        if self.end_date and self.end_date < self.start_date:
             raise ValidationError(
-                {"duty_end_date": _("End date must be after or equal to start date.")}
+                {"end_date": _("End date must be after or equal to start date.")}
             )
 
     def _validate_times(self):
         """Validate time fields."""
-        if self.duty_end_time <= self.duty_start_time:
-            raise ValidationError(
-                {"duty_end_time": _("End time must be after start time.")}
-            )
+        if self.end_time <= self.start_time:
+            raise ValidationError({"end_time": _("End time must be after start time.")})
 
         # Validate against lab operating hours
         if (
-            self.duty_start_time < LabOperatingHoursConstant.START_TIME
-            or self.duty_end_time > LabOperatingHoursConstant.END_TIME
+            self.start_time < LabOperatingHoursConstant.START_TIME
+            or self.end_time > LabOperatingHoursConstant.END_TIME
         ):
             raise ValidationError(
                 {
-                    "duty_start_time": _(
+                    "start_time": _(
                         f"Duty time must be within lab operating hours "
                         f"({LabOperatingHoursConstant.START_TIME} - {LabOperatingHoursConstant.END_TIME})."
                     )
@@ -171,15 +166,15 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
         2. Same days pattern
         3. Overlapping time ranges
         """
-        if not self.duty_days:
+        if not self.days:
             return  # Skip conflict detection if no days pattern
 
         # Find overlapping schedules with same days pattern
         overlapping_schedules = DutyScheduleModel.objects.filter(
             is_active=True,
-            duty_days=self.duty_days,
-            duty_start_date__lte=self.duty_end_date or self.duty_start_date,
-            duty_end_date__gte=self.duty_start_date,
+            days=self.days,
+            start_date__lte=self.end_date or self.start_date,
+            end_date__gte=self.start_date,
         )
 
         # Exclude current instance if updating
@@ -191,10 +186,10 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
             if self._times_overlap(schedule):
                 raise ValidationError(
                     {
-                        "duty_days": _(
-                            f"Schedule conflict detected with '{schedule.duty_days}' "
-                            f"({schedule.duty_start_date} - {schedule.duty_end_date or schedule.duty_start_date}). "
-                            f"Same days pattern '{self.duty_days}' with overlapping times."
+                        "days": _(
+                            f"Schedule conflict detected with '{schedule.days}' "
+                            f"({schedule.start_date} - {schedule.end_date or schedule.start_date}). "
+                            f"Same days pattern '{self.days}' with overlapping times."
                         )
                     }
                 )
@@ -202,13 +197,15 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
     def _times_overlap(self, other_schedule):
         """Check if time ranges overlap with another schedule."""
         return not (
-            self.duty_end_time <= other_schedule.duty_start_time
-            or self.duty_start_time >= other_schedule.duty_end_time
+            self.end_time <= other_schedule.start_time
+            or self.start_time >= other_schedule.end_time
         )
 
     def generate_attendance_records(self, commit=True):
         """
         Generate individual DutyAttendanceModel records based on this schedule.
+        
+        Updated for OTP + Face Recognition model.
 
         Args:
             commit (bool): Whether to save to database immediately
@@ -225,7 +222,7 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
 
         # Generate date list based on pattern
         dates = self._generate_date_list()
-        assistants = list(self.duty_assistants.all())
+        assistants = list(self.laboratory_assistants.all())
 
         if not assistants:
             raise ValidationError(
@@ -238,15 +235,21 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
 
         for date in dates:
             for assistant in assistants:
+                # Create attendance record - Django will use model defaults for other fields
                 attendance = DutyAttendanceModel(
                     duty_schedule=self,
-                    duty_assistant=assistant,
-                    duty_date=date,
-                    duty_start_time=self.duty_start_time,
-                    duty_end_time=self.duty_end_time,
-                    created_by=self.created_by,
-                    updated_by=self.updated_by,
+                    laboratory_assistant=assistant,
+                    date=date,
+                    start_time=self.start_time,
+                    end_time=self.end_time,
                 )
+                
+                # Set BaseModel fields if available
+                if hasattr(self, 'created_by') and self.created_by:
+                    attendance.created_by = self.created_by
+                if hasattr(self, 'updated_by') and self.updated_by:
+                    attendance.updated_by = self.updated_by
+                    
                 attendance_records.append(attendance)
 
         if commit:
@@ -265,16 +268,16 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
         from datetime import timedelta
 
         if not self.is_bulk_generation():
-            return [self.duty_start_date]
+            return [self.start_date]
 
         # Get weekday numbers for the selected days using BulkDays enum
-        weekdays = BulkDays.get_weekday_numbers(self.duty_days)
+        weekdays = BulkDays.get_weekday_numbers(self.days)
         if not weekdays:
-            return [self.duty_start_date]
+            return [self.start_date]
 
         dates = []
-        current_date = self.duty_start_date
-        end_date = self.duty_end_date or self.duty_start_date
+        current_date = self.start_date
+        end_date = self.end_date or self.start_date
 
         while current_date <= end_date:
             # Check if current date's weekday matches our pattern
@@ -298,7 +301,7 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
 
         completed_attendance = (
             DutyAttendanceModel.objects.filter(duty_schedule=self, is_active=True)
-            .exclude(attendance_status=AttendanceStatus.SCHEDULED.value)
+            .exclude(status=AttendanceStatus.SCHEDULED.value)
             .exists()
         )
 
@@ -322,3 +325,83 @@ class DutyScheduleModel(BaseModel, BulkScheduleMixin):
         self.is_generated = False
         self.generated_count = 0
         self.save(update_fields=["is_generated", "generated_count"])
+
+    def generate_missing_attendance_records(self, commit=True):
+        """
+        Generate only missing attendance records (incremental generation).
+        
+        This method will:
+        1. Check existing attendance records
+        2. Only create records that don't exist yet
+        3. Skip existing records (including scheduled ones)
+        
+        This is safer for updates as it preserves existing attendance data.
+
+        Args:
+            commit (bool): Whether to save to database immediately
+
+        Returns:
+            tuple: (newly_created_records, existing_records_count)
+        """
+        from .duty_attendance_model import DutyAttendanceModel
+
+        # Generate date list based on pattern
+        dates = self._generate_date_list()
+        assistants = list(self.laboratory_assistants.all())
+
+        if not assistants:
+            raise ValidationError(
+                _(
+                    "At least one assistant must be assigned before generating attendance records."
+                )
+            )
+
+        new_attendance_records = []
+        existing_count = 0
+
+        for date in dates:
+            for assistant in assistants:
+                # Check if attendance record already exists
+                existing_record = DutyAttendanceModel.objects.filter(
+                    duty_schedule=self,
+                    laboratory_assistant=assistant,
+                    date=date,
+                    is_active=True,
+                ).first()
+
+                if existing_record:
+                    # Skip if record already exists
+                    existing_count += 1
+                    continue
+
+                # Create new attendance record only if it doesn't exist
+                attendance = DutyAttendanceModel(
+                    duty_schedule=self,
+                    laboratory_assistant=assistant,
+                    date=date,
+                    start_time=self.start_time,
+                    end_time=self.end_time,
+                )
+                
+                # Set BaseModel fields if available
+                if hasattr(self, 'created_by') and self.created_by:
+                    attendance.created_by = self.created_by
+                if hasattr(self, 'updated_by') and self.updated_by:
+                    attendance.updated_by = self.updated_by
+                    
+                new_attendance_records.append(attendance)
+
+        if commit and new_attendance_records:
+            # Bulk create only new records
+            DutyAttendanceModel.objects.bulk_create(new_attendance_records)
+
+        # Update generation status and count
+        total_expected = len(dates) * len(assistants)
+        total_existing = existing_count + len(new_attendance_records)
+        
+        if commit:
+            self.is_generated = (total_existing >= total_expected)
+            self.generated_count = total_existing
+            self.save(update_fields=["is_generated", "generated_count"])
+
+        return new_attendance_records, existing_count

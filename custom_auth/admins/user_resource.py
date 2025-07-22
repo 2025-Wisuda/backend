@@ -1,28 +1,24 @@
 """
-User import/export resource for Django admin with validation and auto-generation.
+User Import/Export Resource.
 
-Handles import/export of user data with:
-- Field-level validation and business rule enforcement
-- Auto-generation of username, password, and email if missing
-- Group-based logic for staff/student fields
-- Duplicate checking and row skipping
-- Secure password setting after import
-
+Django-import-export resource for bulk user operations with role-based validation,
+automatic username generation, and duplicate detection.
 """
 
+from core.enums import UserGroup
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from import_export import fields, resources
 from import_export.widgets import CharWidget
-
-from core.enums import UserGroup
 from shared.format.custom_xlsx_format import AutoFitXLSX
 
 from ..models import CustomUserModel
 
 
 class EmptyToNullCharWidget(CharWidget):
+    """Custom widget to convert empty strings to None for nullable fields."""
+
     def clean(self, value, row=None, **kwargs):
         value = super().clean(value, row, **kwargs)
         if isinstance(value, str) and not value.strip():
@@ -30,17 +26,49 @@ class EmptyToNullCharWidget(CharWidget):
         return value
 
 
+# Field definitions for import/export operations
+IMPORT_FIELDS = (
+    "username",
+    "first_name",
+    "last_name",
+    "email",
+    "group",
+    "student_number",
+    "employee_number",
+    "password",
+)
+
+EXPORT_FIELDS = (
+    "username",
+    "first_name",
+    "last_name",
+    "email",
+    "group",
+    "student_number",
+    "employee_number",
+    "date_joined",
+    "last_login",
+    "created_at",
+    "updated_at",
+)
+
+
 class UserResource(resources.ModelResource):
     """
-    Resource for importing/exporting CustomUserModel data in Django admin.
+    Django-import-export resource for bulk user operations.
 
-    - Validates and enforces business rules for user fields (group, student/employee number, etc)
-    - Auto-generates username, password, and email if not provided
-    - Skips invalid or duplicate rows
-    - Handles secure password setting after import
-    - Supports custom widgets for empty-to-null conversion
+    Features:
+    - Role-based validation (student vs staff requirements)
+    - Automatic username generation with collision handling
+    - Duplicate detection and password management
+    - Excel export with professional formatting
     """
 
+    # Field configuration
+    IMPORT_FIELDS = IMPORT_FIELDS
+    EXPORT_FIELDS = EXPORT_FIELDS
+
+    # Custom field widgets for null handling
     student_number = fields.Field(
         column_name="student_number",
         attribute="student_number",
@@ -53,48 +81,27 @@ class UserResource(resources.ModelResource):
     )
 
     class Meta:
+        """Resource configuration for user import/export operations."""
+
         model = CustomUserModel
         import_id_fields = []
-        fields = (
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "group",
-            "student_number",
-            "employee_number",
-        )
-        import_fields = (
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "group",
-            "student_number",
-            "employee_number",
-        )
-        export_order = (
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "group",
-            "student_number",
-            "employee_number",
-            "is_active",
-            "date_joined",
-        )
+        fields = IMPORT_FIELDS
+        import_fields = IMPORT_FIELDS
+        export_order = EXPORT_FIELDS
         export_format_types = [AutoFitXLSX]
 
     def get_export_headers(self, *args, **kwargs):
+        """Format export headers for readability (e.g., 'first_name' -> 'First Name')."""
         headers = super().get_export_headers(*args, **kwargs)
         return [header.replace("_", " ").title() for header in headers]
 
     def import_obj(self, obj, data, dry_run, **kwargs):
         """
-        Import a single user object with validation and business rule enforcement.
-        Auto-generates username, password, and email if missing.
-        Raises ValidationError if any rule is violated.
+        Validate import data with role-based checks.
+
+        Required: first_name, last_name, group
+        Students: require student_number, no employee_number
+        Staff: require employee_number, no student_number
         """
         first_name = str(data.get("first_name", "")).strip()
         last_name = str(data.get("last_name", "")).strip()
@@ -104,6 +111,7 @@ class UserResource(resources.ModelResource):
 
         errors = []
 
+        # Required field validation
         if not first_name:
             errors.append(_("First Name is required"))
         if not last_name:
@@ -111,6 +119,7 @@ class UserResource(resources.ModelResource):
         if not group:
             errors.append(_("Group is required"))
 
+        # Group validation with enum checking
         valid_groups = [g.value for g in UserGroup]
         staff_groups = UserGroup.staff_groups()
         student_groups = UserGroup.student_groups()
@@ -121,6 +130,7 @@ class UserResource(resources.ModelResource):
                 % {"group": group, "valid_groups": ", ".join(valid_groups)}
             )
 
+        # Role-specific identifier validation
         if group in student_groups:
             if not student_number:
                 errors.append(
@@ -147,6 +157,7 @@ class UserResource(resources.ModelResource):
         if errors:
             raise ValidationError("; ".join(errors))
 
+        # Handle password for bulk imports
         if "password" in data:
             obj._password_to_set = data["password"]
 
@@ -154,7 +165,10 @@ class UserResource(resources.ModelResource):
 
     def before_import_row(self, row, **kwargs):
         """
-        Pre-process a row before import: auto-generate username, password, email, and enforce group-based field logic.
+        Generate username and setup user data before import.
+
+        Username format: {first_initial}.{last_name}{id_prefix}
+        Handles collisions with incremental counters.
         """
         first_name = str(row.get("first_name", "")).strip()
         last_name = str(row.get("last_name", "")).strip()
@@ -204,7 +218,10 @@ class UserResource(resources.ModelResource):
 
     def skip_row(self, instance, original, row, import_validation_errors=None):
         """
-        Determine if a row should be skipped based on required fields, group logic, and duplicate checks.
+        Skip rows with validation errors or duplicate identifiers.
+
+        Skips if: missing required fields, invalid group, missing role-specific
+        identifiers, or duplicate student/employee numbers.
         """
         first_name = str(row.get("first_name", "")).strip()
         last_name = str(row.get("last_name", "")).strip()
@@ -237,27 +254,82 @@ class UserResource(resources.ModelResource):
         return super().skip_row(instance, original, row, import_validation_errors)
 
     def after_save_instance(self, instance, row, **kwargs):
-        """
-        Set password securely after saving instance, if needed.
-        """
+        """Hash and save password after successful import (non-dry runs only)."""
         if not kwargs.get("dry_run", False) and hasattr(instance, "_password_to_set"):
             instance.set_password(instance._password_to_set)
             instance.save()
 
     def dehydrate_group(self, user):
-        """
-        Export group field, returning empty string if not set.
-        """
+        """Export group field with null handling."""
         return user.group if user.group else ""
 
     def dehydrate_student_number(self, user):
-        """
-        Export student_number field, returning empty string if not set.
-        """
+        """Export student_number field with null handling."""
         return user.student_number if user.student_number else ""
 
     def dehydrate_employee_number(self, user):
-        """
-        Export employee_number field, returning empty string if not set.
-        """
+        """Export employee_number field with null handling."""
         return user.employee_number if user.employee_number else ""
+
+    def dehydrate_created_at(self, user):
+        """Format created_at for export with i18n support."""
+        if user.created_at:
+            try:
+                import locale
+
+                locale.setlocale(locale.LC_TIME, "id_ID.utf8")
+            except locale.Error:
+                pass  # fallback: will format in English
+
+            day = user.created_at.strftime("%d").lstrip("0")
+            month_year = user.created_at.strftime("%B %Y")
+            time = user.created_at.strftime("%H:%M")
+            return f"{day} {month_year}, {time}"
+        return ""
+
+    def dehydrate_updated_at(self, user):
+        """Format updated_at for export with i18n support."""
+        if user.updated_at:
+            try:
+                import locale
+
+                locale.setlocale(locale.LC_TIME, "id_ID.utf8")
+            except locale.Error:
+                pass  # fallback: will format in English
+
+            day = user.updated_at.strftime("%d").lstrip("0")
+            month_year = user.updated_at.strftime("%B %Y")
+            time = user.updated_at.strftime("%H:%M")
+            return f"{day} {month_year}, {time}"
+        return ""
+
+    def dehydrate_date_joined(self, user):
+        """Format date_joined for export with i18n support."""
+        if user.date_joined:
+            try:
+                import locale
+
+                locale.setlocale(locale.LC_TIME, "id_ID.utf8")
+            except locale.Error:
+                pass  # fallback: will format in English
+
+            day = user.date_joined.strftime("%d").lstrip("0")
+            month_year = user.date_joined.strftime("%B %Y")
+            return f"{day} {month_year}"
+        return ""
+
+    def dehydrate_last_login(self, user):
+        """Format last_login for export with i18n support."""
+        if user.last_login:
+            try:
+                import locale
+
+                locale.setlocale(locale.LC_TIME, "id_ID.utf8")
+            except locale.Error:
+                pass  # fallback: will format in English
+
+            day = user.last_login.strftime("%d").lstrip("0")
+            month_year = user.last_login.strftime("%B %Y")
+            time = user.last_login.strftime("%H:%M")
+            return f"{day} {month_year}, {time}"
+        return ""

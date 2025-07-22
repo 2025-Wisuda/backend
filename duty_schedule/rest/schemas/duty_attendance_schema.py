@@ -5,18 +5,17 @@ This module defines OpenAPI schema decorators for duty attendance API endpoints
 including listing, details, clock in/out operations, and OTP validation using drf-spectacular.
 """
 
-from drf_spectacular.utils import OpenApiParameter, extend_schema
-
 from core.enums import AttendanceStatus
 from core.enums.days_enum import DaysEnum
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from shared.schemas import ResponseSchema
 
 from ..serializers import (
-    DutyAttendanceClockInSerializer,
-    DutyAttendanceClockOutSerializer,
     DutyAttendanceDetailSerializer,
     DutyAttendanceListSerializer,
+    DutyAttendanceManualOverrideSerializer,
     DutyAttendancePersonalSerializer,
+    DutyAttendanceStatisticsSerializer,
     DutyOTPSerializer,
 )
 
@@ -27,13 +26,13 @@ duty_attendance_list_schema = extend_schema(
     ),
     parameters=[
         OpenApiParameter(
-            "duty_date",
+            "date",
             type=str,
             description="Filter by specific duty date (YYYY-MM-DD format)",
             required=False,
         ),
         OpenApiParameter(
-            "attendance_status",
+            "status",
             type=str,
             description=f"Filter by attendance status. Available options: {', '.join([status.value for status in AttendanceStatus])}",
             required=False,
@@ -68,17 +67,6 @@ duty_otp_validation_schema = extend_schema(
 )
 
 
-# Clock in schema
-duty_attendance_clock_in_schema = extend_schema(
-    request=DutyAttendanceClockInSerializer,
-    responses=ResponseSchema.get_response_schema(
-        DutyAttendanceDetailSerializer, name="DutyAttendanceClockInResponse"
-    ),
-    summary="Clock in for duty (Manual)",
-    description="Manual clock in for duty attendance. OTP must be validated separately before using this endpoint. Optional location data and notes can be provided for record keeping.",
-    tags=["Duty Attendance"],
-)
-
 # Personal attendance schema for /me endpoint
 duty_attendance_personal_schema = extend_schema(
     responses=ResponseSchema.get_list_response_schema(
@@ -86,13 +74,13 @@ duty_attendance_personal_schema = extend_schema(
     ),
     parameters=[
         OpenApiParameter(
-            "duty_date",
+            "date",
             type=str,
             description="Filter by specific duty date (YYYY-MM-DD format)",
             required=False,
         ),
         OpenApiParameter(
-            "attendance_status",
+            "status",
             type=str,
             description=f"Filter by attendance status. Available options: {', '.join([status.value for status in AttendanceStatus])}",
             required=False,
@@ -104,13 +92,55 @@ duty_attendance_personal_schema = extend_schema(
     tags=["Duty Attendance"],
 )
 
-# Clock out schema
-duty_attendance_clock_out_schema = extend_schema(
-    request=DutyAttendanceClockOutSerializer,
+# Manual override schema
+duty_attendance_manual_override_schema = extend_schema(
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": ["clock_in", "clock_out"],
+                    "description": "Action to perform: clock_in or clock_out",
+                }
+            },
+            "required": ["action"],
+        }
+    },
     responses=ResponseSchema.get_response_schema(
-        DutyAttendanceDetailSerializer, name="DutyAttendanceClockOutResponse"
+        DutyAttendanceManualOverrideSerializer, name="DutyAttendanceManualOverrideResponse"
     ),
-    summary="Clock out from duty (Manual)",
-    description="Manual clock out from duty attendance. OTP must be validated separately before using this endpoint. Optional location data and notes can be provided for record keeping.",
+    summary="Manual attendance override",
+    description="Manually override attendance status for a specific duty record. Only available to admin users or the attendance record owner. Requires action parameter (clock_in or clock_out).",
+    tags=["Duty Attendance"],
+)
+
+# Statistics schema
+duty_attendance_statistics_schema = extend_schema(
+    responses=ResponseSchema.get_response_schema(
+        DutyAttendanceStatisticsSerializer, name="DutyAttendanceStatisticsResponse"
+    ),
+    parameters=[
+        OpenApiParameter(
+            "start_date",
+            type=str,
+            description="Start date for statistics (YYYY-MM-DD format). Defaults to 30 days ago.",
+            required=False,
+        ),
+        OpenApiParameter(
+            "end_date",
+            type=str,
+            description="End date for statistics (YYYY-MM-DD format). Defaults to today.",
+            required=False,
+        ),
+        OpenApiParameter(
+            "assistant_id",
+            type=int,
+            description="Filter statistics by specific laboratory assistant ID",
+            required=False,
+        ),
+    ],
+    summary="Get attendance statistics",
+    description="Retrieve comprehensive attendance statistics including summary, status breakdown, daily trends, and assistant performance. Automatically updates expired attendance records before returning statistics. Only available to admin users.",
     tags=["Duty Attendance"],
 )

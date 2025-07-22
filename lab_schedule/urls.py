@@ -1,5 +1,7 @@
 """
-URL configuration for lab_schedule app.
+Main URLs for lab_schedule app.
+
+Includes laboratory schedule aggregator and conflict detection endpoints.
 """
 
 from django.urls import include, path

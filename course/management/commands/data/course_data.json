@@ -1,0 +1,58 @@
+[
+    {
+        "title": "Pemrograman Web",
+        "description": "Praktikum pemrograman web menggunakan HTML, CSS, JavaScript, dan framework modern seperti React dan Node.js",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "web_programming_2024"
+    },
+    {
+        "title": "Basis Data",
+        "description": "Praktikum perancangan dan implementasi sistem basis data menggunakan MySQL dan PostgreSQL",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "database_2024"
+    },
+    {
+        "title": "Jaringan Komputer",
+        "description": "Praktikum konfigurasi dan administrasi jaringan komputer menggunakan Cisco Packet Tracer",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "networking_2024"
+    },
+    {
+        "title": "Sistem Operasi",
+        "description": "Praktikum administrasi sistem operasi Linux dan Windows Server",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "os_2024"
+    },
+    {
+        "title": "Pemrograman Mobile",
+        "description": "Praktikum pengembangan aplikasi mobile Android menggunakan Java dan Kotlin",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "mobile_2024"
+    },
+    {
+        "title": "Machine Learning",
+        "description": "Praktikum implementasi algoritma machine learning menggunakan Python dan TensorFlow",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "ml_2024"
+    },
+    {
+        "title": "Cyber Security",
+        "description": "Praktikum keamanan siber dan ethical hacking menggunakan Kali Linux",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "cybersec_2024"
+    },
+    {
+        "title": "Internet of Things",
+        "description": "Praktikum pengembangan sistem IoT menggunakan Arduino dan Raspberry Pi",
+        "start_date": "2024-09-01",
+        "end_date": "2024-12-31",
+        "enroll_key": "iot_2024"
+    }
+]

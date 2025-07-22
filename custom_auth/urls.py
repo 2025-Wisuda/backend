@@ -1,7 +1,8 @@
 """
-Main URLs for custom_auth app.
+Custom Auth URLs
 
-Includes both authentication and user management endpoints.
+Root URL configuration for custom authentication module.
+Organizes authentication and user management endpoints under logical namespaces.
 """
 
 from django.urls import include, path

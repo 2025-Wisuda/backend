@@ -1,0 +1,101 @@
+[
+  {
+    "title": "Software Engineering Seminar",
+    "description": "Weekly seminar on advanced software engineering topics",
+    "booking_type": "Seminar",
+    "start_time": "2024-09-15T09:00:00",
+    "end_time": "2024-09-15T11:00:00",
+    "room": "Lab A",
+    "booker_email": "john.doe@university.edu",
+    "seminar_topic": "Clean Architecture in Modern Applications",
+    "seminar_speaker": "Dr. Jane Smith",
+    "seminar_attendees": 25
+  },
+  {
+    "title": "Database Systems Workshop",
+    "description": "Hands-on workshop for database optimization techniques",
+    "booking_type": "Seminar",
+    "start_time": "2024-09-20T14:00:00",
+    "end_time": "2024-09-20T16:30:00",
+    "room": "Lab B",
+    "booker_email": "alice.johnson@university.edu",
+    "seminar_topic": "Advanced SQL Query Optimization",
+    "seminar_speaker": "Prof. Michael Brown",
+    "seminar_attendees": 20
+  },
+  {
+    "title": "General Lab Access",
+    "description": "General lab access for computer science students",
+    "booking_type": "General",
+    "start_time": "2024-09-25T10:00:00",
+    "end_time": "2024-09-25T12:00:00",
+    "room": "Lab C",
+    "booker_email": "bob.wilson@university.edu"
+  },
+  {
+    "title": "Data Structures Course Session",
+    "description": "Regular course session for Data Structures and Algorithms",
+    "booking_type": "Course",
+    "start_time": "2024-09-18T08:00:00",
+    "end_time": "2024-09-18T10:00:00",
+    "room": "Lab A",
+    "booker_email": "carol.davis@university.edu"
+  },
+  {
+    "title": "Machine Learning Course Lab",
+    "description": "Practical session for machine learning algorithms implementation",
+    "booking_type": "Course",
+    "start_time": "2024-09-22T13:00:00",
+    "end_time": "2024-09-22T15:00:00",
+    "room": "Lab B",
+    "booker_email": "david.miller@university.edu"
+  },
+  {
+    "title": "Faculty Meeting",
+    "description": "Monthly faculty meeting for computer science department",
+    "booking_type": "Meeting",
+    "start_time": "2024-09-30T15:00:00",
+    "end_time": "2024-09-30T17:00:00",
+    "room": "Conference Room",
+    "booker_email": "eve.anderson@university.edu"
+  },
+  {
+    "title": "Research Group Discussion",
+    "description": "Weekly research group meeting for AI research",
+    "booking_type": "Meeting",
+    "start_time": "2024-09-16T16:00:00",
+    "end_time": "2024-09-16T18:00:00",
+    "room": "Lab C",
+    "booker_email": "frank.thomas@university.edu"
+  },
+  {
+    "title": "Programming Competition",
+    "description": "Annual programming competition for computer science students",
+    "booking_type": "Event",
+    "start_time": "2024-10-05T09:00:00",
+    "end_time": "2024-10-05T17:00:00",
+    "room": "Lab A",
+    "booker_email": "grace.jackson@university.edu"
+  },
+  {
+    "title": "Tech Talk: Cloud Computing",
+    "description": "Industry expert talk on cloud computing trends",
+    "booking_type": "Event",
+    "start_time": "2024-10-12T14:00:00",
+    "end_time": "2024-10-12T16:00:00",
+    "room": "Auditorium",
+    "booker_email": "henry.white@university.edu"
+  },
+  {
+    "title": "Web Development Seminar",
+    "description": "Seminar on modern web development frameworks",
+    "booking_type": "Seminar",
+    "start_time": "2024-09-28T10:30:00",
+    "end_time": "2024-09-28T12:30:00",
+    "room": "Lab B",
+    "booker_email": "isabella.martinez@university.edu",
+    "seminar_topic": "React and Vue.js: A Comparative Study",
+    "seminar_speaker": "Dr. Alex Rodriguez",
+    "seminar_attendees": 30
+  }
+]

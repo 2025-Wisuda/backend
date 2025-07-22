@@ -4,12 +4,12 @@ This module provides ViewSet classes for room booking operations,
 including CRUD operations and approval workflow.
 """
 
+from core import ApprovalStatus, UserGroup
+from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.viewsets import ModelViewSet
-
-from core import ApprovalStatus, UserGroup
 from shared.presenter import ResponsePresenter
 from shared.utils import owner_only, owner_or_laboratory_staff, technician_or_higher
 from shared.utils.permission_config_utils import has_group_permission
@@ -22,6 +22,7 @@ from ..schemas.room_booking_schema import (
     room_booking_delete_schema,
     room_booking_detail_schema,
     room_booking_list_schema,
+    room_booking_rejection_schema,
     room_booking_update_schema,
 )
 from ..serializers import (
@@ -49,13 +50,14 @@ class RoomBookingViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = RoomBookingFilter
     ordering_fields = [
-        "booking_date",
+        "date",
         "created_at",
     ]
-    ordering = ["-booking_date", "-booking_start_time"]
+    ordering = ["-date", "-start_time"]
     search_fields = [
         "purpose",
         "research_title",
+        "seminar_type",
         "booker__first_name",
         "booker__last_name",
         "supervisor_main",
@@ -68,22 +70,26 @@ class RoomBookingViewSet(ModelViewSet):
         - Laboratory staff can see all active bookings
         - Other users can only see their own active bookings
         """
+        # Auto-update expired/completed statuses on every fetch
+        RoomBookingModel.auto_sync_statuses()
+
         queryset = (
             RoomBookingModel.objects.filter(is_active=True)
             .select_related("booker", "approved_by_user")
-            .order_by("-booking_date", "-booking_start_time")
+            .order_by("-date", "-start_time")
         )
 
         # Check if user has laboratory staff permissions
-        # laboratory_staff_groups = [
-        #     UserGroup.LABORATORY_HEAD,
-        #     UserGroup.LABORATORY_TECHNICIAN,
-        #     UserGroup.LABORATORY_ASSISTANT,
-        # ]
+        # Only Head and Technician can see all bookings
+        laboratory_staff_groups = [
+            UserGroup.LABORATORY_HEAD,
+            UserGroup.LABORATORY_TECHNICIAN,
+        ]
 
-        if not has_group_permission(self.request.user, 
-                                    # laboratory_staff_groups
-                                    ):
+        if not has_group_permission(
+            self.request.user,
+            laboratory_staff_groups
+        ):
             queryset = queryset.filter(booker=self.request.user)
 
         return queryset
@@ -92,7 +98,7 @@ class RoomBookingViewSet(ModelViewSet):
         """Return appropriate serializer based on action."""
         if self.action == "list":
             return RoomBookingListSerializer
-        elif self.action == "approve":
+        elif self.action in ["approve", "reject"]:
             return RoomBookingApprovalSerializer
         return RoomBookingDetailSerializer
 
@@ -142,7 +148,7 @@ class RoomBookingViewSet(ModelViewSet):
         instance = self.get_object()
 
         # Check if booking is still pending
-        if instance.booking_approval_status != ApprovalStatus.PENDING.value:
+        if instance.approval_status != ApprovalStatus.PENDING.value:
             return ResponsePresenter.bad_request_response(
                 message="You can only update pending bookings"
             )
@@ -166,13 +172,13 @@ class RoomBookingViewSet(ModelViewSet):
         instance = self.get_object()
 
         # Check if booking is still pending
-        if instance.booking_approval_status != ApprovalStatus.PENDING.value:
+        if instance.approval_status != ApprovalStatus.PENDING.value:
             return ResponsePresenter.bad_request_response(
                 message="You can only cancel pending bookings"
             )
 
         # Change status to rejected (canceled) instead of deleting
-        instance.booking_approval_status = ApprovalStatus.CANCELLED.value
+        instance.approval_status = ApprovalStatus.CANCELLED.value
         instance.approval_notes = "Canceled by user"
         instance.save()
 
@@ -182,32 +188,70 @@ class RoomBookingViewSet(ModelViewSet):
 
     @room_booking_approval_schema
     @action(detail=True, methods=["post"], url_path="approve")
-    # @technician_or_higher
+    # @technician_or_higher  # TODO: Enable permission after testing
     def approve(self, request, pk=None):
         """Approve a specific booking (technicians only)."""
         instance = self.get_object()
 
         # Check if booking is still pending
-        if instance.booking_approval_status != ApprovalStatus.PENDING.value:
+        if instance.approval_status != ApprovalStatus.PENDING.value:
             return ResponsePresenter.bad_request_response(
                 message="Only pending bookings can be approved"
             )
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
+            try:
+                # Use the ApprovalMixin method with conflict validation
+                notes = serializer.validated_data.get(
+                    "approval_notes", "Approved by technician"
+                )
+                instance.approve(approved_by=request.user, notes=notes)
+                instance.save()
+
+                response_serializer = RoomBookingDetailSerializer(instance)
+                return ResponsePresenter.success_response(
+                    message="Room booking approved successfully",
+                    data=response_serializer.data,
+                )
+            except ValidationError as e:
+                # Handle schedule conflict validation errors
+                return ResponsePresenter.bad_request_response(
+                    message=str(e) if str(e) else "Cannot approve booking due to schedule conflicts"
+                )
+
+        return ResponsePresenter.bad_request_response(
+            message="Failed to approve room booking", errors=serializer.errors
+        )
+
+    @room_booking_rejection_schema
+    @action(detail=True, methods=["post"], url_path="reject")
+    # @technician_or_higher  # TODO: Enable permission after testing
+    def reject(self, request, pk=None):
+        """Reject a specific booking (technicians only)."""
+        instance = self.get_object()
+
+        # Check if booking is still pending
+        if instance.approval_status != ApprovalStatus.PENDING.value:
+            return ResponsePresenter.bad_request_response(
+                message="Only pending bookings can be rejected"
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
             # Use the ApprovalMixin method
             notes = serializer.validated_data.get(
-                "approval_notes", "Approved by technician"
+                "approval_notes", "Rejected by technician"
             )
-            instance.approve(approved_by=request.user, notes=notes)
+            instance.reject(rejected_by=request.user, notes=notes)
             instance.save()
 
             response_serializer = RoomBookingDetailSerializer(instance)
             return ResponsePresenter.success_response(
-                message="Room booking approved successfully",
+                message="Room booking rejected successfully",
                 data=response_serializer.data,
             )
 
         return ResponsePresenter.bad_request_response(
-            message="Failed to approve room booking", errors=serializer.errors
+            message="Failed to reject room booking", errors=serializer.errors
         )

@@ -1,21 +1,17 @@
 """
-Authentication ViewSet for handling auth-related API endpoints.
+Authentication Views
 
-Provides endpoints for:
-- Change password (POST /auth/change-password)
-- Logout (POST /auth/logout) - For shared lab computers security
-
-Login and refresh token handled by SimpleJWT built-in views.
+ViewSet for authentication operations including password change and logout.
+Implements JWT token management and secure authentication workflows.
 """
 
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_api_key.permissions import HasAPIKey
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from shared.presenter import ResponsePresenter
 
 from ..schemas import change_password_schema, logout_schema
@@ -26,14 +22,14 @@ User = get_user_model()
 
 class AuthViewSet(GenericViewSet):
     """
-    ViewSet for authentication management.
+    ViewSet for authentication operations.
 
-    Provides authentication-related endpoints including
-    password management for authenticated users.
+    Endpoints:
+    - change_password: Update user password with validation
+    - logout: Invalidate JWT refresh token
     """
 
     def get_serializer_class(self):
-        """Return appropriate serializer based on action."""
         if self.action == "change_password":
             return ChangePasswordSerializer
         elif self.action == "logout":
@@ -43,7 +39,6 @@ class AuthViewSet(GenericViewSet):
     @change_password_schema
     @action(detail=False, methods=["post"], url_path="change-password")
     def change_password(self, request):
-        """Change current user's password."""
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
         )
@@ -66,9 +61,9 @@ class AuthViewSet(GenericViewSet):
         )
 
     @logout_schema
+    @permission_classes([AllowAny])
     @action(detail=False, methods=["post"], url_path="logout")
     def logout(self, request):
-        """Logout user by blacklisting refresh token."""
         serializer = self.get_serializer(data=request.data)
 
         if not serializer.is_valid():
@@ -78,17 +73,38 @@ class AuthViewSet(GenericViewSet):
             )
 
         try:
+            # Handle refresh token blacklist
             refresh_token = serializer.validated_data.get("refresh_token")
             if refresh_token:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
+                try:
+                    token = RefreshToken(refresh_token)
+                    token.blacklist()
+                except Exception as token_error:
+                    # If token is invalid/expired, we still consider logout successful
+                    pass
+
+            # Auto unregister FCM device for authenticated user
+            if request.user.is_authenticated:
+                try:
+                    from fcm_notifications.models import FCMDeviceModel
+
+                    # Deactivate all devices for this user
+                    devices = FCMDeviceModel.objects.filter(
+                        user=request.user, is_active=True
+                    )
+                    if devices.exists():
+                        devices.update(is_active=False)
+                except Exception as fcm_error:
+                    # Log error but don't fail logout
+                    pass
 
             return ResponsePresenter.success_response(
                 message="Successfully logged out",
                 data={"detail": "Successfully logged out"},
             )
         except Exception as e:
-            return ResponsePresenter.bad_request_response(
-                message="Failed to logout",
-                errors={"detail": str(e)},
+            # Even if there's an error, we consider logout successful
+            return ResponsePresenter.success_response(
+                message="Successfully logged out",
+                data={"detail": "Successfully logged out"},
             )

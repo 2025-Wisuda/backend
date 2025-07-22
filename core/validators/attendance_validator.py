@@ -5,10 +5,9 @@ This module provides reusable validators for attendance-related operations
 including status validation, location validation, and security checks.
 """
 
+from core.enums.attendance_status_enum import AttendanceStatus
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-
-from core.enums.attendance_status_enum import AttendanceStatus
 
 
 class AttendanceStatusValidator:
@@ -179,10 +178,10 @@ class AttendanceStatusValidator:
                 raise ValidationError(_("Clock out time must be after clock in time."))
 
     @staticmethod
-    def calculate_attendance_status(
-        duty_date,
-        duty_start_time,
-        duty_end_time,
+    def calculate_status(
+        date,
+        start_time,
+        end_time,
         clock_in_time=None,
         clock_out_time=None,
     ):
@@ -190,9 +189,9 @@ class AttendanceStatusValidator:
         Calculate attendance status based on times and thresholds.
 
         Args:
-            duty_date: Date of the duty
-            duty_start_time: Scheduled start time
-            duty_end_time: Scheduled end time
+            date: Date of the duty
+            start_time: Scheduled start time
+            end_time: Scheduled end time
             clock_in_time: Actual clock in time (optional)
             clock_out_time: Actual clock out time (optional)
 
@@ -205,14 +204,14 @@ class AttendanceStatusValidator:
 
         # If no clock in, check if duty date has passed
         if not clock_in_time:
-            duty_datetime = datetime.combine(duty_date, duty_end_time)
-            if timezone.now() > timezone.make_aware(duty_datetime):
+            datetime = datetime.combine(date, end_time)
+            if timezone.localtime() > timezone.make_aware(datetime):
                 return AttendanceStatus.ABSENT.value
             return AttendanceStatus.SCHEDULED.value
 
         # Expected start and end times for the duty date
-        expected_start = datetime.combine(duty_date, duty_start_time)
-        expected_end = datetime.combine(duty_date, duty_end_time)
+        expected_start = datetime.combine(date, start_time)
+        expected_end = datetime.combine(date, end_time)
 
         # Convert to timezone-aware if needed
         if timezone.is_naive(expected_start):

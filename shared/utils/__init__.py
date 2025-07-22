@@ -58,9 +58,23 @@ from .admin_approval_utils import (
     create_reject_action,
     get_bulk_approval_message,
 )
+from .admin_permission_mixins import (
+    AuditFieldMixin,
+    ExportOnlyMixin,
+    LabEmployeePermissionMixin,
+    ReadOnlyAggregatorMixin,
+    SoftDeleteAdminMixin,
+    StandardExportFormatMixin,
+    SuperuserDataVisibilityMixin,
+)
 from .availability_time_utils import (
     calculate_available_slots,
     format_available_slots_for_api,
+)
+from .enhanced_export_mixins import (
+    BulkActionsMixin,
+    EnhancedExportAdminMixin,
+    LabEmployeeRestrictedActionsMixin,
 )
 from .permission_config_utils import (
     admin_assistant_or_higher,
@@ -189,4 +203,16 @@ __all__ = [
     # Avaibility time generator utils
     "format_available_slots_for_api",
     "calculate_available_slots",
+    # Admin permission mixins
+    "LabEmployeePermissionMixin",
+    "ReadOnlyAggregatorMixin",
+    "SoftDeleteAdminMixin",
+    "ExportOnlyMixin",
+    "StandardExportFormatMixin",
+    "AuditFieldMixin",
+    "SuperuserDataVisibilityMixin",
+    # Enhanced export mixins
+    "EnhancedExportAdminMixin",
+    "LabEmployeeRestrictedActionsMixin",
+    "BulkActionsMixin",
 ]

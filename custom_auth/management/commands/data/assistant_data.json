@@ -123,5 +123,10 @@
         "student_id": "2115061074",
         "first_name": "Yos",
         "last_name": "Marison Sianipar"
+    },
+    {
+        "student_id": "2134567890",
+        "first_name": "Dummy",
+        "last_name": "Assistant"
     }
 ]

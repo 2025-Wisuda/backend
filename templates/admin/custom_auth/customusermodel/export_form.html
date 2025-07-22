@@ -1,0 +1,33 @@
+{% extends "admin/base_export_form.html" %}
+{% load i18n admin_urls static %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:custom_auth_customusermodel_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; {% trans 'Export with Filters' %}
+</div>
+{% endblock %}
+
+{% block additional_filters %}
+    <div class="form-grid">
+        <div class="form-field">
+            {{ form.group.label_tag }}
+            {{ form.group }}
+            {% if form.group.help_text %}
+                <div class="help">{{ form.group.help_text }}</div>
+            {% endif %}
+            {% if form.group.errors %}
+                <ul class="errorlist">
+                    {% for error in form.group.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+

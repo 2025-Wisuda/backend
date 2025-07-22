@@ -13,7 +13,7 @@ import pymysql
 from dotenv import load_dotenv
 
 pymysql.install_as_MySQLdb()
-# load_dotenv()
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,10 +22,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # =============================================================================
 
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+ALLOWED_HOSTS = [
+    "backend.2025wisuda.me",
+    "ai.2025wisuda.me",
+    "167.71.212.171",
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+]
 
-CSRF_TRUSTED_ORIGINS = (
+CSRF_TRUSTED_ORIGINS = [
+    "https://backend.2025wisuda.me",
+    "https://ai.2025wisuda.me",
+    "http://localhost:3000",  # For local frontend development
+] + (
     os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
     if os.getenv("CSRF_TRUSTED_ORIGINS")
     else []
@@ -50,6 +61,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "rest_framework_api_key",
     "drf_spectacular",
     "django_filters",
@@ -57,14 +69,20 @@ THIRD_PARTY_APPS = [
     "guardian",
     "import_export",
     "channels",
+    "django_extensions",
+    "django_celery_beat",  # Required for Celery Beat scheduler
 ]
 
 LOCAL_APPS = [
+    "shared",
     "custom_auth",
     "lab_schedule",
     "lab_allocation",
     "room_booking",
     "duty_schedule",
+    "course",
+    "guest_visit",
+    "fcm_notifications",
 ]
 
 INSTALLED_APPS = LOCAL_APPS + DJANGO_APPS + THIRD_PARTY_APPS
@@ -82,6 +100,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "shared.middleware.anonymous_user_fix.AnonymousUserFixMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "shared.middleware.LanguageParameterMiddleware",
@@ -110,7 +129,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "api.wsgi.application"
-ASGI_APPLICATION = "api.asgi.application"
+ASGI_APPLICATION = "api.routing.application"
 
 
 # =============================================================================
@@ -125,6 +144,9 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
+        "OPTIONS": {
+            "charset": "utf8mb4",
+        },
     }
 }
 
@@ -137,7 +159,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [
+                (
+                    os.getenv("REDIS_HOST", "127.0.0.1"),
+                    int(os.getenv("REDIS_PORT", "6379")),
+                )
+            ],
         },
     },
 }
@@ -172,7 +199,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # =============================================================================
 
 LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "id")
-TIME_ZONE = os.getenv("TIME_ZONE", "UTC")
+
+# Force Django admin to use Indonesian
+USE_L10N = True
+TIME_ZONE = os.getenv("TIME_ZONE", "Asia/Jakarta")
 USE_I18N = True
 USE_TZ = True
 
@@ -190,7 +220,7 @@ LOCALE_PATHS = [
 # =============================================================================
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
@@ -308,6 +338,11 @@ SIMPLE_JWT = {
 # LOGGING CONFIGURATION
 # =============================================================================
 
+# Create logs directory if it doesn't exist
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
+# Use console-only logging in production/Docker for simplicity
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -326,11 +361,6 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": os.getenv("LOG_FILE", "logs/django.log"),
-            "formatter": "verbose",
-        },
     },
     "root": {
         "handlers": ["console"],
@@ -338,80 +368,94 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["console", "file"],
+            "handlers": ["console"],
             "level": os.getenv("LOG_LEVEL", "INFO"),
             "propagate": False,
         },
         "application": {
-            "handlers": ["console", "file"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
         },
         "infrastructure": {
-            "handlers": ["console", "file"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
         },
         "shared.format": {
-            "handlers": ["console", "file"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
         },
     },
 }
 
+# Duplicated LOGGING config removed - using the one above
+
 # =============================================================================
-# LOGGING CONFIGURATION CONTINUED
+# FCM CONFIGURATION
 # =============================================================================
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
+# Firebase Admin SDK Configuration
+FIREBASE_SERVICE_ACCOUNT_PATH = os.path.join(BASE_DIR, "firebase-service-account.json")
+FCM_PROJECT_ID = "simplelab-ced4d"  # From your service account JSON
+
+# =============================================================================
+# CELERY CONFIGURATION
+# =============================================================================
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://backend-redis-1:6379/0")
+CELERY_RESULT_BACKEND = os.getenv(
+    "CELERY_RESULT_BACKEND", "redis://backend-redis-1:6379/0"
+)
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Jakarta"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60  # 25 minutes
+
+# Celery Beat Schedule for periodic tasks
+CELERY_BEAT_SCHEDULE = {
+    "send-lab-reminders": {
+        "task": "fcm_notifications.tasks.notification_tasks.send_lab_schedule_reminders",
+        "schedule": 300.0,  # Every 5 minutes
+        "args": (15,),  # Look 15 minutes ahead
     },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": os.getenv("LOG_FILE", "logs/django.log"),
-            "formatter": "verbose",
-        },
+    "test-notification-system": {
+        "task": "fcm_notifications.tasks.notification_tasks.test_lab_notification_system",
+        "schedule": 3600.0,  # Every hour for monitoring
     },
-    "root": {
-        "handlers": ["console"],
-        "level": os.getenv("LOG_LEVEL", "INFO"),
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": os.getenv("LOG_LEVEL", "INFO"),
-            "propagate": False,
-        },
-        "application": {
-            "handlers": ["console", "file"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-        "infrastructure": {
-            "handlers": ["console", "file"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-        "shared.format": {
-            "handlers": ["console", "file"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-    },
+    # Legacy tasks (disabled for now)
+    # "send-lab-notifications": {
+    #     "task": "fcm_notifications.tasks.send_lab_schedule_notifications",
+    #     "schedule": 300.0,  # Every 5 minutes
+    #     "args": (15,),  # Look 15 minutes ahead
+    # },
+    # "cleanup-old-notifications": {
+    #     "task": "fcm_notifications.tasks.cleanup_old_notifications",
+    #     "schedule": 86400.0,  # Every 24 hours
+    #     "args": (30,),  # Remove logs older than 30 days
+    # },
 }
+
+# =============================================================================
+# FACE RECOGNITION SERVICE COMMUNICATION
+# =============================================================================
+
+# Point to Face Recognition service via subdomain
+FACE_RECOGNITION_WS_URL = os.getenv(
+    "FACE_RECOGNITION_WS_URL", "wss://ai.2025wisuda.me/ws/backend-communication/"
+)
+FACE_RECOGNITION_AUTH_TOKEN = os.getenv(
+    "FACE_RECOGNITION_AUTH_TOKEN", "backend-service-token"
+)
+FACE_RECOGNITION_ENABLED = (
+    os.getenv("FACE_RECOGNITION_ENABLED", "True").lower() == "true"
+)
+FACE_RECOGNITION_TIMEOUT = int(os.getenv("FACE_RECOGNITION_TIMEOUT", "30"))
+
+# Lab Security Settings
+LAB_ACCESS_KEY = "LAB_SECRET_2025"  # Change this to your secret key
+LAB_SESSION_TIMEOUT = 3600  # 1 hour in seconds

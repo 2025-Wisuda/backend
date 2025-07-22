@@ -1,52 +1,77 @@
 [
     {
-        "first_name": "Student",
-        "last_name": "Alpha",
-        "student_id": "2315061001"
+        "first_name": "Ridho",
+        "last_name": "Ahmad Fauzi",
+        "student_id": "2115061001"
     },
     {
-        "first_name": "Student",
-        "last_name": "Beta",
-        "student_id": "2315061002"
+        "first_name": "Ni Putu Tiara",
+        "last_name": "Prezilia Adnyana",
+        "student_id": "2115061006"
     },
     {
-        "first_name": "Student",
-        "last_name": "Gamma",
-        "student_id": "2315061003"
+        "first_name": "Muhkito",
+        "last_name": "Afif",
+        "student_id": "2115061007"
     },
     {
-        "first_name": "Student",
-        "last_name": "Delta",
-        "student_id": "2315061004"
+        "first_name": "Winaldi",
+        "last_name": "Putra Jaya",
+        "student_id": "2115061010"
     },
     {
-        "first_name": "Student",
-        "last_name": "Epsilon",
-        "student_id": "2315061005"
+        "first_name": "Rona",
+        "last_name": "Aprilia",
+        "student_id": "2115061027"
     },
     {
-        "first_name": "Student",
-        "last_name": "Zeta",
-        "student_id": "2315061006"
+        "first_name": "Rodhiyati",
+        "last_name": "Mardhiyyah",
+        "student_id": "2115061059"
     },
     {
-        "first_name": "Student",
-        "last_name": "Eta",
-        "student_id": "2315061007"
+        "first_name": "Dimas",
+        "last_name": "Prasetiyo",
+        "student_id": "2115061076"
     },
     {
-        "first_name": "Student",
-        "last_name": "Theta",
-        "student_id": "2315061008"
+        "first_name": "Alvin",
+        "last_name": "Reihansyah Makarim",
+        "student_id": "2115061083"
     },
     {
-        "first_name": "Student",
-        "last_name": "Iota",
-        "student_id": "2315061009"
+        "first_name": "Raihan",
+        "last_name": "Antoni",
+        "student_id": "2115061086"
     },
     {
-        "first_name": "Student",
-        "last_name": "Kappa",
-        "student_id": "2315061010"
+        "first_name": "Dimas",
+        "last_name": "Ardi Kusuma",
+        "student_id": "2115061110"
+    },
+    {
+        "first_name": "Arbian",
+        "last_name": "Alex Pritama",
+        "student_id": "2155061013"
+    },
+    {
+        "first_name": "Dimas",
+        "last_name": "Kurnia Putra",
+        "student_id": "2215061005"
+    },
+    {
+        "first_name": "Arya",
+        "last_name": "Setia Pratama",
+        "student_id": "2215061034"
+    },
+    {
+        "first_name": "Raihan",
+        "last_name": "Maulana",
+        "student_id": "2255061002"
+    },
+    {
+        "first_name": "Dummy",
+        "last_name": "Student",
+        "student_id": "1234567890"
     }
 ]

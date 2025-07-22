@@ -1,16 +1,12 @@
 """
 Management command to seed users from JSON data files.
 
-Provides comprehensive user seeding functionality for development and testing
-environments with support for different user types and flexible options.
-
 Key Features:
-- JSON data source for consistent and maintainable user data
-- Selective seeding by user type (assistants, staff, students)
-- Safe clearing of existing users (preserves superusers)
-- Group management with automatic creation
-- Comprehensive logging and progress tracking
-- Default password assignment for testing environments
+- Loads user data from JSON files (assistant_data.json, staff_data.json, student_data.json)
+- Selective seeding by user type (--assistants-only, --staff-only, --students-only)
+- Safe clearing of existing users (--clear, preserves superusers)
+- Auto-generates usernames from names and ID numbers
+- Default password: "password" for all users
 """
 
 import json
@@ -26,25 +22,12 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    """
-    Django management command for seeding users from JSON data.
-
-    Supports different seeding strategies:
-    - Full seeding (all user types)
-    - Selective seeding by user type
-    - Safe data clearing with superuser preservation
-    - Group management and validation
-    """
+    """Seed users from JSON data with selective options."""
 
     help = _("Seed users from JSON data files")
 
     def add_arguments(self, parser):
-        """
-        Define command line arguments for flexible seeding options.
-
-        Supports mutually exclusive options for different seeding strategies
-        and a clear option for resetting data safely.
-        """
+        """Add command line options for selective seeding."""
         parser.add_argument(
             "--clear",
             action="store_true",
@@ -70,18 +53,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        """
-        Main command execution logic.
-
-        Orchestrates the complete seeding process including:
-        1. Optional data clearing with superuser preservation
-        2. Group creation and validation
-        3. Selective user creation based on command options
-        4. Progress tracking and summary reporting
-
-        Uses selective execution based on command options to allow
-        granular control over which user types are seeded.
-        """
+        """Main seeding logic with selective user type creation."""
         self.stdout.write(
             self.style.SUCCESS(_("🚀 Starting user seeding with JSON data..."))
         )
@@ -146,12 +118,7 @@ class Command(BaseCommand):
         )
 
     def ensure_groups_exist(self):
-        """
-        Ensure all required lab groups exist before user creation.
-
-        Creates Django auth groups that correspond to lab roles
-        for proper permission management and user categorization.
-        """
+        """Create required Django groups if they don't exist."""
         groups_data = {
             "Asisten Laboratorium": "Teaching assistants for laboratory",
             "Teknisi Laboratorium": "Laboratory technicians and staff",
@@ -166,12 +133,7 @@ class Command(BaseCommand):
             self.stdout.write(f'📂 Group "{group_name}" {status}')
 
     def create_assistants(self):
-        """
-        Create teaching assistants from JSON data.
-
-        Loads assistant data from JSON file and creates user records
-        with appropriate group assignment and laboratory-specific attributes.
-        """
+        """Create teaching assistants from assistant_data.json."""
         self.stdout.write("\n👥 Creating teaching assistants from JSON data...")
 
         assistants_data = self.load_json_data("assistant_data.json")
@@ -207,7 +169,7 @@ class Command(BaseCommand):
         return created_count
 
     def create_staff(self):
-        """Create staff users from JSON data files."""
+        """Create staff and lecturers from staff_data.json and lecturer_data.json."""
         self.stdout.write("\n🔧 Creating staff users...")
 
         created_count = 0
@@ -259,7 +221,7 @@ class Command(BaseCommand):
         return created_count
 
     def create_students(self):
-        """Create student users from JSON data."""
+        """Create students from student_data.json (generates sample data if file missing)."""
         self.stdout.write("\n🎓 Creating students from JSON data...")
 
         students_data = self.load_json_data("student_data.json")
@@ -299,7 +261,14 @@ class Command(BaseCommand):
         return created_count
 
     def create_user_from_data(self, user_data, group_name, group_obj, is_staff=False):
-        """Create a user from data dictionary."""
+        """
+        Create user from data dict with auto-generated username.
+
+        Username format: first_initial.last_name + id_prefix
+        Example: j.smith23 (from John Smith with ID starting with 23)
+
+        Returns True if user created, False if skipped (already exists).
+        """
         first_name = user_data.get("first_name", "").strip()
         last_name = user_data.get("last_name", "").strip()
 
@@ -390,7 +359,7 @@ class Command(BaseCommand):
         return True
 
     def load_json_data(self, filename):
-        """Load JSON data from the data directory."""
+        """Load JSON data from management/commands/data/ directory."""
         try:
             # Data files are in the same directory as this command
             data_dir = Path(__file__).parent / "data"

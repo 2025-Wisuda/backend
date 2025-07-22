@@ -1,14 +1,24 @@
-"""User management admin interface - simplified approach."""
+"""
+User Admin Configuration
 
-from django.contrib import admin
+Django admin interface for user management with enhanced features.
+Includes export functionality, audit trails, and role-based field management.
+"""
+
+from core.enums import UserGroup
+from django.contrib import admin, messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm
+from django.core.exceptions import ValidationError
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportMixin
-
-from shared.format.custom_xlsx_format import AutoFitXLSX
 from shared.utils import (
+    AuditFieldMixin,
+    EnhancedExportAdminMixin,
+    SoftDeleteAdminMixin,
+    SuperuserDataVisibilityMixin,
     admin_laboratory_employee_only,
     create_activate_action,
     create_deactivate_action,
@@ -16,24 +26,105 @@ from shared.utils import (
 
 from ..models import CustomUserModel
 from .user_resource import UserResource
+from .views.user_export_view import UserExportView
 
 User = get_user_model()
 
 
 class UserAdminForm(UserChangeForm):
-    """Custom form for editing users in admin."""
+    """
+    Custom form for user administration with model-specific validation.
+    """
 
     class Meta:
         model = CustomUserModel
         fields = "__all__"
 
+    def clean(self):
+        """
+        Custom form validation that handles errors gracefully.
+        """
+        cleaned_data = super().clean()
+
+        try:
+            # Create a temporary instance to validate
+            if self.instance.pk:
+                # For existing instances, update with form data
+                for field, value in cleaned_data.items():
+                    if hasattr(self.instance, field):
+                        setattr(self.instance, field, value)
+            else:
+                # For new instances, create with form data
+                self.instance = self.Meta.model(**cleaned_data)
+
+            # Run model validation
+            self.instance.full_clean()
+
+        except ValidationError as e:
+            # Add validation errors to form
+            for field, error in e.error_dict.items():
+                if field in self.fields:
+                    self.add_error(field, error)
+                else:
+                    self.add_error(None, error)
+
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter group choices based on existing data
+        if self.instance and self.instance.pk:
+            if self.instance.student_number:
+                # If has student_number, only allow student groups
+                self.fields["group"].choices = [
+                    choice
+                    for choice in self.fields["group"].choices
+                    if choice[0] in UserGroup.student_groups()
+                ]
+            elif self.instance.employee_number:
+                # If has employee_number, only allow staff groups
+                self.fields["group"].choices = [
+                    choice
+                    for choice in self.fields["group"].choices
+                    if choice[0] in UserGroup.staff_groups()
+                ]
+
 
 @admin.register(CustomUserModel)
-class UserAdmin(ImportExportMixin, BaseUserAdmin):
+class UserAdmin(
+    EnhancedExportAdminMixin,
+    AuditFieldMixin,
+    SoftDeleteAdminMixin,
+    SuperuserDataVisibilityMixin,
+    ImportExportMixin,
+    BaseUserAdmin,
+):
+    """
+    Enhanced Django admin for user management.
+
+    Features:
+    - Role-based field organization
+    - Export functionality with filtering
+    - Audit trail display
+    - Bulk activation/deactivation
+    - Laboratory employee access control
+
+    Field Organization:
+    - Authentication: Login credentials
+    - Basic Information: Name and role
+    - Identity Numbers: Student/Employee IDs (role-dependent)
+    - Images: Avatar and face recognition
+    - Permissions: Admin access control
+    - Audit: Creation/modification tracking
+    """
+
     form = UserAdminForm
     add_form_template = "admin/auth/add_form.html"
+    change_list_template = "admin/custom_auth/customusermodel/change_list.html"
     resource_class = UserResource
     model = CustomUserModel
+    export_view_class = UserExportView
+    export_filtered_url_name = "custom_auth_customusermodel_export_filtered"
 
     list_display = (
         "username",
@@ -87,17 +178,10 @@ class UserAdmin(ImportExportMixin, BaseUserAdmin):
         (
             _("Permissions"),
             {
-                "fields": ("groups",),
+                "fields": ("group",),
                 "description": _(
                     "Manage user access and permissions in the admin panel."
                 ),
-                "classes": ("collapse",),
-            },
-        ),
-        (
-            _("Face Recognition"),
-            {
-                "fields": ("face_uploaded",),
                 "classes": ("collapse",),
             },
         ),
@@ -118,7 +202,6 @@ class UserAdmin(ImportExportMixin, BaseUserAdmin):
     )
 
     readonly_fields = (
-        "face_uploaded",
         "last_login",
         "date_joined",
         "created_by",
@@ -128,79 +211,20 @@ class UserAdmin(ImportExportMixin, BaseUserAdmin):
     )
 
     def get_readonly_fields(self, request, obj=None):
-        """Make username readonly only when editing existing user, not when adding new user."""
         readonly = list(self.readonly_fields)
         if obj:
             readonly.append("username")
         return readonly
 
     def get_queryset(self, request):
-        """
-        Optimize queryset with select_related.
+        queryset = super().get_queryset(request)
 
-        Show all data for superuser.
-        For others, exclude superusers and show only active entries.
-        """
-        queryset = (
-            super().get_queryset(request).select_related("created_by", "updated_by")
-        )
+        if not request.user.is_superuser:
+            queryset = queryset.exclude(is_superuser=True)
 
-        if request.user.is_superuser:
-            return queryset
-
-        return queryset.filter(is_active=True).exclude(is_superuser=True)
-
-    def save_model(self, request, obj, form, change):
-        """Set created_by/updated_by fields."""
-        if not change:
-            obj.created_by = request.user
-        obj.updated_by = request.user
-        super().save_model(request, obj, form, change)
-
-    def get_export_formats(self):
-        """Export formats available."""
-        formats = super().get_export_formats()
-        export_formats = [AutoFitXLSX]
-        for format_cls in formats:
-            if format_cls.__name__ != "XLSX":
-                export_formats.append(format_cls)
-        return export_formats
-
-    def process_import(self, request, *args, **kwargs):
-        """Import process - restricted to lab employees only."""
-        # Check permissions manually
-        if not self._has_lab_employee_permission(request):
-            from django.contrib import messages
-            from django.shortcuts import redirect
-
-            messages.error(request, _("Only laboratory employees can import data"))
-            return redirect(request.META.get("HTTP_REFERER", "admin:index"))
-        return super().process_import(request, *args, **kwargs)
-
-    def export_action(self, request, *args, **kwargs):
-        """Export action - restricted to lab employees."""
-        # Check permissions manually
-        if not self._has_lab_employee_permission(request):
-            from django.contrib import messages
-            from django.shortcuts import redirect
-
-            messages.error(request, _("Only laboratory employees can export data"))
-            return redirect(request.META.get("HTTP_REFERER", "admin:index"))
-        return super().export_action(request, *args, **kwargs)
-
-    def _has_lab_employee_permission(self, request):
-        """Check if user has lab employee permissions."""
-        from core.enums.user_group_enum import UserGroup
-        from shared.utils.permission_config_utils import has_group_permission
-
-        allowed_groups = [
-            UserGroup.LABORATORY_HEAD,
-            UserGroup.LABORATORY_TECHNICIAN,
-        ]
-        return has_group_permission(request.user, allowed_groups)
+        return queryset
 
     def activate_users(self, request, queryset):
-        """Restore selected users - restricted to lab employees."""
         activate_action = create_activate_action(
             model_name="user",
             superuser_only=True,
@@ -212,7 +236,6 @@ class UserAdmin(ImportExportMixin, BaseUserAdmin):
 
     @admin_laboratory_employee_only
     def deactivate_users(self, request, queryset):
-        """Delete selected users - restricted to lab employees."""
         deactivate_action = create_deactivate_action(
             model_name="user",
             superuser_only=False,
@@ -223,14 +246,91 @@ class UserAdmin(ImportExportMixin, BaseUserAdmin):
     deactivate_users.short_description = _("Delete Selected Users")
 
     def get_actions(self, request):
-        """Control actions - remove hard delete, keep soft delete."""
+        """
+        Return actions based on user role.
+        """
         actions = super().get_actions(request)
-        if "delete_selected" in actions:
-            del actions["delete_selected"]
+
+        if request.user.is_superuser:
+            actions["activate_users"] = self.get_action("activate_users")
+            actions["deactivate_users"] = self.get_action("deactivate_users")
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            actions["deactivate_users"] = self.get_action("deactivate_users")
+
+
         return actions
 
-    actions = ["activate_users", "deactivate_users"]
+    actions = [] 
 
     def has_delete_permission(self, request, obj=None):
-        """No hard delete - only soft delete via actions."""
         return False
+
+    def has_import_permission(self, request):
+        """
+        Control import permission based on user role.
+        """
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_ASSISTANT.value:
+            return True
+        return False
+
+    def has_export_permission(self, request):
+        """Control export permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_module_permission(self, request):
+        """Control module access based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        """Control view permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_add_permission(self, request):
+        """
+        Control add permission based on user role.
+        """
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """
+        Control edit permission based on user role.
+        """
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def get_list_display_links(self, request, list_display):
+        """
+        Disable edit links for users without change permission.
+        """
+        if not self.has_change_permission(request):
+            return None
+        return super().get_list_display_links(request, list_display)
+
+    # def process_import(self, request, *args, **kwargs):
+    #     if not self._has_lab_employee_permission(request):
+    #         messages.error(request, _("Only laboratory employees can import data"))
+    #         return redirect(request.META.get("HTTP_REFERER", "admin:index"))
+    #     return super().process_import(request, *args, **kwargs)

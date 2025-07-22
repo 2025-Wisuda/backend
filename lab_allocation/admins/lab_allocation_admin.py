@@ -7,12 +7,15 @@ with auto-approval and bulk generation capabilities.
 
 from datetime import timedelta
 
+from core.enums import BulkDays, UserGroup
 from django import forms
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-
-from core.enums import BulkDays
-from shared.utils import create_activate_action, create_deactivate_action
+from shared.utils import (
+    AuditFieldMixin,
+    create_activate_action,
+    create_deactivate_action,
+)
 from shared.utils.permission_config_utils import admin_laboratory_employee_only
 
 from ..models import LabAllocationModel
@@ -28,19 +31,19 @@ class LabAllocationAdminForm(forms.ModelForm):
         fields = "__all__"
 
     def clean(self):
-        """Validate that allocation_days is required when allocation_end_date is provided."""
+        """Validate that days is required when end_date is provided."""
         cleaned_data = super().clean()
-        allocation_end_date = cleaned_data.get("allocation_end_date")
-        allocation_days = cleaned_data.get("allocation_days")
+        end_date = cleaned_data.get("end_date")
+        days = cleaned_data.get("days")
 
-        if allocation_end_date and not allocation_days:
+        if end_date and not days:
             raise forms.ValidationError(
                 _(
                     "Allocation days must be selected when creating bulk allocations with an end date."
                 )
             )
 
-        if allocation_days and not allocation_end_date:
+        if days and not end_date:
             raise forms.ValidationError(
                 _(
                     "End date must be provided when allocation days are selected for bulk generation."
@@ -51,23 +54,23 @@ class LabAllocationAdminForm(forms.ModelForm):
 
 
 @admin.register(LabAllocationModel)
-class LabAllocationAdmin(admin.ModelAdmin):
+class LabAllocationAdmin(AuditFieldMixin, admin.ModelAdmin):
     form = LabAllocationAdminForm
 
     list_display = [
-        "allocation_type",
-        "allocation_start_date",
+        "type",
+        "start_date",
         "time_display",
-        "allocation_details_short",
+        "detail_short",
     ]
 
     list_filter = [
-        "allocation_type",
-        "allocation_start_date",
+        "type",
+        "start_date",
     ]
 
     search_fields = [
-        "allocation_details",
+        "detail",
     ]
 
     readonly_fields = (
@@ -77,19 +80,19 @@ class LabAllocationAdmin(admin.ModelAdmin):
         "updated_at",
     )
 
-    ordering = ["-allocation_start_date", "-allocation_start_time"]
-    date_hierarchy = "allocation_start_date"
+    ordering = ["-start_date", "-start_time"]
+    date_hierarchy = "start_date"
 
     add_fieldsets = (
         (
             _("New Lab Allocation"),
             {
                 "fields": (
-                    "allocation_type",
-                    "allocation_details",
-                    "allocation_start_date",
-                    "allocation_start_time",
-                    "allocation_end_time",
+                    "type",
+                    "detail",
+                    "start_date",
+                    "start_time",
+                    "end_time",
                 ),
                 "description": _(
                     "Please fill all field at this section for creating schedule."
@@ -101,11 +104,11 @@ class LabAllocationAdmin(admin.ModelAdmin):
             {
                 "classes": ("collapse"),
                 "fields": (
-                    "allocation_end_date",
-                    "allocation_days",
+                    "end_date",
+                    "days",
                 ),
                 "description": _(
-                    "Fill allocation_end_date and select days to create multiple allocations at once."
+                    "Fill end_date and select days to create multiple allocations at once."
                 ),
             },
         ),
@@ -116,11 +119,11 @@ class LabAllocationAdmin(admin.ModelAdmin):
             _("Allocation Information"),
             {
                 "fields": (
-                    "allocation_type",
-                    "allocation_details",
-                    "allocation_start_date",
-                    "allocation_start_time",
-                    "allocation_end_time",
+                    "type",
+                    "detail",
+                    "start_date",
+                    "start_time",
+                    "end_time",
                 )
             },
         ),
@@ -140,24 +143,22 @@ class LabAllocationAdmin(admin.ModelAdmin):
         ),
     )
 
-    def allocation_details_short(self, obj):
+    def detail_short(self, obj):
         """Display shortened allocation details."""
-        if obj.allocation_details:
-            return (
-                obj.allocation_details[:50] + "..."
-                if len(obj.allocation_details) > 50
-                else obj.allocation_details
-            )
+        if obj.detail:
+            return obj.detail[:50] + "..." if len(obj.detail) > 50 else obj.detail
         return "-"
 
-    allocation_details_short.short_description = _("Details")
+    detail_short.short_description = _("Details")
 
     def time_display(self, obj):
         """Display formatted time range."""
-        if obj.allocation_start_time and obj.allocation_end_time:
-            return f"{obj.allocation_start_time.strftime('%H:%M')} - {obj.allocation_end_time.strftime('%H:%M')}"
-        elif obj.allocation_start_time:
-            return f"{obj.allocation_start_time.strftime('%H:%M')} - "
+        if obj.start_time and obj.end_time:
+            return (
+                f"{obj.start_time.strftime('%H:%M')} - {obj.end_time.strftime('%H:%M')}"
+            )
+        elif obj.start_time:
+            return f"{obj.start_time.strftime('%H:%M')} - "
         return "-"
 
     time_display.short_description = _("Time")
@@ -211,7 +212,7 @@ class LabAllocationAdmin(admin.ModelAdmin):
             BulkDays.SUNDAY.value,
         ]
 
-        start_date = obj.allocation_start_date
+        start_date = obj.start_date
         end_date = bulk_end_date
 
         if not start_date or not end_date or not valid_days:
@@ -226,11 +227,11 @@ class LabAllocationAdmin(admin.ModelAdmin):
                 and weekday_enum[current_date.weekday()] in valid_days
             ):
                 LabAllocationModel.objects.create(
-                    allocation_type=obj.allocation_type,
-                    allocation_details=obj.allocation_details,
-                    allocation_start_date=current_date,
-                    allocation_start_time=obj.allocation_start_time,
-                    allocation_end_time=obj.allocation_end_time,
+                    type=obj.type,
+                    detail=obj.detail,
+                    start_date=current_date,
+                    start_time=obj.start_time,
+                    end_time=obj.end_time,
                     created_by=request.user,
                     updated_by=request.user,
                 )
@@ -240,15 +241,12 @@ class LabAllocationAdmin(admin.ModelAdmin):
         return created
 
     def save_model(self, request, obj, form, change):
-        """Set created_by/updated_by and handle bulk generation."""
-        if not change:
-            obj.created_by = request.user
-        obj.updated_by = request.user
-
-        bulk_end_date = form.cleaned_data.get("allocation_end_date")
-        bulk_days = form.cleaned_data.get("allocation_days", "")
+        """Handle bulk generation - audit fields handled by AuditFieldMixin."""
+        bulk_end_date = form.cleaned_data.get("end_date")
+        bulk_days = form.cleaned_data.get("days", "")
         is_bulk = not change and bulk_end_date and bulk_days
 
+        # Let AuditFieldMixin handle the audit fields
         super().save_model(request, obj, form, change)
 
         if is_bulk:
@@ -285,14 +283,73 @@ class LabAllocationAdmin(admin.ModelAdmin):
     deactivate_allocations.short_description = _("Delete Selected Allocations")
 
     def get_actions(self, request):
-        """Control actions - remove hard delete, keep soft delete."""
+        """
+        Control actions based on user role.
+        """
         actions = super().get_actions(request)
+
+        # Remove hard delete action
         if "delete_selected" in actions:
             del actions["delete_selected"]
+
+        # Control soft delete/restore actions based on role
+        if request.user.is_superuser:
+            # Superuser: delete & restore
+            actions["activate_allocations"] = self.get_action("activate_allocations")
+            actions["deactivate_allocations"] = self.get_action(
+                "deactivate_allocations"
+            )
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            # Teknisi: delete only
+            actions["deactivate_allocations"] = self.get_action(
+                "deactivate_allocations"
+            )
+        # Kepala & Asisten: no actions
+
         return actions
 
-    actions = ["activate_allocations", "deactivate_allocations"]
+    actions = []  # Remove default actions, will be set by get_actions
 
     def has_delete_permission(self, request, obj=None):
         """No hard delete - only soft delete via actions."""
         return False
+
+    def has_module_permission(self, request):
+        """Control module access based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        """Control view permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_add_permission(self, request):
+        """Control add permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Control edit permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_import_permission(self, request):
+        """Control import permission based on user role."""
+        return False  # No import for anyone
+
+    def has_export_permission(self, request):
+        """Control export permission based on user role."""
+        return False  # No export for anyone

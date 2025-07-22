@@ -19,7 +19,8 @@ class DutyOTPService:
 
     # OTP Configuration
     OTP_LENGTH = 6
-    OTP_EXPIRY_MINUTES = 1
+    # Set OTP expiry to 0.5 minutes (30 seconds) for rapid testing
+    OTP_EXPIRY_MINUTES = 0.5
     OTP_CACHE_PREFIX = "duty_otp"
     OTP_USAGE_PREFIX = "duty_otp_used"
 
@@ -42,17 +43,17 @@ class DutyOTPService:
 
         # Generate new OTP
         otp_code = cls.generate_otp()
-        expiry_time = timezone.now() + timedelta(minutes=cls.OTP_EXPIRY_MINUTES)
+        expiry_time = timezone.localtime() + timedelta(minutes=cls.OTP_EXPIRY_MINUTES)
 
         otp_data = {
             "code": otp_code,
-            "generated_at": timezone.now().isoformat(),
+            "generated_at": timezone.localtime().isoformat(),
             "expires_at": expiry_time.isoformat(),
             "remaining_seconds": cls.OTP_EXPIRY_MINUTES * 60,
         }
 
         # Cache for the expiry duration
-        cache.set(cache_key, otp_data, timeout=cls.OTP_EXPIRY_MINUTES * 60)
+        cache.set(cache_key, otp_data, timeout=int(cls.OTP_EXPIRY_MINUTES * 60))
 
         return otp_data
 
@@ -105,13 +106,13 @@ class DutyOTPService:
         """
         usage_key = f"{cls.OTP_USAGE_PREFIX}:{user_id}:{otp_code}"
         usage_data = {
-            "used_at": timezone.now().isoformat(),
+            "used_at": timezone.localtime().isoformat(),
             "action_type": action_type,
             "user_id": user_id,
         }
 
         # Cache usage for the same duration as OTP expiry
-        cache.set(usage_key, usage_data, timeout=cls.OTP_EXPIRY_MINUTES * 60)
+        cache.set(usage_key, usage_data, timeout=int(cls.OTP_EXPIRY_MINUTES * 60))
 
     @classmethod
     def get_otp_status(cls) -> Dict:
@@ -129,7 +130,7 @@ class DutyOTPService:
         if timezone.is_naive(expires_at):
             expires_at = timezone.make_aware(expires_at)
 
-        remaining_seconds = max(0, int((expires_at - timezone.now()).total_seconds()))
+        remaining_seconds = max(0, int((expires_at - timezone.localtime()).total_seconds()))
 
         return {
             "has_active_otp": True,

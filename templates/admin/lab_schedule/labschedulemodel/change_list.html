@@ -3,9 +3,13 @@
 
 {% block object-tools-items %}
     <li>
+        <a href="{% url 'admin:lab_schedule_labschedulemodel_export_filtered' %}" class="addlink">
+            <i class="fas fa-download"></i> {% trans 'Export' %}
+        </a>
+    </li>
+    <li>
         <a href="{% url 'admin:lab_schedule_labschedulemodel_dashboard' %}" class="addlink">
             <i class="fas fa-chart-bar"></i> {% trans 'Dashboard' %}
         </a>
     </li>
-    {{ block.super }}
 {% endblock %}

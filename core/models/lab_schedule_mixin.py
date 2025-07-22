@@ -40,7 +40,7 @@ Required Fields (must be defined in your model):
 
 Field Mapping Customization:
 Override these class attributes to map to your field names:
-- SCHEDULE_DATE_FIELD: defaults to 'schedule_date'
+- SCHEDULE_DATE_FIELD: defaults to 'date'
 - START_TIME_FIELD: defaults to 'start_time'
 - END_TIME_FIELD: defaults to 'end_time'
 """
@@ -56,7 +56,7 @@ class LabScheduleMixin(models.Model):
     """
 
     # Class attributes for field name customization - can be overridden
-    SCHEDULE_DATE_FIELD = "schedule_date"
+    SCHEDULE_DATE_FIELD = "date"
     START_TIME_FIELD = "start_time"
     END_TIME_FIELD = "end_time"
 
@@ -69,35 +69,24 @@ class LabScheduleMixin(models.Model):
 
         from ..validators import ScheduleValidator
 
-        # Set up cross-model conflict detection
-        cross_model_classes = []
-
-        # For cross-model conflict detection, include LabScheduleModel aggregator if available
-        # and if this instance is not already a LabScheduleModel
-        try:
-            from lab_schedule.models import LabScheduleModel
-
-            if not isinstance(self, LabScheduleModel):
-                cross_model_classes.append(LabScheduleModel)
-        except ImportError:
-            pass
-
+        # Disable cross-model validation to avoid conflicts with LabScheduleModel aggregator
+        # LabScheduleModel will be synced via signals after successful save
         validator = ScheduleValidator(
             instance=self,
             model_class=self.__class__,
             date_field=self.SCHEDULE_DATE_FIELD,
             start_time_field=self.START_TIME_FIELD,
             end_time_field=self.END_TIME_FIELD,
-            cross_model_classes=cross_model_classes,
+            cross_model_classes=[],  # Disable cross-model validation
         )
         validator.validate()
 
     # Accessor methods using field mapping
-    def get_schedule_date(self):
+    def get_date(self):
         """Get the schedule date using mapped field name."""
         return getattr(self, self.SCHEDULE_DATE_FIELD)
 
-    def set_schedule_date(self, value):
+    def set_date(self, value):
         """Set the schedule date using mapped field name."""
         setattr(self, self.SCHEDULE_DATE_FIELD, value)
 

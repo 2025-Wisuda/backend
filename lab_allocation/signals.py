@@ -1,10 +1,3 @@
-"""
-Signal handlers for LabAllocationModel.
-Handles synchronization with LabSchedule aggregator for conflict detection.
-
-Soft deletes are handled by marking aggregator entries inactive.
-"""
-
 import logging
 
 from django.db import transaction
@@ -34,20 +27,17 @@ def lab_allocation_saved(sender, instance, created, **kwargs):
 
             action = "created" if created else "updated"
 
-            # Skip sync for bulk allocations; those are handled individually
-            if hasattr(instance, "allocation_end_date") and hasattr(
-                instance, "allocation_days"
-            ):
-                if instance.allocation_end_date and instance.allocation_days:
+            if hasattr(instance, "end_date") and hasattr(instance, "days"):
+                if instance.end_date and instance.days:
                     logger.debug(
-                        f"Bulk allocation {action}: {instance.allocation_type} - skipping sync"
+                        f"Bulk allocation {action}: {instance.type} - skipping sync"
                     )
                     return
 
-            logger.info(f"Single allocation {action}: {instance.allocation_type}")
+            logger.info(f"Single allocation {action}: {instance.type}")
             LabScheduleModel.sync_from_allocation(instance)
             logger.debug(
-                f"LabAllocation signal: {instance.id} {action} at {timezone.now()}"
+                f"LabAllocation signal: {instance.id} {action} at {timezone.localtime()}"
             )
 
         except Exception as e:
@@ -69,10 +59,10 @@ def lab_allocation_deleted(sender, instance, **kwargs):
         try:
             from lab_schedule.models import LabScheduleModel
 
-            logger.info(f"Allocation deleted: {instance.allocation_type}")
+            logger.info(f"Allocation deleted: {instance.type}")
             LabScheduleModel.remove_allocation(instance.pk)
             logger.debug(
-                f"LabAllocation deletion signal: {instance.id} deleted at {timezone.now()}"
+                f"LabAllocation deletion signal: {instance.id} deleted at {timezone.localtime()}"
             )
 
         except Exception as e:
@@ -92,7 +82,15 @@ def sync_bulk_allocation_to_schedule(allocation_instance, action):
     Note:
         This function is called for each individual schedule generated from bulk allocation.
     """
-    from lab_schedule.models import LabScheduleModel
+    try:
+        from lab_schedule.models import LabScheduleModel
 
-    logger.info(f"Syncing bulk allocation ({action}): {allocation_instance.id}")
-    LabScheduleModel.sync_from_allocation(allocation_instance)
+        logger.info(f"Bulk allocation sync {action}: {allocation_instance.type}")
+        LabScheduleModel.sync_from_allocation(allocation_instance)
+        logger.debug(
+            f"Bulk allocation synced: {allocation_instance.id} {action} at {timezone.localtime()}"
+        )
+
+    except Exception as e:
+        logger.exception(f"Error during bulk allocation sync: {e}")
+        raise  # Re-raise for proper error handling

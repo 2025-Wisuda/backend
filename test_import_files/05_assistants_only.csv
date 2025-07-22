@@ -1,0 +1,6 @@
+username,first_name,last_name,email,group,student_number,employee_number,password
+assistant001,Alice,Johnson,alice.johnson@example.com,Asisten Laboratorium,2021001,,password123
+assistant002,Bob,Smith,bob.smith@example.com,Asisten Laboratorium,2021002,,password123
+assistant003,Charlie,Brown,charlie.brown@example.com,Asisten Laboratorium,2021003,,password123
+assistant004,Diana,Wilson,diana.wilson@example.com,Asisten Laboratorium,2021004,,password123
+assistant005,Emma,Davis,emma.davis@example.com,Asisten Laboratorium,2021005,,password123 

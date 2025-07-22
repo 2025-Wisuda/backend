@@ -1,7 +1,8 @@
 """
-User URLs for custom_auth app.
+User URLs
 
-Single route for user listing, detail, and profile management.
+URL routing for user management endpoints using DRF ViewSet routing.
+Provides RESTful endpoints for user CRUD operations and profile management.
 """
 
 from rest_framework.routers import SimpleRouter

@@ -130,10 +130,10 @@ class BulkScheduleMixin(models.Model):
         bulk_end_date = self.get_bulk_end_date()
         bulk_days_list = self.get_bulk_days_list()
 
-        # Check if we have ScheduleMixin to get schedule_date
-        if hasattr(self, "get_schedule_date"):
-            schedule_date = self.get_schedule_date()
-            if schedule_date and bulk_end_date and bulk_end_date < schedule_date:
+        # Check if we have ScheduleMixin to get date
+        if hasattr(self, "get_date"):
+            date = self.get_date()
+            if date and bulk_end_date and bulk_end_date < date:
                 raise ValueError(
                     _("Bulk end date must be after or equal to schedule start date")
                 )

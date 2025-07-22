@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Duty Schedule - OTP Input</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .mobile-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .step-indicator {
+            background: #e8f4fd;
+            color: #1976d2;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .otp-section {
+            margin: 30px 0;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .otp-input.filled {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+
+        .validate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .validate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .validate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-message {
+            margin: 20px 0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.loading {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .face-recognition-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #d4f8d4 0%, #c8f7c8 100%);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .face-recognition-section.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .face-section h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .face-section p {
+            color: #388e3c;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .face-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .face-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
+        .help-text {
+            color: #666;
+            font-size: 12px;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+
+        .help-text a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        @media (max-width: 480px) {
+            .mobile-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .otp-inputs {
+                gap: 8px;
+            }
+            
+            .otp-input {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="header">
+            <h1>📱 Duty Attendance</h1>
+            <p class="subtitle">Enter OTP code to unlock face recognition</p>
+            <div class="step-indicator">Step 1: OTP Validation</div>
+        </div>
+
+        <div class="otp-section">
+            <div class="otp-inputs">
+                <input type="text" class="otp-input" maxlength="1" data-index="0">
+                <input type="text" class="otp-input" maxlength="1" data-index="1">
+                <input type="text" class="otp-input" maxlength="1" data-index="2">
+                <input type="text" class="otp-input" maxlength="1" data-index="3">
+                <input type="text" class="otp-input" maxlength="1" data-index="4">
+                <input type="text" class="otp-input" maxlength="1" data-index="5">
+            </div>
+            
+            <button class="validate-btn" id="validateBtn" disabled>
+                Validate OTP & Unlock Face Recognition
+            </button>
+        </div>
+
+        <div class="status-message" id="statusMessage"></div>
+
+        <div class="face-recognition-section" id="faceSection">
+            <div class="face-section">
+                <h3>🎯 Face Recognition Ready!</h3>
+                <p>OTP validated successfully. You can now use face recognition for attendance.</p>
+                <div class="step-indicator">Step 2: Face Recognition</div>
+                <button class="face-btn" id="clockInBtn">📷 Clock In</button>
+                <button class="face-btn" id="clockOutBtn">📷 Clock Out</button>
+            </div>
+        </div>
+
+        <div class="help-text">
+            💡 <strong>Tips:</strong><br>
+            • Get OTP code from admin panel<br>
+            • OTP expires in 60 seconds<br>
+            • Face recognition requires good lighting<br>
+            <a href="/otp-admin/" target="_blank">🔧 Admin OTP Panel</a>
+        </div>
+    </div>
+
+    <script>
+        // OTP Input Logic
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const validateBtn = document.getElementById('validateBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const faceSection = document.getElementById('faceSection');
+
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                const value = e.target.value;
+                
+                // Only allow numbers
+                if (!/^\d$/.test(value)) {
+                    e.target.value = '';
+                    return;
+                }
+
+                // Add filled class
+                if (value) {
+                    e.target.classList.add('filled');
+                } else {
+                    e.target.classList.remove('filled');
+                }
+
+                // Auto-focus next input
+                if (value && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+
+                // Check if all inputs are filled
+                checkOTPComplete();
+            });
+
+            input.addEventListener('keydown', (e) => {
+                // Handle backspace
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').replace(/\D/g, '');
+                
+                // Fill inputs with pasted data
+                for (let i = 0; i < Math.min(pastedData.length, otpInputs.length); i++) {
+                    otpInputs[i].value = pastedData[i];
+                    otpInputs[i].classList.add('filled');
+                }
+                
+                checkOTPComplete();
+            });
+        });
+
+        function checkOTPComplete() {
+            const otpValue = Array.from(otpInputs).map(input => input.value).join('');
+            validateBtn.disabled = otpValue.length !== 6;
+        }
+
+        function showMessage(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type}`;
+            statusMessage.style.display = 'block';
+        }
+
+        function hideMessage() {
+            statusMessage.style.display = 'none';
+        }
+
+        // OTP Validation
+        validateBtn.addEventListener('click', async () => {
+            const otpValue = Array.from(otpInputs).map(input => input.value).join('');
+            
+            if (otpValue.length !== 6) {
+                showMessage('Please enter all 6 digits', 'error');
+                return;
+            }
+
+            validateBtn.disabled = true;
+            validateBtn.innerHTML = '<span class="loading-spinner"></span>Validating...';
+            showMessage('Validating OTP...', 'loading');
+
+            try {
+                const response = await fetch('/api/v1/duty-schedule/attendance/validate-otp/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Note: Add authentication headers based on your auth system
+                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        otp_code: otpValue
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showMessage(`✅ OTP validated! Valid for ${data.data.expires_in_minutes} minutes`, 'success');
+                    faceSection.classList.add('show');
+                    
+                    // Update header
+                    document.querySelector('.step-indicator').textContent = 'Step 2: Face Recognition Ready';
+                    document.querySelector('.step-indicator').style.background = '#d4f8d4';
+                    document.querySelector('.step-indicator').style.color = '#2e7d32';
+                } else {
+                    showMessage(data.message || 'Invalid OTP code', 'error');
+                    validateBtn.disabled = false;
+                    validateBtn.innerHTML = 'Validate OTP & Unlock Face Recognition';
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.', 'error');
+                validateBtn.disabled = false;
+                validateBtn.innerHTML = 'Validate OTP & Unlock Face Recognition';
+            }
+        });
+
+        // Face Recognition Placeholders
+        document.getElementById('clockInBtn').addEventListener('click', () => {
+            alert('🎯 Clock In: This will trigger face recognition via WebSocket\n\nNext: Implement camera capture + WebSocket connection');
+        });
+
+        document.getElementById('clockOutBtn').addEventListener('click', () => {
+            alert('🎯 Clock Out: This will trigger face recognition via WebSocket\n\nNext: Implement camera capture + WebSocket connection');
+        });
+
+        // Focus first input on load
+        window.addEventListener('load', () => {
+            otpInputs[0].focus();
+        });
+    </script>
+</body>
+</html> 

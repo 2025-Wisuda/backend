@@ -1,0 +1,298 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
+<style>
+    .export-form {
+        max-width: 900px;
+        margin: 20px auto;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .form-section {
+        padding: 25px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .form-section:last-child {
+        border-bottom: none;
+    }
+    
+    .form-section h2 {
+        margin: 0 0 20px 0;
+        color: #333;
+        font-size: 18px;
+        font-weight: bold;
+        border-bottom: 2px solid #417690;
+        padding-bottom: 8px;
+    }
+    
+    .form-row {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 20px;
+    }
+    
+    .form-field {
+        flex: 1;
+    }
+    
+    .form-field label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+        font-size: 14px;
+    }
+    
+    .form-field input,
+    .form-field select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+    
+    .form-field input:focus,
+    .form-field select:focus {
+        border-color: #417690;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(65,118,144,0.2);
+    }
+    
+    .help-text {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+        font-style: italic;
+    }
+    
+    .field-selection {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        margin-top: 15px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .field-selection p {
+        margin: 0 0 15px 0;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .field-checkboxes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
+    }
+    
+    .field-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+    
+    .field-checkbox:hover {
+        background: #f8f9fa;
+    }
+    
+    .field-checkbox input[type="checkbox"] {
+        margin: 0;
+    }
+    
+    .field-checkbox label {
+        margin: 0;
+        font-weight: normal;
+        cursor: pointer;
+    }
+    
+    .submit-row {
+        text-align: center;
+        padding: 25px;
+        background: #f8f9fa;
+        border-top: 1px solid #eee;
+    }
+    
+    .submit-button {
+        background: #417690;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .submit-button:hover {
+        background: #295a6d;
+    }
+    
+    .format-selection-radio {
+        margin-top: 15px;
+    }
+    
+    .format-selection-radio ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .format-selection-radio li {
+        display: inline-block;
+        margin-right: 30px;
+    }
+    
+    .format-selection-radio label {
+        font-weight: normal;
+        cursor: pointer;
+    }
+    
+    .breadcrumbs {
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='guest_visit' %}">{% trans 'Guest Visit' %}</a>
+    &rsaquo; <a href="{% url 'admin:guest_visit_guestvisitmodel_changelist' %}">{% trans 'Guest Visits' %}</a>
+    &rsaquo; {% trans 'Export Data' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="export-form">
+    <div class="form-section">
+        <h2>{% trans 'Export Guest Visit Data' %}</h2>
+        <p style="color: #666; margin: 0;">{% trans 'Select filters and fields to export guest visit data.' %}</p>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Date Filters -->
+        <div class="form-section">
+            <h2>{% trans 'Date Filters' %}</h2>
+            
+            <div class="form-row">
+                <div class="form-field">
+                    {{ form.visit_date_from.label_tag }}
+                    {{ form.visit_date_from }}
+                    {% if form.visit_date_from.help_text %}
+                        <div class="help-text">{{ form.visit_date_from.help_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-field">
+                    {{ form.visit_date_to.label_tag }}
+                    {{ form.visit_date_to }}
+                    {% if form.visit_date_to.help_text %}
+                        <div class="help-text">{{ form.visit_date_to.help_text }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-field">
+                    {{ form.visit_month.label_tag }}
+                    {{ form.visit_month }}
+                    {% if form.visit_month.help_text %}
+                        <div class="help-text">{{ form.visit_month.help_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-field">
+                    {{ form.visit_year.label_tag }}
+                    {{ form.visit_year }}
+                    {% if form.visit_year.help_text %}
+                        <div class="help-text">{{ form.visit_year.help_text }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Visitor Filters -->
+        <div class="form-section">
+            <h2>{% trans 'Visitor Filters' %}</h2>
+            
+            <div class="form-row">
+                <div class="form-field">
+                    {{ form.visitor_identity_type.label_tag }}
+                    {{ form.visitor_identity_type }}
+                    {% if form.visitor_identity_type.help_text %}
+                        <div class="help-text">{{ form.visitor_identity_type.help_text }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-field">
+                    {{ form.host_user.label_tag }}
+                    {{ form.host_user }}
+                    {% if form.host_user.help_text %}
+                        <div class="help-text">{{ form.host_user.help_text }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Field Selection -->
+        <div class="form-section">
+            <h2>{% trans 'Field Selection' %}</h2>
+            <div class="field-selection">
+                <p>{% trans 'Select which fields to include in the export:' %}</p>
+                
+                <div class="field-checkboxes">
+                    {% for field_name, field_label in form.FIELD_CHOICES %}
+                    <div class="field-checkbox">
+                        <input type="checkbox" 
+                               name="fields" 
+                               value="{{ field_name }}" 
+                               id="field_{{ field_name }}"
+                               {% if field_name in form.DEFAULT_FIELDS %}checked{% endif %}>
+                        <label for="field_{{ field_name }}">{{ field_label }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Export Format -->
+        <div class="form-section">
+            <h2>{% trans 'Export Format' %}</h2>
+            {{ form.format.label_tag }}
+            {{ form.format }}
+            {% if form.format.help_text %}
+                <div class="help-text">{{ form.format.help_text }}</div>
+            {% endif %}
+        </div>
+        
+        <!-- Submit -->
+        <div class="submit-row">
+            <button type="submit" class="submit-button">
+                {% trans 'Export Data' %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %} 

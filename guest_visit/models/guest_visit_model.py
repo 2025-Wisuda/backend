@@ -15,6 +15,7 @@ from core import BaseModel, VisitorIdentityType
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -92,22 +93,6 @@ class GuestVisitModel(BaseModel):
         help_text=_("Purpose of the visit"),
     )
 
-    paraf = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name=_("Signature/Paraf"),
-        help_text=_("Visitor signature or paraf (optional)"),
-    )
-
-    # Host/Assistant who registered the visit
-    staff = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="hosted_guest_visits",
-        verbose_name=_("Host/Assistant"),
-        help_text=_("Laboratory assistant who registered this visit"),
-    )
-
     class Meta:
         db_table = "guest_visit"
         ordering = ["-date", "-start_time"]
@@ -118,7 +103,6 @@ class GuestVisitModel(BaseModel):
         indexes = [
             models.Index(fields=["date", "start_time"]),
             models.Index(fields=["visitor", "date"]),
-            models.Index(fields=["staff", "date"]),
         ]
 
     def __str__(self):
@@ -173,12 +157,6 @@ class GuestVisitModel(BaseModel):
             return f"{self.identity_type}: {self.identity_number}"
         return None
 
-    def get_visitor_contact(self):
-        """Get visitor contact information if available."""
-        if self.visitor and self.visitor.email:
-            return self.visitor.email
-        return None
-
     def is_manual_entry(self):
         """Check if this is a manual entry (not linked to a user)."""
         return self.visitor is None
@@ -187,11 +165,9 @@ class GuestVisitModel(BaseModel):
         """Check if this visit can still be edited (within 5 minutes of creation)."""
         from datetime import timedelta
 
-        from django.utils import timezone
-
         if not self.created_at:
             return True  # New object, can edit
 
         # Allow editing within 5 minutes of creation
         time_limit = self.created_at + timedelta(minutes=5)
-        return timezone.now() <= time_limit
+        return timezone.localtime() <= time_limit

@@ -5,12 +5,11 @@ Edit configurations here to control permission behavior across the application.
 
 from functools import wraps
 
+from core.enums.user_group_enum import UserGroup
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from core.enums.user_group_enum import UserGroup
 from shared.presenter import ResponsePresenter
 
 
@@ -37,7 +36,7 @@ class PermissionConfigUtils:
     """
 
     STAFF_BYPASS_ENABLED = False
-    ADMIN_STRICT_MODE = False  # Set True for strict admin mode
+    ADMIN_STRICT_MODE = True  # Set True for strict admin mode
     OWNER_PROTECTION_ENABLED = True  # Set False to disable owner checks
 
     # Hierarchy system: lower number = higher authority

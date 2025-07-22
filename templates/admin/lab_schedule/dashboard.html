@@ -26,9 +26,9 @@
                 <ul class="grp-listing">
                     {% for schedule in upcoming_schedules %}
                     <li>
-                        <strong>{{ schedule.schedule_date|date:"M d, Y" }}</strong>
+                        <strong>{{ schedule.date|date:"M d, Y" }}</strong>
                         &nbsp;|&nbsp; {{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}
-                        &nbsp;|&nbsp; {{ schedule.activity_type }}
+                        &nbsp;|&nbsp; {{ schedule.type }}
                     </li>
                     {% endfor %}
                 </ul>
@@ -210,7 +210,7 @@ function renderAllCharts() {
         activityCtx.chart = new Chart(activityCtx, {
             type: 'bar',
             data: {
-                labels: activityData.map(item => item.activity_type),
+                labels: activityData.map(item => item.type),
                 datasets: [{
                     label: 'Activities',
                     data: activityData.map(item => item.count),

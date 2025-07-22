@@ -141,7 +141,7 @@ class ApprovalMixin(models.Model):
         """
         self.set_approval_status(ApprovalStatus.APPROVED.value)
         self.set_approved_by(approved_by)
-        self.set_approval_timestamp(timezone.now())
+        self.set_approval_timestamp(timezone.localtime())
         if notes:
             self.set_approval_notes(notes)
 
@@ -155,7 +155,7 @@ class ApprovalMixin(models.Model):
         """
         self.set_approval_status(ApprovalStatus.REJECTED.value)
         self.set_approved_by(rejected_by)
-        self.set_approval_timestamp(timezone.now())
+        self.set_approval_timestamp(timezone.localtime())
         if notes:
             self.set_approval_notes(notes)
 

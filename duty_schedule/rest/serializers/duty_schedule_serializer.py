@@ -1,6 +1,6 @@
 """
-Serializer for Duty Attendance List.
-This serializer is used to represent duty attendance records in a public format,
+Serializer for Duty Schedule.
+This serializer is used to represent duty schedule records in different formats.
 """
 
 from django.utils.translation import gettext_lazy as _
@@ -9,19 +9,13 @@ from rest_framework import serializers
 from ...models import DutyScheduleModel
 
 
-class DutyScheduleSerializer(serializers.ModelSerializer):
-    """General Duty Schedule Serializer - without attendance status."""
+class DutyScheduleSerializer(serializers.Serializer):
+    """General Duty Schedule Serializer - just schedule info without attendance status."""
 
-    laboratory_assistant = serializers.SerializerMethodField()
-
-    class Meta:
-        model = DutyScheduleModel
-        fields = ["duty_days", "laboratory_assistant"]
-        read_only_fields = ["duty_days", "laboratory_assistant"]
-
-    def get_laboratory_assistant(self, obj):
-        """Get list of assigned laboratory assistants names and student numbers only."""
-        assistants = obj.duty_assistants.all()
+    def to_representation(self, instance):
+        """Return dictionary with assistants array."""
+        # Get all assistants assigned to this duty schedule
+        assistants = instance.laboratory_assistants.all()
         assistant_list = []
 
         for assistant in assistants:
@@ -36,32 +30,36 @@ class DutyScheduleSerializer(serializers.ModelSerializer):
             else:
                 name = assistant.username
 
+            # Get avatar URL
+            avatar_url = None
+            if assistant.avatar:
+                request = self.context.get("request")
+                if request:
+                    avatar_url = request.build_absolute_uri(assistant.avatar.url)
+                else:
+                    avatar_url = assistant.avatar.url
+
             assistant_list.append(
                 {
                     "name": name,
                     "student_number": getattr(assistant, "student_number", "")
                     or assistant.username,
+                    "avatar": avatar_url,
                 }
             )
 
-        return assistant_list
+        return {
+            "assistants": assistant_list,
+            "days": instance.days
+        }
 
 
-class DutyScheduleTodaySerializer(serializers.ModelSerializer):
-    """Today's Duty Schedule Serializer - with attendance status only."""
+class DutyScheduleTodaySerializer(serializers.Serializer):
+    """Today's Duty Schedule Serializer - with attendance status for today only."""
 
-    laboratory_assistant = serializers.SerializerMethodField()
-
-    class Meta:
-        model = DutyScheduleModel
-        fields = ["laboratory_assistant"]
-        read_only_fields = ["laboratory_assistant"]
-
-    def get_laboratory_assistant(self, obj):
-        """Get list of assigned laboratory assistants with their names and duty status."""
+    def to_representation(self, instance):
+        """Return array of assistants with attendance status for today."""
         from datetime import date
-
-        from core.enums import AttendanceStatus
 
         from ...models import DutyAttendanceModel
 
@@ -69,7 +67,7 @@ class DutyScheduleTodaySerializer(serializers.ModelSerializer):
         target_date = self.context.get("date", date.today())
 
         # Get all assistants assigned to this duty schedule
-        assistants = obj.duty_assistants.all()
+        assistants = instance.laboratory_assistants.all()
         assistant_list = []
 
         for assistant in assistants:
@@ -87,21 +85,31 @@ class DutyScheduleTodaySerializer(serializers.ModelSerializer):
             # Get attendance status for this assistant on target date
             try:
                 attendance = DutyAttendanceModel.objects.get(
-                    duty_schedule=obj,
-                    duty_assistant=assistant,
-                    duty_date=target_date,
+                    duty_schedule=instance,
+                    laboratory_assistant=assistant,
+                    date=target_date,
                     is_active=True,
                 )
-                duty_status = attendance.attendance_status
+                status = attendance.status
             except DutyAttendanceModel.DoesNotExist:
-                duty_status = "No Record"
+                status = "No Record"
+
+            # Get avatar URL
+            avatar_url = None
+            if assistant.avatar:
+                request = self.context.get("request")
+                if request:
+                    avatar_url = request.build_absolute_uri(assistant.avatar.url)
+                else:
+                    avatar_url = assistant.avatar.url
 
             assistant_list.append(
                 {
                     "name": name,
                     "student_number": getattr(assistant, "student_number", "")
                     or assistant.username,
-                    "duty_status": duty_status,
+                    "status": status,
+                    "avatar": avatar_url,
                 }
             )
 

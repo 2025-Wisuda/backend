@@ -1,0 +1,1 @@
+"""Lab Schedule Views Module."""

@@ -56,7 +56,7 @@ class GuestVisitDetailSerializer(serializers.ModelSerializer):
     name_display = serializers.SerializerMethodField(read_only=True)
     identity_display = serializers.SerializerMethodField(read_only=True)
     can_edit = serializers.SerializerMethodField(read_only=True)
-    created_by = UserListSerializer(source="created_by", read_only=True)
+    created_by = UserListSerializer(read_only=True)
 
     class Meta:
         model = GuestVisitModel
@@ -72,8 +72,6 @@ class GuestVisitDetailSerializer(serializers.ModelSerializer):
             "start_time",
             "end_time",
             "purpose",
-            "paraf",
-            "staff",
             "can_edit",
             "created_by",
             "created_at",

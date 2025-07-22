@@ -1,0 +1,106 @@
+{% extends "admin/base_export_form.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Export Course Session Attendance with Filters" %} | {{ title }}
+{% endblock %}
+
+{% block export_description %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        {% trans "Export course session attendance data with customizable filters and field selection. This includes course information, session details, student data, and attendance status." %}
+    </div>
+{% endblock %}
+
+{% block additional_filters %}
+    <div class="form-grid">
+        <div class="form-field">
+            {{ form.course.label_tag }}
+            {{ form.course }}
+            {% if form.course.help_text %}
+                <div class="help">{{ form.course.help_text }}</div>
+            {% endif %}
+            {% if form.course.errors %}
+                <ul class="errorlist">
+                    {% for error in form.course.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-field">
+            {{ form.course_session.label_tag }}
+            {{ form.course_session }}
+            {% if form.course_session.help_text %}
+                <div class="help">{{ form.course_session.help_text }}</div>
+            {% endif %}
+            {% if form.course_session.errors %}
+                <ul class="errorlist">
+                    {% for error in form.course_session.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        
+        <div class="form-field">
+            {{ form.attendance_status.label_tag }}
+            {{ form.attendance_status }}
+            {% if form.attendance_status.help_text %}
+                <div class="help">{{ form.attendance_status.help_text }}</div>
+            {% endif %}
+            {% if form.attendance_status.errors %}
+                <ul class="errorlist">
+                    {% for error in form.attendance_status.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const courseSelect = document.getElementById('id_course');
+        const sessionSelect = document.getElementById('id_course_session');
+        
+        if (!courseSelect || !sessionSelect) return;
+        
+        // Store all original session options
+        const allSessionOptions = Array.from(sessionSelect.options);
+        
+        function filterSessions() {
+            const selectedCourseId = courseSelect.value;
+            
+            // Clear current options except first one
+            sessionSelect.innerHTML = '';
+            sessionSelect.appendChild(allSessionOptions[0].cloneNode(true)); // Keep "All Sessions" option
+            
+            if (!selectedCourseId) {
+                // If no course selected, show all sessions
+                allSessionOptions.slice(1).forEach(option => {
+                    sessionSelect.appendChild(option.cloneNode(true));
+                });
+            } else {
+                // Show only sessions for selected course
+                allSessionOptions.slice(1).forEach(option => {
+                    const optionText = option.text;
+                    // Check if this session belongs to the selected course
+                    // Session format: "Course Title - Session Title (Date)"
+                    const courseTitle = courseSelect.options[courseSelect.selectedIndex].text;
+                    if (optionText.startsWith(courseTitle + ' - ')) {
+                        sessionSelect.appendChild(option.cloneNode(true));
+                    }
+                });
+            }
+        }
+        
+        // Filter sessions when course changes
+        courseSelect.addEventListener('change', filterSessions);
+        
+        // Initial filter on page load
+        filterSessions();
+    });
+    </script>
+{% endblock %} 

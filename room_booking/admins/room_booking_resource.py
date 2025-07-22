@@ -50,24 +50,24 @@ class RoomBookingResource(resources.ModelResource):
         attribute="document_proof",
     )
 
-    booking_date = fields.Field(
+    date = fields.Field(
         column_name=_("Booking Date"),
-        attribute="booking_date",
+        attribute="date",
     )
 
-    booking_start_time = fields.Field(
+    start_time = fields.Field(
         column_name=_("Start Time"),
-        attribute="booking_start_time",
+        attribute="start_time",
     )
 
-    booking_end_time = fields.Field(
+    end_time = fields.Field(
         column_name=_("End Time"),
-        attribute="booking_end_time",
+        attribute="end_time",
     )
 
-    booking_approval_status = fields.Field(
+    approval_status = fields.Field(
         column_name=_("Booking Approval Status"),
-        attribute="booking_approval_status",
+        attribute="approval_status",
     )
 
     approved_by_user = fields.Field(
@@ -85,31 +85,32 @@ class RoomBookingResource(resources.ModelResource):
         attribute="approval_notes",
     )
 
-    def dehydrate_booking_date(self, obj):
-        month = {
-            1: "Januari",
-            2: "Februari",
-            3: "Maret",
-            4: "April",
-            5: "Mei",
-            6: "Juni",
-            7: "Juli",
-            8: "Agustus",
-            9: "September",
-            10: "Oktober",
-            11: "November",
-            12: "Desember",
+    def dehydrate_date(self, obj):
+        """Format date with i18n-ready month names."""
+        from django.utils.translation import gettext as _
+
+        month_names = {
+            1: _("January"),
+            2: _("February"),
+            3: _("March"),
+            4: _("April"),
+            5: _("May"),
+            6: _("June"),
+            7: _("July"),
+            8: _("August"),
+            9: _("September"),
+            10: _("October"),
+            11: _("November"),
+            12: _("December"),
         }
-        dt = obj.booking_date
-        return f"{dt.day} {month[dt.month]} {dt.year}"
+        dt = obj.date
+        return f"{dt.day} {month_names[dt.month]} {dt.year}"
 
-    def dehydrate_booking_start_time(self, obj):
-        return (
-            obj.booking_start_time.strftime("%H:%M") if obj.booking_start_time else ""
-        )
+    def dehydrate_start_time(self, obj):
+        return obj.start_time.strftime("%H:%M") if obj.start_time else ""
 
-    def dehydrate_booking_end_time(self, obj):
-        return obj.booking_end_time.strftime("%H:%M") if obj.booking_end_time else ""
+    def dehydrate_end_time(self, obj):
+        return obj.end_time.strftime("%H:%M") if obj.end_time else ""
 
     def dehydrate_booker(self, obj):
         # Tampilkan username atau full name kalau ada
@@ -131,8 +132,12 @@ class RoomBookingResource(resources.ModelResource):
         return ""
 
     def dehydrate_approval_timestamp(self, obj):
+        """Format approval timestamp with i18n-ready format."""
+        from django.utils.translation import gettext as _
+
         if obj.approval_timestamp:
-            return obj.approval_timestamp.strftime("%d %b %Y %H:%M")
+            # Use i18n-ready format: "20 July 2025, 15:30"
+            return obj.approval_timestamp.strftime(_("%d %B %Y, %H:%M"))
         return ""
 
     class Meta:
@@ -149,10 +154,10 @@ class RoomBookingResource(resources.ModelResource):
             "supervisor_secondary",
             "examiner",
             "document_proof",
-            "booking_date",
-            "booking_start_time",
-            "booking_end_time",
-            "booking_approval_status",
+            "date",
+            "start_time",
+            "end_time",
+            "approval_status",
             "approved_by_user",
             "approval_timestamp",
             "approval_notes",

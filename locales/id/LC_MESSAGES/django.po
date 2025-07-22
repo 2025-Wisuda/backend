@@ -1,0 +1,3566 @@
+# Laboratory Management System - Indonesian Translation  
+# Copyright (C) 2025 Laboratory Management System
+# This file is distributed under the same license as the Laboratory Management System package.
+# Laboratory Team <lab@example.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Laboratory Management System 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-21 09:05+0700\n"
+"PO-Revision-Date: 2025-06-25 15:56+0000\n"
+"Last-Translator: Laboratory Team <lab@example.com>\n"
+"Language-Team: Indonesian <id@li.org>\n"
+"Language: id\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: core/enums/activity_type_enum.py:30 shared/utils/i18n_utils.py:61
+msgid "Practicum"
+msgstr "Praktikum"
+
+#: core/enums/activity_type_enum.py:31
+msgid "Proposal Seminar"
+msgstr "Seminar Proposal"
+
+#: core/enums/activity_type_enum.py:32
+msgid "Result Seminar"
+msgstr "Seminar Hasil"
+
+#: core/enums/activity_type_enum.py:33
+msgid "Internship Seminar"
+msgstr "Seminar Magang"
+
+#: core/enums/activity_type_enum.py:34 core/enums/allocation_type_enum.py:41
+msgid "Other"
+msgstr "Lainnya"
+
+#: core/enums/allocation_type_enum.py:38 core/enums/booking_type_enum.py:38
+msgid "Regular Class"
+msgstr "Kelas Reguler"
+
+#: core/enums/allocation_type_enum.py:39
+msgid "Maintenance"
+msgstr "Perawatan"
+
+#: core/enums/allocation_type_enum.py:40
+msgid "Equipment Setup"
+msgstr "Pengaturan Peralatan"
+
+#: core/enums/approval_status_enum.py:36
+#: fcm_notifications/models/notification_log_model.py:75
+#: shared/management/commands/test_i18n.py:146
+#: shared/management/commands/test_i18n.py:149
+#: shared/rest/views/i18n_test_view.py:45 shared/utils/i18n_utils.py:25
+msgid "Pending"
+msgstr "Menunggu"
+
+#: core/enums/approval_status_enum.py:37 shared/rest/views/i18n_test_view.py:46
+#: shared/utils/i18n_utils.py:26
+msgid "Approved"
+msgstr "Disetujui"
+
+#: core/enums/approval_status_enum.py:38 shared/rest/views/i18n_test_view.py:47
+#: shared/utils/i18n_utils.py:27
+msgid "Rejected"
+msgstr "Ditolak"
+
+#: core/enums/approval_status_enum.py:39 core/enums/session_status_enum.py:34
+#: shared/utils/i18n_utils.py:28
+msgid "Cancelled"
+msgstr "Dibatalkan"
+
+#: core/enums/approval_status_enum.py:40 core/enums/session_status_enum.py:33
+#: shared/utils/i18n_utils.py:29
+msgid "Completed"
+msgstr "Selesai"
+
+#: core/enums/approval_status_enum.py:41 shared/utils/i18n_utils.py:30
+msgid "Expired"
+msgstr "Kedaluwarsa"
+
+#: core/enums/approval_status_enum.py:42
+msgid "In Progress"
+msgstr "Sedang Berlangsung"
+
+#: core/enums/attendance_status_enum.py:35 core/enums/session_status_enum.py:32
+msgid "Scheduled"
+msgstr "Terjadwal"
+
+#: core/enums/attendance_status_enum.py:36 shared/utils/i18n_utils.py:31
+msgid "Present"
+msgstr "Hadir"
+
+#: core/enums/attendance_status_enum.py:37 shared/utils/i18n_utils.py:32
+msgid "Absent"
+msgstr "Tidak Hadir"
+
+#: core/enums/attendance_status_enum.py:38 shared/utils/i18n_utils.py:33
+msgid "Late"
+msgstr "Terlambat"
+
+#: core/enums/attendance_status_enum.py:39
+msgid "Early Out"
+msgstr "Pulang Awal"
+
+#: core/enums/attendance_status_enum.py:40
+msgid "Excused"
+msgstr "Izin"
+
+#: core/enums/attendance_status_enum.py:41
+msgid "Sick"
+msgstr "Sakit"
+
+#: core/enums/booking_type_enum.py:37 core/enums/session_type_enum.py:58
+#: shared/utils/i18n_utils.py:62
+msgid "Seminar"
+msgstr "Seminar"
+
+#: core/enums/bulk_days_enum.py:52
+msgid "Monday Only"
+msgstr "Hanya Senin"
+
+#: core/enums/bulk_days_enum.py:53
+msgid "Tuesday Only"
+msgstr "Hanya Selasa"
+
+#: core/enums/bulk_days_enum.py:54
+msgid "Wednesday Only"
+msgstr "Hanya Rabu"
+
+#: core/enums/bulk_days_enum.py:55
+msgid "Thursday Only"
+msgstr "Hanya Kamis"
+
+#: core/enums/bulk_days_enum.py:56
+msgid "Friday Only"
+msgstr "Hanya Jumat"
+
+#: core/enums/bulk_days_enum.py:57
+msgid "Saturday Only"
+msgstr "Hanya Sabtu"
+
+#: core/enums/bulk_days_enum.py:58
+msgid "Sunday Only"
+msgstr "Hanya Minggu"
+
+#: core/enums/bulk_days_enum.py:59
+msgid "Weekdays (Mon-Fri)"
+msgstr "Hari Kerja (Sen-Jum)"
+
+#: core/enums/bulk_days_enum.py:60
+msgid "Weekend (Sat-Sun)"
+msgstr "Akhir Pekan (Sab-Min)"
+
+#: core/enums/bulk_days_enum.py:61
+msgid "All Days (Mon-Sun)"
+msgstr "Semua Hari (Sen-Min)"
+
+#: core/enums/bulk_days_enum.py:62
+msgid "Mon, Wed, Fri"
+msgstr "Sen, Rab, Jum"
+
+#: core/enums/bulk_days_enum.py:63
+msgid "Tue, Thu"
+msgstr "Sel, Kam"
+
+#: core/enums/bulk_days_enum.py:64
+msgid "Mon, Wed"
+msgstr "Sen, Rab"
+
+#: core/enums/bulk_days_enum.py:65
+msgid "Wed, Fri"
+msgstr "Rab, Jum"
+
+#: core/enums/days_enum.py:41 shared/utils/i18n_utils.py:34
+msgid "Monday"
+msgstr "Senin"
+
+#: core/enums/days_enum.py:42 shared/utils/i18n_utils.py:35
+msgid "Tuesday"
+msgstr "Selasa"
+
+#: core/enums/days_enum.py:43 shared/utils/i18n_utils.py:36
+msgid "Wednesday"
+msgstr "Rabu"
+
+#: core/enums/days_enum.py:44 shared/utils/i18n_utils.py:37
+msgid "Thursday"
+msgstr "Kamis"
+
+#: core/enums/days_enum.py:45 shared/utils/i18n_utils.py:38
+msgid "Friday"
+msgstr "Jumat"
+
+#: core/enums/days_enum.py:46 shared/utils/i18n_utils.py:39
+msgid "Saturday"
+msgstr "Sabtu"
+
+#: core/enums/days_enum.py:47 shared/utils/i18n_utils.py:40
+msgid "Sunday"
+msgstr "Minggu"
+
+#: core/enums/month_enum.py:33 room_booking/admins/room_booking_resource.py:93
+#: shared/utils/i18n_utils.py:41
+msgid "January"
+msgstr "Januari"
+
+#: core/enums/month_enum.py:34 room_booking/admins/room_booking_resource.py:94
+#: shared/utils/i18n_utils.py:42
+msgid "February"
+msgstr "Februari"
+
+#: core/enums/month_enum.py:35 room_booking/admins/room_booking_resource.py:95
+#: shared/utils/i18n_utils.py:43
+msgid "March"
+msgstr "Maret"
+
+#: core/enums/month_enum.py:36 room_booking/admins/room_booking_resource.py:96
+#: shared/utils/i18n_utils.py:44
+msgid "April"
+msgstr "April"
+
+#: core/enums/month_enum.py:37 room_booking/admins/room_booking_resource.py:97
+#: shared/utils/i18n_utils.py:45
+msgid "May"
+msgstr "Mei"
+
+#: core/enums/month_enum.py:38 room_booking/admins/room_booking_resource.py:98
+#: shared/utils/i18n_utils.py:46
+msgid "June"
+msgstr "Juni"
+
+#: core/enums/month_enum.py:39 room_booking/admins/room_booking_resource.py:99
+#: shared/utils/i18n_utils.py:47
+msgid "July"
+msgstr "Juli"
+
+#: core/enums/month_enum.py:40 room_booking/admins/room_booking_resource.py:100
+#: shared/utils/i18n_utils.py:48
+msgid "August"
+msgstr "Agustus"
+
+#: core/enums/month_enum.py:41 room_booking/admins/room_booking_resource.py:101
+#: shared/utils/i18n_utils.py:49
+msgid "September"
+msgstr "September"
+
+#: core/enums/month_enum.py:42 room_booking/admins/room_booking_resource.py:102
+#: shared/utils/i18n_utils.py:50
+msgid "October"
+msgstr "Oktober"
+
+#: core/enums/month_enum.py:43 room_booking/admins/room_booking_resource.py:103
+#: shared/utils/i18n_utils.py:51
+msgid "November"
+msgstr "November"
+
+#: core/enums/month_enum.py:44 room_booking/admins/room_booking_resource.py:104
+#: shared/utils/i18n_utils.py:52
+msgid "December"
+msgstr "Desember"
+
+#: core/enums/month_enum.py:67
+#: guest_visit/admins/forms/guest_visit_export_form.py:89
+msgid "All Months"
+msgstr "Semua Bulan"
+
+#: core/enums/session_type_enum.py:47 shared/utils/i18n_utils.py:63
+msgid "Experiment"
+msgstr "Eksperimen"
+
+#: core/enums/session_type_enum.py:48
+msgid "Responsi"
+msgstr "Responsi"
+
+#: core/enums/session_type_enum.py:49
+msgid "Final Project"
+msgstr "Tugas Akhir"
+
+#: core/enums/session_type_enum.py:50
+msgid "Lab Introduction"
+msgstr "Pengenalan Lab"
+
+#: core/enums/session_type_enum.py:51
+msgid "Practical Exam"
+msgstr "Ujian Praktikum"
+
+#: core/enums/session_type_enum.py:52 shared/utils/i18n_utils.py:64
+msgid "Tutorial"
+msgstr "Tutorial"
+
+#: core/enums/session_type_enum.py:53 shared/utils/i18n_utils.py:65
+msgid "Lecture"
+msgstr "Kuliah"
+
+#: core/enums/session_type_enum.py:54 shared/utils/i18n_utils.py:66
+msgid "Quiz"
+msgstr "Kuis"
+
+#: core/enums/session_type_enum.py:55
+msgid "Presentation"
+msgstr "Presentasi"
+
+#: core/enums/session_type_enum.py:56
+msgid "Discussion"
+msgstr "Diskusi"
+
+#: core/enums/session_type_enum.py:57
+msgid "Workshop"
+msgstr "Workshop"
+
+#: core/enums/session_type_enum.py:59 shared/utils/i18n_utils.py:67
+msgid "Exam"
+msgstr "Ujian"
+
+#: core/enums/session_type_enum.py:60
+msgid "Review"
+msgstr "Review"
+
+#: core/models/base_model.py:22
+msgid "ID"
+msgstr "ID"
+
+#: core/models/base_model.py:28 shared/utils/i18n_utils.py:57
+msgid "Is Active"
+msgstr "Aktif"
+
+#: core/models/base_model.py:29
+msgid "Indicates whether this record is active or not"
+msgstr "Menunjukkan apakah catatan ini aktif atau tidak"
+
+#: core/models/base_model.py:37 custom_auth/models/custom_user_model.py:76
+#: guest_visit/admins/forms/guest_visit_export_form.py:151
+#: guest_visit/admins/guest_visit_resource.py:56 shared/utils/i18n_utils.py:53
+msgid "Created By"
+msgstr "Dibuat Oleh"
+
+#: core/models/base_model.py:38
+msgid "User who created this record"
+msgstr "Pengguna yang membuat catatan ini"
+
+#: core/models/base_model.py:42 custom_auth/models/custom_user_model.py:82
+#: guest_visit/admins/guest_visit_resource.py:54 shared/utils/date_utils.py:79
+#: shared/utils/i18n_utils.py:54
+msgid "Created At"
+msgstr "Dibuat Pada"
+
+#: core/models/base_model.py:43
+msgid "Timestamp when this record was created"
+msgstr "Waktu ketika catatan ini dibuat"
+
+#: core/models/base_model.py:51 custom_auth/models/custom_user_model.py:92
+#: shared/utils/i18n_utils.py:55
+msgid "Updated By"
+msgstr "Diperbarui Oleh"
+
+#: core/models/base_model.py:52
+msgid "User who last updated this record"
+msgstr "Pengguna yang terakhir memperbarui catatan ini"
+
+#: core/models/base_model.py:56 custom_auth/models/custom_user_model.py:98
+#: shared/utils/date_utils.py:80 shared/utils/i18n_utils.py:56
+msgid "Updated At"
+msgstr "Diperbarui Pada"
+
+#: core/models/base_model.py:57
+msgid "Timestamp when this record was last updated"
+msgstr "Waktu ketika catatan ini terakhir diperbarui"
+
+#: core/models/bulk_schedule_mixin.py:138
+msgid "Bulk end date must be after or equal to schedule start date"
+msgstr "Tanggal akhir bulk harus setelah atau sama dengan tanggal mulai jadwal"
+"Tanggal akhir massal harus setelah atau sama dengan tanggal mulai jadwal"
+
+#: core/models/bulk_schedule_mixin.py:156
+#, python-format
+msgid "Invalid day names: %(invalid_days)s. Must be one of: %(valid_days)s"
+msgstr "Nama hari tidak valid: %(invalid_days)s. Harus salah satu dari: %(valid_days)s"
+"Nama hari tidak valid: %(invalid_days)s. Harus salah satu dari: "
+"%(valid_days)s"
+
+#: core/utils/schedule_generator.py:153
+msgid "Start date must be before end date"
+msgstr "Tanggal mulai harus sebelum tanggal akhir"
+
+#: core/utils/schedule_generator.py:156
+msgid "At least one day must be selected"
+msgstr "Setidaknya satu hari harus dipilih"
+
+#: core/utils/schedule_generator.py:162
+#, python-format
+msgid "Invalid days: %(days)s"
+msgstr "Hari tidak valid: %(days)s"
+
+#: core/utils/schedule_generator.py:167
+msgid "Start date cannot be in the past"
+msgstr "Tanggal mulai tidak boleh di masa lalu"
+
+#: core/validators/approval_validator.py:133
+msgid "Cannot change status from final state '{}'. Final states are permanent."
+msgstr "Tidak dapat mengubah status dari kondisi final '{}'. Kondisi final bersifat permanen."
+
+#: core/validators/approval_validator.py:144
+msgid "Invalid status transition from '{}' to '{}'. Allowed transitions: {}"
+msgstr "Transisi status tidak valid dari '{}' ke '{}'. Transisi yang diizinkan: {}"
+
+#: core/validators/approval_validator.py:175
+msgid "Approver must be specified for status '{}'"
+msgstr "Penyetuju harus ditentukan untuk status '{}'"
+
+#: core/validators/approval_validator.py:184
+msgid "Approver should not be set for pending status"
+msgstr "Penyetuju tidak boleh diatur untuk status menunggu"
+
+#: core/validators/approval_validator.py:232 shared/utils/i18n_utils.py:112
+msgid "Only staff members can set status to '{}'"
+msgstr "Hanya anggota staf yang dapat mengatur status ke '{}'"
+
+#: core/validators/approval_validator.py:250
+msgid "Only laboratory heads can manually set status to '{}'"
+msgstr "Hanya kepala laboratorium yang dapat mengatur status secara manual ke '{}'"
+
+#: core/validators/approval_validator.py:263
+msgid "You can only cancel your own requests or be a staff member"
+msgstr "Anda hanya dapat membatalkan permintaan Anda sendiri atau menjadi anggota staf"
+
+#: core/validators/approval_validator.py:304
+msgid "Cannot set status to 'Expired' before scheduled start time"
+msgstr "Tidak dapat mengatur status ke 'Kedaluwarsa' sebelum waktu mulai yang dijadwalkan"
+
+#: core/validators/approval_validator.py:312
+#: core/validators/approval_validator.py:344
+msgid "Cannot set status to 'Expired' for current or future dates"
+msgstr "Tidak dapat mengatur status ke 'Kedaluwarsa' untuk tanggal saat ini atau masa depan"
+
+#: core/validators/approval_validator.py:360
+msgid "Cannot set status to 'Expired' before scheduled end time"
+msgstr "Tidak dapat mengatur status ke 'Kedaluwarsa' sebelum waktu akhir yang dijadwalkan"
+
+#: core/validators/attendance_validator.py:39
+msgid "Invalid attendance status '{}'. Valid options: {}"
+msgstr "Status kehadiran tidak valid '{}'. Opsi yang valid: {}"
+
+#: core/validators/attendance_validator.py:92
+msgid "Cannot transition from status '{}'"
+msgstr "Tidak dapat bertransisi dari status '{}'"
+
+#: core/validators/attendance_validator.py:97
+msgid "Invalid status transition from '{}' to '{}'"
+msgstr "Transisi status tidak valid dari '{}' ke '{}'"
+
+#: core/validators/attendance_validator.py:122
+msgid "Only staff users can perform manual attendance overrides"
+msgstr "Hanya pengguna staf yang dapat melakukan override kehadiran manual"
+
+#: core/validators/attendance_validator.py:178
+msgid "Clock out time must be after clock in time."
+msgstr "Waktu keluar harus setelah waktu masuk."
+
+#: core/validators/attendance_validator.py:314
+msgid "Assistant has already clocked in for this duty."
+msgstr "Asisten sudah melakukan clock in untuk tugas ini."
+
+#: core/validators/attendance_validator.py:329
+msgid "Assistant must clock in before clocking out."
+msgstr "Asisten harus clock in sebelum clock out."
+
+#: core/validators/attendance_validator.py:332
+msgid "Assistant has already clocked out for this duty."
+msgstr "Asisten sudah melakukan clock out untuk tugas ini."
+
+#: core/validators/attendance_validator.py:359
+msgid "Location data must be a dictionary"
+msgstr "Data lokasi harus berupa dictionary"
+
+#: core/validators/attendance_validator.py:365
+msgid "Location data must contain '{}'"
+msgstr "Data lokasi harus mengandung '{}'"
+
+#: core/validators/attendance_validator.py:373
+msgid "Latitude and longitude must be valid numbers"
+msgstr "Latitude dan longitude harus berupa angka yang valid"
+
+#: core/validators/attendance_validator.py:377
+msgid "Latitude must be between -90 and 90"
+msgstr "Latitude harus antara -90 dan 90"
+
+#: core/validators/attendance_validator.py:380
+msgid "Longitude must be between -180 and 180"
+msgstr "Longitude harus antara -180 dan 180"
+
+#: core/validators/attendance_validator.py:414
+msgid ""
+"Location must be within UNILA laboratory area. Current location: ({}, {}), "
+"Expected: ({}, {})"
+msgstr ""
+"Lokasi harus dalam area laboratorium UNILA. Lokasi saat ini: ({}, {}), "
+"Diharapkan: ({}, {})"
+
+#: core/validators/schedule_validator.py:130 shared/utils/i18n_utils.py:108
+msgid "Invalid date value."
+msgstr "Nilai tanggal tidak valid."
+
+#: core/validators/schedule_validator.py:136 shared/utils/i18n_utils.py:109
+msgid "Date cannot be in the past."
+msgstr "Tanggal tidak boleh di masa lalu."
+
+#: core/validators/schedule_validator.py:153
+#: duty_schedule/models/duty_schedule_model.py:146
+#: shared/utils/i18n_utils.py:110
+msgid "End time must be after start time."
+msgstr "Waktu akhir harus setelah waktu mulai."
+
+#: core/validators/schedule_validator.py:162
+msgid "Start time cannot be earlier than current time."
+msgstr "Waktu mulai tidak boleh lebih awal dari waktu saat ini."
+
+#: core/validators/schedule_validator.py:177
+#, python-format
+msgid "Start time must be after lab opening time (%(start_time)s)."
+msgstr "Waktu mulai harus setelah jam buka lab (%(start_time)s)."
+
+#: core/validators/schedule_validator.py:190
+#, fuzzy, python-format
+#| msgid "End time must be before lab closing time (%(end_time)s)."
+msgid "Start time must be before lab closing time (%(end_time)s)."
+msgstr "Waktu akhir harus sebelum jam tutup lab (%(end_time)s)."
+
+#: core/validators/schedule_validator.py:205
+#, python-format
+msgid "End time must be before lab closing time (%(end_time)s)."
+msgstr "Waktu akhir harus sebelum jam tutup lab (%(end_time)s)."
+
+#: core/validators/schedule_validator.py:218
+#, python-format
+msgid "End time must be after lab opening time (%(start_time)s)."
+msgstr "Waktu akhir harus setelah jam buka lab (%(start_time)s)."
+
+#: core/validators/schedule_validator.py:253 shared/utils/i18n_utils.py:111
+msgid "Schedule conflicts with existing entries."
+msgstr "Jadwal konflik dengan catatan yang ada."
+
+#: core/validators/schedule_validator.py:262
+msgid "Schedule conflicts with existing entries in {}."
+msgstr "Jadwal konflik dengan catatan yang ada di {}."
+
+#: course/admins/course_admin.py:52 course/admins/course_session_admin.py:156
+#: course/admins/course_session_admin.py:182
+#: course/admins/course_session_admin.py:240 course/models/course_model.py:55
+#: shared/rest/views/i18n_test_view.py:51 shared/utils/i18n_utils.py:60
+msgid "Teaching Assistants"
+msgstr "Asisten Mengajar"
+
+#: course/admins/course_admin.py:116
+msgid "End date must be after start date."
+msgstr "Tanggal akhir harus setelah tanggal mulai."
+
+#: course/admins/course_admin.py:190 course/admins/course_admin.py:216
+msgid "Course Information"
+msgstr "Informasi Kelas"
+
+#: course/admins/course_admin.py:203 course/admins/course_admin.py:229
+msgid "Participants"
+msgstr "Peserta"
+
+#: course/admins/course_admin.py:239
+msgid "Statistics"
+msgstr "Statistik"
+
+#: course/admins/course_admin.py:246 course/admins/course_session_admin.py:189
+#: custom_auth/admins/user_admin.py:189
+#: duty_schedule/admins/duty_attendance_admin.py:115
+#: duty_schedule/admins/duty_schedule_admin.py:120
+#: guest_visit/admins/guest_visit_admin.py:167
+#: lab_allocation/admins/lab_allocation_admin.py:131
+#: lab_schedule/admins/lab_schedule_admin.py:144
+#: room_booking/admins/room_booking_admin.py:171
+#: room_booking/admins/room_booking_admin.py:268
+msgid "Important Dates"
+msgstr "Tanggal Penting"
+
+#: course/admins/course_admin.py:253 course/admins/course_session_admin.py:196
+#: custom_auth/admins/user_admin.py:196
+#: duty_schedule/admins/duty_attendance_admin.py:122
+#: duty_schedule/admins/duty_schedule_admin.py:127
+#: guest_visit/admins/guest_visit_admin.py:174
+#: lab_allocation/admins/lab_allocation_admin.py:138
+#: lab_schedule/admins/lab_schedule_admin.py:151
+#: room_booking/admins/room_booking_admin.py:178
+#: room_booking/admins/room_booking_admin.py:275
+msgid "Audit Info"
+msgstr "Info Audit"
+
+#: course/admins/course_admin.py:278
+msgid "Total Sessions"
+msgstr "Total Sesi"
+
+#: course/admins/course_admin.py:300 course/admins/course_admin.py:317
+#: course/admins/course_admin.py:334 course/admins/course_session_admin.py:268
+#: course/admins/course_session_admin.py:293
+#: shared/utils/permission_config_utils.py:576
+msgid "Only laboratory employees can perform this admin action"
+msgstr "Only laboratory employees can perform this admdi action"
+
+#: course/admins/course_session_admin.py:52
+#: course/models/course_session_model.py:154
+msgid "Cannot edit session that has already passed. Session date: {}"
+msgstr "Tidak dapat mengedit sesi yang sudah berlangsung. Tanggal sesi: {}"
+
+#: course/admins/course_session_admin.py:64
+#: course/models/course_session_model.py:160
+msgid "Cannot edit session that has already ended. Session ended at: {}"
+msgstr "Tidak dapat mengedit sesi yang sudah berakhir. Sesi berakhir pada: {}"
+
+#: course/admins/course_session_admin.py:73
+msgid "Session end time must be after start time."
+msgstr "Waktu akhir sesi harus setelah waktu mulai."
+
+#: course/admins/course_session_admin.py:83
+msgid "Session date must be within course date range ({} - {})."
+msgstr "Tanggal sesi harus dalam rentang tanggal kelas ({} - {})."
+
+#: course/admins/course_session_admin.py:140
+#: course/admins/course_session_admin.py:166
+msgid "Session Information"
+msgstr "Informasi Sesi"
+
+#: course/admins/course_session_admin.py:152
+#: course/admins/course_session_admin.py:178
+msgid "Basic session information and scheduling."
+msgstr "Informasi dasar tentang jadwal sesi dan penjadwalan."
+
+#: course/admins/course_session_admin.py:159
+#: course/admins/course_session_admin.py:185
+msgid "Assign teaching assistants to this session."
+msgstr "Tetapkan asisten mengajar ke sesi ini."
+
+#: course/admins/course_session_admin.py:231
+#: duty_schedule/admins/duty_attendance_admin.py:152
+#: duty_schedule/admins/duty_schedule_admin.py:147
+#: guest_visit/admins/guest_visit_admin.py:206
+#: lab_allocation/admins/lab_allocation_admin.py:164
+#: lab_schedule/admins/lab_schedule_admin.py:167
+#: room_booking/admins/room_booking_admin.py:202
+msgid "Time"
+msgstr "Waktu"
+
+#: course/admins/course_session_admin.py:281
+msgid "{} session(s) were successfully restored."
+msgstr "{} sesi(n) berhasil direstore."
+
+#: course/admins/course_session_admin.py:284
+msgid "No sessions needed to be restored."
+msgstr "Tidak ada sesi yang perlu direstore."
+
+#: course/admins/course_session_admin.py:286
+msgid "Restore Selected Sessions"
+msgstr "Restore Sesi Terpilih"
+
+#: course/admins/course_session_admin.py:306
+msgid "{} session(s) were successfully deleted."
+msgstr "{} sesi(n) berhasil dihapus."
+
+#: course/admins/course_session_admin.py:309
+msgid "No sessions needed to be deleted."
+msgstr "Tidak ada sesi yang perlu dihapus."
+
+#: course/admins/course_session_admin.py:311
+msgid "Delete Selected Sessions"
+msgstr "Hapus Sesi Terpilih"
+
+#: course/admins/course_session_attendance_admin.py:73
+#: shared/utils/enhanced_export_mixins.py:77
+msgid "Only laboratory employees can export data"
+msgstr "Only laboratory employees can export data"
+
+#: course/admins/course_session_attendance_resource.py:22
+#: course/models/course_model.py:20
+msgid "Course Title"
+msgstr "Judul Kelas"
+
+#: course/admins/course_session_attendance_resource.py:27
+#: course/models/course_session_model.py:74
+msgid "Session Title"
+msgstr "Judul Sesi"
+
+#: course/admins/course_session_attendance_resource.py:32
+#: course/models/course_session_model.py:58
+msgid "Session Date"
+msgstr "Tanggal Sesi"
+
+#: course/admins/course_session_attendance_resource.py:37
+msgid "Session Time"
+msgstr "Waktu Sesi"
+
+#: course/admins/course_session_attendance_resource.py:42
+msgid "Student Name"
+msgstr "Nama Siswa"
+
+#: course/admins/course_session_attendance_resource.py:47
+#: custom_auth/models/custom_user_model.py:44
+msgid "Student Number"
+msgstr "Nomor Siswa"
+
+#: course/admins/course_session_attendance_resource.py:52
+#: course/admins/forms/course_session_attendance_export_form.py:91
+#: course/models/course_session_attendance_model.py:42
+msgid "Attendance Status"
+msgstr "Status Kehadiran"
+
+#: course/admins/course_session_attendance_resource.py:57
+#: course/models/course_session_attendance_model.py:49
+msgid "Marked At"
+msgstr "Tandai Pada"
+
+#: course/admins/course_session_attendance_resource.py:62
+#: course/models/course_session_attendance_model.py:59
+msgid "Marked By"
+msgstr "Tandai Oleh"
+
+#: course/admins/forms/course_session_attendance_export_form.py:64
+msgid "All Courses"
+msgstr "Semua Kelas"
+
+#: course/admins/forms/course_session_attendance_export_form.py:70
+#: course/models/course_model.py:81 course/models/course_session_model.py:52
+#: shared/utils/i18n_utils.py:58
+msgid "Course"
+msgstr "Kelas"
+
+#: course/admins/forms/course_session_attendance_export_form.py:77
+msgid "All Sessions"
+msgstr "Semua Sesi"
+
+#: course/admins/forms/course_session_attendance_export_form.py:83
+#: course/models/course_session_attendance_model.py:25
+#: course/models/course_session_model.py:116
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:99
+msgid "Course Session"
+msgstr "Sesi Kelas"
+
+#: course/admins/forms/course_session_attendance_export_form.py:86
+msgid "All Statuses"
+msgstr "Semua Status"
+
+#: course/admins/views/course_session_attendance_export_view.py:103
+#: templates/admin/course/coursesessionattendancemodel/export_form.html:5
+msgid "Export Course Session Attendance with Filters"
+msgstr "Ekspor Kehadiran Sesi Kelas dengan Filter"
+
+#: course/admins/views/course_session_attendance_export_view.py:104
+#: course/models/course_session_attendance_model.py:95
+msgid "Course Session Attendance"
+msgstr "Kehadiran Sesi Kelas"
+
+#: course/admins/views/course_session_attendance_export_view.py:106
+#: templates/admin/course/coursesessionattendancemodel/export_form.html:11
+msgid ""
+"Export course session attendance data with customizable filters and field "
+"selection. This includes course information, session details, student data, "
+"and attendance status."
+msgstr ""
+"Ekspor data kehadiran sesi kelas dengan filter dan pilihan bidang yang dapat "
+"disesuaikan. Ini termasuk informasi kelas, detail sesi, data siswa, dan "
+"status kehadiran."
+
+#: course/apps.py:12
+msgid "Course Management"
+msgstr "Manajemen Kelas"
+
+#: course/models/course_model.py:21
+msgid "Title of the laboratory course"
+msgstr "Judul kelas laboratorium"
+
+#: course/models/course_model.py:27
+msgid "Course Description"
+msgstr "Deskripsi Kelas"
+
+#: course/models/course_model.py:28
+msgid "Detailed description of the course content and objectives"
+msgstr "Deskripsi detail tentang konten dan tujuan kelas"
+
+#: course/models/course_model.py:32
+msgid "Course Start Date"
+msgstr "Tanggal Mulai Kelas"
+
+#: course/models/course_model.py:33
+msgid "Start date of the course period"
+msgstr "Tanggal mulai periode kelas"
+
+#: course/models/course_model.py:37
+msgid "Course End Date"
+msgstr "Tanggal Selesai Kelas"
+
+#: course/models/course_model.py:38
+msgid "End date of the course period"
+msgstr "Tanggal selesai periode kelas"
+
+#: course/models/course_model.py:46
+msgid "Enrolled Students"
+msgstr "Mahasiswa Terdaftar"
+
+#: course/models/course_model.py:47
+msgid "Students enrolled in this course"
+msgstr "Mahasiswa yang terdaftar di kelas ini"
+
+#: course/models/course_model.py:56
+msgid "Teaching assistants assigned to this course"
+msgstr "Asisten dosen yang ditugaskan untuk kelas ini"
+
+#: course/models/course_model.py:64
+msgid "Enrollment Key"
+msgstr "Kunci Pendaftaran"
+
+#: course/models/course_model.py:65
+msgid "Enrollment key for student self-registration"
+msgstr "Kunci untuk pendaftaran mandiri mahasiswa"
+
+#: course/models/course_model.py:74
+msgid "Course Image"
+msgstr "Gambar Kelas"
+
+#: course/models/course_model.py:75
+msgid "Course cover image"
+msgstr "Gambar sampul kelas"
+
+#: course/models/course_model.py:82
+msgid "Courses"
+msgstr "Kelas"
+
+#: course/models/course_model.py:108
+#: duty_schedule/models/duty_schedule_model.py:140
+msgid "End date must be after or equal to start date."
+msgstr "Tanggal akhir harus setelah atau sama dengan tanggal mulai."
+
+#: course/models/course_session_attendance_model.py:26
+msgid "The course session this attendance belongs to"
+msgstr "Sesi kelas yang dimiliki kehadiran ini"
+
+#: course/models/course_session_attendance_model.py:33
+#: shared/rest/views/i18n_test_view.py:50 shared/utils/i18n_utils.py:59
+msgid "Student"
+msgstr "Mahasiswa"
+
+#: course/models/course_session_attendance_model.py:34
+msgid "The student for this attendance record"
+msgstr "Mahasiswa untuk catatan kehadiran ini"
+
+#: course/models/course_session_attendance_model.py:43
+msgid "Current attendance status"
+msgstr "Status kehadiran saat ini"
+
+#: course/models/course_session_attendance_model.py:50
+msgid "Timestamp when attendance was marked"
+msgstr "Waktu ketika kehadiran ditandai"
+
+#: course/models/course_session_attendance_model.py:60
+msgid "Teaching assistant who marked the attendance"
+msgstr "Asisten mengajar yang menandai kehadiran"
+
+#: course/models/course_session_attendance_model.py:67
+#: duty_schedule/models/duty_attendance_model.py:107
+#, fuzzy
+#| msgid "Face Recognition"
+msgid "Face Recognition Person ID"
+msgstr "Pengenalan Wajah"
+
+#: course/models/course_session_attendance_model.py:68
+msgid "Person ID returned from face recognition service"
+msgstr "ID Orang yang dikembalikan dari layanan pengenalan wajah"
+
+#: course/models/course_session_attendance_model.py:74
+#, fuzzy
+#| msgid "Face Recognition"
+msgid "Face Recognition Confidence"
+msgstr "Pengenalan Wajah"
+
+#: course/models/course_session_attendance_model.py:75
+#: duty_schedule/models/duty_attendance_model.py:80
+msgid "Confidence score from face recognition (0.0-1.0)"
+msgstr "Skor kepercayaan dari pengenalan wajah (0.0-1.0)"
+
+#: course/models/course_session_attendance_model.py:82
+#: duty_schedule/models/duty_attendance_model.py:114
+#, fuzzy
+#| msgid "Face Recognition"
+msgid "Face Recognition Request ID"
+msgstr "Pengenalan Wajah"
+
+#: course/models/course_session_attendance_model.py:83
+msgid "WebSocket request ID for face recognition"
+msgstr "ID Permintaan WebSocket untuk pengenalan wajah"
+
+#: course/models/course_session_attendance_model.py:89
+#, fuzzy
+#| msgid "Attendance Method"
+msgid "Manual Attendance Override"
+msgstr "Metode Kehadiran"
+
+#: course/models/course_session_attendance_model.py:90
+msgid "True if attendance was marked manually without face recognition"
+msgstr "Benar jika kehadiran ditandai secara manual tanpa pengenalan wajah"
+
+#: course/models/course_session_attendance_model.py:96
+msgid "Course Session Attendances"
+msgstr "Kehadiran Sesi Kelas"
+
+#: course/models/course_session_attendance_model.py:117
+msgid "Only teaching assistants assigned to this course can mark attendance."
+msgstr "Hanya asisten mengajar yang ditugaskan ke kelas ini yang dapat menandai kehadiran."
+
+#: course/models/course_session_model.py:53
+msgid "The course this session belongs to"
+msgstr "Kelas yang dimiliki sesi ini"
+
+#: course/models/course_session_model.py:59
+msgid "Date when the session is scheduled"
+msgstr "Tanggal ketika sesi dijadwalkan"
+
+#: course/models/course_session_model.py:63
+msgid "Session Start Time"
+msgstr "Waktu Mulai Sesi"
+
+#: course/models/course_session_model.py:64
+msgid "Start time of the course session"
+msgstr "Waktu mulai sesi kelas"
+
+#: course/models/course_session_model.py:68
+msgid "Session End Time"
+msgstr "Waktu Selesai Sesi"
+
+#: course/models/course_session_model.py:69
+msgid "End time of the course session"
+msgstr "Waktu selesai sesi kelas"
+
+#: course/models/course_session_model.py:75
+msgid "Title or topic of this session"
+msgstr "Judul atau topik sesi ini"
+
+#: course/models/course_session_model.py:80
+msgid "Session Description"
+msgstr "Deskripsi Sesi"
+
+#: course/models/course_session_model.py:82
+msgid "Detailed description of the session content, objectives, and activities"
+msgstr "Deskripsi detail tentang konten sesi, tujuan, dan aktivitas"
+
+#: course/models/course_session_model.py:91
+msgid "Session Type"
+msgstr "Tipe Sesi"
+
+#: course/models/course_session_model.py:92
+msgid "Type of session/activity (Percobaan, Responsi, Tutorial, etc.)"
+msgstr "Tipe sesi/aktivitas (Percobaan, Responsi, Tutorial, dll.)"
+
+#: course/models/course_session_model.py:100
+msgid "Session Teaching Assistants"
+msgstr "Asisten Mengajar Sesi"
+
+#: course/models/course_session_model.py:101
+msgid "Teaching assistants assigned to this specific session"
+msgstr "Asisten mengajar yang ditugaskan ke sesi spesifik ini"
+
+#: course/models/course_session_model.py:109
+msgid "Session Status"
+msgstr "Status Sesi"
+
+#: course/models/course_session_model.py:110
+msgid "Current status of the session"
+msgstr "Status saat ini dari sesi"
+
+#: course/models/course_session_model.py:117
+msgid "Course Sessions"
+msgstr "Sesi Kelas"
+
+#: course/models/course_session_model.py:166
+msgid "Session date cannot be before course start date."
+msgstr "Tanggal sesi tidak boleh sebelum tanggal mulai kelas."
+
+#: course/models/course_session_model.py:168
+msgid "Session date cannot be after course end date."
+msgstr "Tanggal sesi tidak boleh setelah tanggal selesai kelas."
+
+#: custom_auth/admins/forms/user_export_form.py:52
+msgid "User Group"
+msgstr "Grup Pengguna"
+
+#: custom_auth/admins/group_admin.py:23
+#: custom_auth/models/custom_user_model.py:59
+msgid "Group"
+msgstr "Grup"
+
+#: custom_auth/admins/group_admin.py:24
+msgid "Groups"
+msgstr "Grup"
+
+#: custom_auth/admins/group_admin.py:95
+msgid "Group name cannot be changed"
+msgstr "Nama grup tidak bisa diubah"
+
+#: custom_auth/admins/group_admin.py:99 custom_auth/admins/user_admin.py:179
+msgid "Permissions"
+msgstr "Izin"
+
+#: custom_auth/admins/group_admin.py:102
+msgid "Only superusers can edit permissions"
+msgstr "Hanya superuser yang dapat mengedit izin"
+
+#: custom_auth/admins/group_admin.py:115
+msgid "Permission Count"
+msgstr "Jumlah Izin"
+
+#: custom_auth/admins/group_admin.py:119
+msgid "User Groups - Only permissions can be edited"
+msgstr "Grup Pengguna - Hanya izin yang dapat diedit"
+
+#: custom_auth/admins/user_admin.py:152
+msgid "Account Authentication"
+msgstr "Autentikasi Akun"
+
+#: custom_auth/admins/user_admin.py:156
+msgid "Create login credentials for the new user."
+msgstr "Buat kredensial login untuk pengguna baru."
+
+#: custom_auth/admins/user_admin.py:160
+#: duty_schedule/admins/duty_attendance_admin.py:90
+msgid "Basic Information"
+msgstr "Informasi Dasar"
+
+#: custom_auth/admins/user_admin.py:164
+msgid "Set basic user information and role."
+msgstr "Atur informasi dasar dan peran pengguna."
+
+#: custom_auth/admins/user_admin.py:168
+msgid "Identity Numbers"
+msgstr "Nomor Identitas"
+
+#: custom_auth/admins/user_admin.py:172
+msgid "Enter appropriate ID number based on role."
+msgstr "Masukkan nomor ID yang sesuai berdasarkan peran."
+
+#: custom_auth/admins/user_admin.py:177
+msgid "Authentication"
+msgstr "Autentikasi"
+
+#: custom_auth/admins/user_admin.py:183
+msgid "Manage user access and permissions in the admin panel."
+msgstr "Kelola akses pengguna dan izin di panel admin."
+
+#: custom_auth/admins/user_admin.py:231 custom_auth/admins/user_admin.py:235
+msgid "Restore Selected Users"
+msgstr "Pulihkan Pengguna Terpilih"
+
+#: custom_auth/admins/user_admin.py:242 custom_auth/admins/user_admin.py:246
+msgid "Delete Selected Users"
+msgstr "Hapus Pengguna Terpilih"
+
+#: custom_auth/admins/user_resource.py:116
+msgid "First Name is required"
+msgstr "Nama depan wajib diisi"
+
+#: custom_auth/admins/user_resource.py:118
+msgid "Last Name is required"
+msgstr "Nama belakang wajib diisi"
+
+#: custom_auth/admins/user_resource.py:120
+msgid "Group is required"
+msgstr "Grup wajib diisi"
+
+#: custom_auth/admins/user_resource.py:129
+#, python-format
+msgid "Invalid group '%(group)s'. Valid groups: %(valid_groups)s"
+msgstr "Grup tidak valid '%(group)s'. Grup yang valid: %(valid_groups)s"
+
+#: custom_auth/admins/user_resource.py:137
+#, python-format
+msgid "Student Number is required for group '%(group)s'"
+msgstr "Nomor mahasiswa wajib untuk grup '%(group)s'"
+
+#: custom_auth/admins/user_resource.py:142
+#, python-format
+msgid "Employee Number should not be provided for group '%(group)s'"
+msgstr "Nomor pegawai tidak boleh diberikan untuk grup '%(group)s'"
+
+#: custom_auth/admins/user_resource.py:148
+#, python-format
+msgid "Employee Number is required for group '%(group)s'"
+msgstr "Nomor pegawai wajib untuk grup '%(group)s'"
+
+#: custom_auth/admins/user_resource.py:153
+#, python-format
+msgid "Student Number should not be provided for group '%(group)s'"
+msgstr "Nomor mahasiswa tidak boleh diberikan untuk grup '%(group)s'"
+
+#: custom_auth/apps.py:24
+msgid "User Management"
+msgstr "Manajemen Pengguna"
+
+#: custom_auth/management/commands/seed_users.py:27
+msgid "Seed users from JSON data files"
+msgstr "Isi data pengguna dari file JSON"
+
+#: custom_auth/management/commands/seed_users.py:34
+msgid "Clear existing users before seeding (except superusers)"
+msgstr "Hapus pengguna yang ada sebelum mengisi data (kecuali superuser)"
+
+#: custom_auth/management/commands/seed_users.py:39
+msgid "Only seed teaching assistants from JSON data"
+msgstr "Hanya isi data asisten mengajar dari data JSON"
+
+#: custom_auth/management/commands/seed_users.py:44
+msgid "Only seed staff users (admin users)"
+msgstr "Hanya isi data pengguna staf (pengguna admin)"
+
+#: custom_auth/management/commands/seed_users.py:47
+msgid "Only seed students"
+msgstr "Hanya isi data mahasiswa"
+
+#: custom_auth/management/commands/seed_users.py:52
+msgid "Only seed users from JSON data"
+msgstr "Hanya isi data pengguna dari data JSON"
+
+#: custom_auth/management/commands/seed_users.py:58
+msgid "🚀 Starting user seeding with JSON data..."
+msgstr "🚀 Memulai pengisian data pengguna dengan data JSON..."
+
+#: custom_auth/management/commands/seed_users.py:66
+#, python-format
+msgid "🗑️ Deleted %d existing users (kept superusers)"
+msgstr "🗑️ Menghapus %d pengguna yang ada (tetap menyimpan superuser)"
+
+#: custom_auth/management/commands/seed_users.py:84
+#: custom_auth/management/commands/seed_users.py:112
+#, python-format
+msgid ""
+"🎉 Successfully completed user seeding!\n"
+"📊 Total users created: %d\n"
+"🔑 All users created with default password: \"password\""
+msgstr ""
+"🎉 Berhasil menyelesaikan pengisian data pengguna!\n"
+"📊 Total pengguna dibuat: %d\n"
+"🔑 Semua pengguna dibuat dengan password default: \"password\""
+
+#: custom_auth/models/custom_user_model.py:52
+msgid "Employee Number"
+msgstr "Nomor Pegawai"
+
+#: custom_auth/models/custom_user_model.py:60
+msgid "Select the user's role in the laboratory."
+msgstr "Pilih peran pengguna di laboratorium."
+
+#: custom_auth/models/custom_user_model.py:63
+msgid "Avatar"
+msgstr "Avatar"
+
+#: custom_auth/models/custom_user_model.py:67
+msgid "Upload a user avatar."
+msgstr "Unggah avatar pengguna."
+
+#: custom_auth/models/custom_user_model.py:77
+msgid "User who created this record."
+msgstr "Pengguna yang membuat catatan ini."
+
+#: custom_auth/models/custom_user_model.py:83
+msgid "Date and time when this record was created."
+msgstr "Tanggal dan waktu ketika catatan ini dibuat."
+
+#: custom_auth/models/custom_user_model.py:93
+msgid "User who last updated this record."
+msgstr "Pengguna yang terakhir memperbarui catatan ini."
+
+#: custom_auth/models/custom_user_model.py:99
+msgid "Date and time when this record was last updated."
+msgstr "Tanggal dan waktu ketika catatan ini terakhir diperbarui."
+
+#: custom_auth/models/custom_user_model.py:103
+#: fcm_notifications/models/fcm_device_model.py:24
+#: fcm_notifications/models/notification_log_model.py:24
+msgid "User"
+msgstr "Pengguna"
+
+#: custom_auth/models/custom_user_model.py:104
+msgid "Users"
+msgstr "Pengguna"
+
+#: custom_auth/models/custom_user_model.py:128
+msgid ""
+"Group selection is required. Please select the user's role in the laboratory."
+msgstr "Pemilihan grup wajib. Silakan pilih peran pengguna di laboratorium."
+
+#: custom_auth/models/custom_user_model.py:145
+msgid "Employee number is required for staff groups."
+msgstr "Nomor pegawai wajib untuk grup staf."
+
+#: custom_auth/models/custom_user_model.py:153
+msgid "Student number should not be provided for staff groups."
+msgstr "Nomor mahasiswa tidak boleh diberikan untuk grup staf."
+
+#: custom_auth/models/custom_user_model.py:163
+msgid "Student number is required for student groups."
+msgstr "Nomor mahasiswa wajib untuk grup mahasiswa."
+
+#: custom_auth/models/custom_user_model.py:171
+msgid "Employee number should not be provided for student groups."
+msgstr "Nomor pegawai tidak boleh diberikan untuk grup mahasiswa."
+
+#: duty_schedule/admins/duty_attendance_admin.py:22
+#: guest_visit/admins/forms/guest_visit_export_form.py:97
+#: shared/export/base_export_form.py:63
+msgid "Month"
+msgstr "Month"
+
+#: duty_schedule/admins/duty_attendance_admin.py:98
+#, fuzzy
+#| msgid "Duty Schedule Information"
+msgid "Duty schedule information and assigned assistant."
+msgstr "Informasi Jadwal Piket"
+
+#: duty_schedule/admins/duty_attendance_admin.py:104
+#, fuzzy
+#| msgid "Attendance Status"
+msgid "Attendance Details"
+msgstr "Status Kehadiran"
+
+#: duty_schedule/admins/duty_attendance_admin.py:111
+msgid "Attendance status and time tracking information."
+msgstr "Informasi status kehadiran dan pelacakan waktu."
+
+#: duty_schedule/admins/duty_attendance_admin.py:160
+#: duty_schedule/models/duty_attendance_model.py:61
+#, fuzzy
+#| msgid "Actual Clock In Time"
+msgid "Clock In Time"
+msgstr "Waktu Clock In Aktual"
+
+#: duty_schedule/admins/duty_attendance_admin.py:168
+#: duty_schedule/models/duty_attendance_model.py:67
+#, fuzzy
+#| msgid "Actual Clock Out Time"
+msgid "Clock Out Time"
+msgstr "Waktu Clock Out Aktual"
+
+#: duty_schedule/admins/duty_attendance_admin.py:183
+#: duty_schedule/admins/duty_schedule_admin.py:161
+#: duty_schedule/models/duty_attendance_model.py:88
+#: fcm_notifications/models/notification_log_model.py:81
+msgid "Status"
+msgstr "Status"
+
+#: duty_schedule/admins/duty_schedule_admin.py:78
+msgid "New Duty Schedule"
+msgstr "Jadwal Piket Baru"
+
+#: duty_schedule/admins/duty_schedule_admin.py:89
+msgid "Please fill all fields in this section for creating duty schedule."
+msgstr "Harap isi semua bidang di bagian ini untuk membuat jadwal piket."
+
+#: duty_schedule/admins/duty_schedule_admin.py:97
+msgid "Duty Schedule Information"
+msgstr "Informasi Jadwal Piket"
+
+#: duty_schedule/admins/duty_schedule_admin.py:110
+msgid "Generation Status"
+msgstr "Status Generasi"
+
+#: duty_schedule/admins/duty_schedule_admin.py:153
+msgid "Assistants"
+msgstr "Asisten"
+
+#: duty_schedule/admins/duty_schedule_admin.py:222
+#, python-brace-format
+msgid ""
+"✅ Duty schedule created! Auto-generated {count} attendance records for "
+"{assistants} assistants."
+msgstr ""
+"✅ Jadwal piket dibuat! Otomatis menghasilkan {count} catatan kehadiran "
+"untuk {assistants} asisten."
+
+#: duty_schedule/admins/duty_schedule_admin.py:231
+#: duty_schedule/admins/duty_schedule_admin.py:275
+#, python-brace-format
+msgid "❌ Error generating attendance records: {error}"
+msgstr "❌ Error menghasilkan catatan kehadiran: {error}"
+
+#: duty_schedule/admins/duty_schedule_admin.py:249
+#, fuzzy, python-brace-format
+#| msgid ""
+#| "✅ Duty schedule created! Auto-generated {count} attendance records for "
+#| "{assistants} assistants."
+msgid ""
+"🔄 Duty schedule updated! Created {new_count} new attendance records. "
+"{existing_count} existing records preserved for {assistants} assistants."
+msgstr ""
+"✅ Jadwal piket dibuat! Otomatis menghasilkan {count} catatan kehadiran "
+"untuk {assistants} asisten."
+
+#: duty_schedule/admins/duty_schedule_admin.py:261
+#, python-brace-format
+msgid ""
+"ℹ️ Duty schedule updated! All {existing_count} attendance records already "
+"exist - no new records needed."
+msgstr ""
+"ℹ️ Jadwal piket diperbarui! Semua {existing_count} catatan kehadiran sudah "
+"ada - tidak perlu catatan baru."
+
+#: duty_schedule/admins/duty_schedule_admin.py:268
+#, fuzzy
+#| msgid ""
+#| "✅ Duty schedule created! Auto-generated {count} attendance records for "
+#| "{assistants} assistants."
+msgid "ℹ️ Duty schedule updated - no attendance records to generate."
+msgstr "ℹ️ Jadwal piket diperbarui - tidak ada catatan kehadiran yang perlu dibuat."
+"ℹ️ Jadwal piket diperbarui - tidak ada catatan kehadiran untuk dihasilkan."
+
+#: duty_schedule/admins/duty_schedule_admin.py:306
+#, fuzzy
+#| msgid "Successfully regenerated {count} attendance records."
+msgid "Only superusers can regenerate attendance records."
+msgstr "Hanya superuser yang dapat meregenerasi catatan kehadiran."
+
+#: duty_schedule/admins/duty_schedule_admin.py:313
+msgid ""
+"Cannot regenerate more than 10 schedules at once for performance reasons."
+msgstr ""
+"Tidak dapat meregenerasi lebih dari 10 jadwal sekaligus untuk alasan kinerja."
+
+#: duty_schedule/admins/duty_schedule_admin.py:330
+#, python-brace-format
+msgid "Error regenerating {title}: {error}"
+msgstr "Error meregenerasi {title}: {error}"
+
+#: duty_schedule/admins/duty_schedule_admin.py:339
+#, python-brace-format
+msgid "Unexpected error for {title}: {error}"
+msgstr "Error tidak terduga untuk {title}: {error}"
+
+#: duty_schedule/admins/duty_schedule_admin.py:348
+#, python-brace-format
+msgid "Successfully regenerated {count} attendance records."
+msgstr "Berhasil meregenerasi {count} catatan kehadiran."
+
+#: duty_schedule/admins/duty_schedule_admin.py:354
+msgid "Regenerate Attendance Records (clears existing)"
+msgstr "Regenerasi Catatan Kehadiran (hapus yang ada)"
+
+#: duty_schedule/admins/duty_schedule_admin.py:360
+#, fuzzy
+#| msgid "Only superusers can perform this action."
+msgid "Only superusers can restore duty schedules."
+msgstr "Only superusers can perform this action."
+
+#: duty_schedule/admins/duty_schedule_admin.py:365
+#: duty_schedule/admins/duty_schedule_admin.py:369
+msgid "Restore Selected Duty Schedules"
+msgstr "Pulihkan Jadwal Piket Terpilih"
+
+#: duty_schedule/admins/duty_schedule_admin.py:378
+msgid "Only superusers and technicians can delete duty schedules."
+msgstr "Hanya superuser dan teknisi yang dapat menghapus jadwal piket."
+
+#: duty_schedule/admins/duty_schedule_admin.py:384
+#: duty_schedule/admins/duty_schedule_admin.py:388
+msgid "Delete Selected Duty Schedules"
+msgstr "Hapus Jadwal Piket Terpilih"
+
+#: duty_schedule/apps.py:10 duty_schedule/models/duty_attendance_model.py:34
+msgid "Duty Schedule"
+msgstr "Jadwal Piket"
+
+#: duty_schedule/models/duty_attendance_dashboard_model.py:22
+#, fuzzy
+#| msgid "Duty Attendances"
+msgid "Duty Attendance Dashboard"
+msgstr "Kehadiran Piket"
+
+#: duty_schedule/models/duty_attendance_dashboard_model.py:23
+#: lab_schedule/models/lab_schedule_dashboard_model.py:23
+#: templates/admin/duty_schedule/dutyattendancemodel/change_list.html:7
+#: templates/admin/lab_schedule/labschedulemodel/change_list.html:12
+msgid "Dashboard"
+msgstr "Dasbor"
+
+#: duty_schedule/models/duty_attendance_model.py:42
+#, fuzzy
+#| msgid "Host/Assistant"
+msgid "Laboratory Assistant"
+msgstr "Host/Assistant"
+
+#: duty_schedule/models/duty_attendance_model.py:47
+msgid "Duty Date"
+msgstr "Tanggal Piket"
+
+#: duty_schedule/models/duty_attendance_model.py:51
+#: guest_visit/admins/guest_visit_resource.py:48
+#: guest_visit/models/guest_visit_model.py:80
+#: lab_schedule/admins/lab_schedule_resource.py:70
+#: lab_schedule/models/lab_schedule_model.py:52
+#: room_booking/admins/room_booking_resource.py:59
+#: shared/utils/date_utils.py:85
+msgid "Start Time"
+msgstr "Waktu Start"
+
+#: duty_schedule/models/duty_attendance_model.py:55
+#: guest_visit/admins/guest_visit_resource.py:50
+#: guest_visit/models/guest_visit_model.py:87
+#: lab_schedule/admins/lab_schedule_resource.py:75
+#: lab_schedule/models/lab_schedule_model.py:56
+#: room_booking/admins/room_booking_resource.py:64
+#: shared/utils/date_utils.py:86
+msgid "End Time"
+msgstr "Waktu End"
+
+#: duty_schedule/models/duty_attendance_model.py:73
+#, fuzzy
+#| msgid "OTP validated successfully"
+msgid "OTP Validated At"
+msgstr "OTP validated successfully"
+
+#: duty_schedule/models/duty_attendance_model.py:79
+msgid "Recognition Confidence"
+msgstr "Kepercayaan Pengenalan"
+
+#: duty_schedule/models/duty_attendance_model.py:94
+#, fuzzy
+#| msgid "Actual Clock In Time"
+msgid "Manual Clock In Override"
+msgstr "Waktu Clock In Aktual"
+
+#: duty_schedule/models/duty_attendance_model.py:99
+#, fuzzy
+#| msgid "Actual Clock Out Time"
+msgid "Manual Clock Out Override"
+msgstr "Waktu Clock Out Aktual"
+
+#: duty_schedule/models/duty_attendance_model.py:119
+#, fuzzy
+#| msgid "Method used to mark attendance"
+msgid "OTP Used for Attendance"
+msgstr "Metode yang digunakan untuk menandai kehadiran"
+
+#: duty_schedule/models/duty_attendance_model.py:125
+msgid "Duty Attendance"
+msgstr "Kehadiran Piket"
+
+#: duty_schedule/models/duty_attendance_model.py:126
+msgid "Duty Attendances"
+msgstr "Kehadiran Piket"
+
+#: duty_schedule/models/duty_schedule_model.py:52
+msgid "Assigned Teaching Assistants"
+msgstr "Asisten Mengajar yang Ditugaskan"
+
+#: duty_schedule/models/duty_schedule_model.py:53
+msgid "Select teaching assistants for this duty schedule"
+msgstr "Pilih asisten mengajar untuk jadwal piket ini"
+
+#: duty_schedule/models/duty_schedule_model.py:58
+msgid "Duty Start Date"
+msgstr "Tanggal Mulai Piket"
+
+#: duty_schedule/models/duty_schedule_model.py:59
+msgid "Start date for the duty period"
+msgstr "Tanggal mulai untuk periode piket"
+
+#: duty_schedule/models/duty_schedule_model.py:63
+msgid "Duty End Date"
+msgstr "Tanggal Selesai Piket"
+
+#: duty_schedule/models/duty_schedule_model.py:64
+msgid "End date for bulk generation"
+msgstr "Tanggal selesai untuk generasi massal"
+
+#: duty_schedule/models/duty_schedule_model.py:70
+msgid "Duty Start Time"
+msgstr "Waktu Mulai Piket"
+
+#: duty_schedule/models/duty_schedule_model.py:71
+msgid "Start time for duty shifts"
+msgstr "Waktu mulai untuk shift piket"
+
+#: duty_schedule/models/duty_schedule_model.py:76
+msgid "Duty End Time"
+msgstr "Waktu Selesai Piket"
+
+#: duty_schedule/models/duty_schedule_model.py:77
+msgid "End time for duty shifts"
+msgstr "Waktu selesai untuk shift piket"
+
+#: duty_schedule/models/duty_schedule_model.py:84
+msgid "Duty Days Pattern"
+msgstr "Pola Hari Piket"
+
+#: duty_schedule/models/duty_schedule_model.py:86
+msgid "Select days pattern for bulk generation (e.g., 'Senin,Rabu,Jumat')"
+msgstr "Pilih pola hari untuk generasi massal (misalnya 'Senin,Rabu,Jumat')"
+
+#: duty_schedule/models/duty_schedule_model.py:93
+msgid "Is Generated"
+msgstr "Sudah Digenerate"
+
+#: duty_schedule/models/duty_schedule_model.py:94
+msgid "Indicates whether attendance records have been generated"
+msgstr "Menunjukkan apakah catatan kehadiran sudah digenerate"
+
+#: duty_schedule/models/duty_schedule_model.py:99
+msgid "Generated Count"
+msgstr "Jumlah yang Digenerate"
+
+#: duty_schedule/models/duty_schedule_model.py:100
+msgid "Number of attendance records generated from this schedule"
+msgstr "Jumlah catatan kehadiran yang digenerate dari jadwal ini"
+
+#: duty_schedule/models/duty_schedule_model.py:106
+msgid "Duty Schedule (Bulk)"
+msgstr "Jadwal Piket (Massal)"
+
+#: duty_schedule/models/duty_schedule_model.py:107
+msgid "Duty Schedules (Bulk)"
+msgstr "Jadwal Piket (Massal)"
+
+#: duty_schedule/models/duty_schedule_model.py:156
+msgid "Duty time must be within lab operating hours "
+msgstr "Waktu piket harus dalam jam operasional lab"
+
+#: duty_schedule/models/duty_schedule_model.py:218
+msgid "Attendance records have already been generated for this schedule."
+msgstr "Catatan kehadiran sudah digenerate untuk jadwal ini."
+
+#: duty_schedule/models/duty_schedule_model.py:230
+#: duty_schedule/models/duty_schedule_model.py:355
+msgid ""
+"At least one assistant must be assigned before generating attendance records."
+msgstr ""
+
+#: duty_schedule/models/duty_schedule_model.py:295
+msgid "No records generated yet."
+msgstr "Belum ada catatan yang digenerate."
+
+#: duty_schedule/models/duty_schedule_model.py:310
+msgid "Cannot regenerate: Some attendance records have been completed."
+msgstr "Tidak dapat regenerate: Beberapa catatan kehadiran sudah selesai."
+
+#: duty_schedule/models/duty_schedule_model.py:313
+msgid "Can regenerate (no completed attendance found)."
+msgstr "Dapat regenerate (tidak ditemukan kehadiran yang selesai)."
+
+#: duty_schedule/rest/serializers/duty_attendance_serializer.py:135
+msgid "6-digit OTP code for verification"
+msgstr "Kode OTP 6 digit untuk verifikasi"
+
+#: duty_schedule/rest/serializers/duty_attendance_serializer.py:141
+msgid "OTP must be a 6-digit number."
+msgstr "OTP harus berupa angka 6 digit."
+
+#: fcm_notifications/apps.py:12
+#, fuzzy
+#| msgid "Test Notification"
+msgid "FCM Notifications"
+msgstr "Notifikasi Tes"
+
+#: fcm_notifications/models/fcm_device_model.py:25
+#, fuzzy
+#| msgid "User who created this record"
+msgid "User who owns this device"
+msgstr "Pengguna yang membuat catatan ini"
+
+#: fcm_notifications/models/fcm_device_model.py:31
+msgid "Registration Token"
+msgstr "Token Registrasi"
+
+#: fcm_notifications/models/fcm_device_model.py:32
+msgid "FCM registration token for this device"
+msgstr "Token registrasi FCM untuk perangkat ini"
+
+#: fcm_notifications/models/fcm_device_model.py:38
+msgid "Android"
+msgstr "Android"
+
+#: fcm_notifications/models/fcm_device_model.py:39
+msgid "iOS"
+msgstr "iOS"
+
+#: fcm_notifications/models/fcm_device_model.py:40
+msgid "Web"
+msgstr "Web"
+
+#: fcm_notifications/models/fcm_device_model.py:43
+#, fuzzy
+#| msgid "Session Type"
+msgid "Device Type"
+msgstr "Tipe Sesi"
+
+#: fcm_notifications/models/fcm_device_model.py:44
+msgid "Type of device (Android, iOS, Web)"
+msgstr "Tipe perangkat (Android, iOS, Web)"
+
+#: fcm_notifications/models/fcm_device_model.py:51
+msgid "Device Name"
+msgstr "Nama Perangkat"
+
+#: fcm_notifications/models/fcm_device_model.py:52
+msgid "Optional device name (e.g., 'iPhone 13', 'Samsung Galaxy')"
+msgstr "Nama perangkat opsional (misalnya 'iPhone 13', 'Samsung Galaxy')"
+
+#: fcm_notifications/models/fcm_device_model.py:57
+#, fuzzy
+#| msgid "Host User"
+msgid "Last Used"
+msgstr "Pengguna Host"
+
+#: fcm_notifications/models/fcm_device_model.py:58
+#, fuzzy
+#| msgid "Timestamp when this record was last updated"
+msgid "When this token was last updated"
+msgstr "Waktu ketika catatan ini terakhir diperbarui"
+
+#: fcm_notifications/models/fcm_device_model.py:64
+msgid "FCM Device"
+msgstr "Perangkat FCM"
+
+#: fcm_notifications/models/fcm_device_model.py:65
+msgid "FCM Devices"
+msgstr "Perangkat FCM"
+
+#: fcm_notifications/models/notification_log_model.py:25
+#, fuzzy
+#| msgid "User who created this record"
+msgid "User who received the notification"
+msgstr "Pengguna yang membuat catatan ini"
+
+#: fcm_notifications/models/notification_log_model.py:34
+#: lab_schedule/admins/views/lab_schedule_export_view.py:117
+#: lab_schedule/models/lab_schedule_model.py:97
+msgid "Lab Schedule"
+msgstr "Jadwal Lab"
+
+#: fcm_notifications/models/notification_log_model.py:35
+msgid "Lab schedule this notification is about"
+msgstr "Jadwal lab yang terkait dengan notifikasi ini"
+
+#: fcm_notifications/models/notification_log_model.py:41
+msgid "Lab Reminder"
+msgstr "Pengingat Lab"
+
+#: fcm_notifications/models/notification_log_model.py:42
+#, fuzzy
+#| msgid "Schedule Date"
+msgid "Schedule Change"
+msgstr "Tanggal Schedule"
+
+#: fcm_notifications/models/notification_log_model.py:43
+#, fuzzy
+#| msgid "Cancelled"
+msgid "Cancellation"
+msgstr "Dibatalkan"
+
+#: fcm_notifications/models/notification_log_model.py:44
+msgid "General Notification"
+msgstr "Notifikasi Umum"
+
+#: fcm_notifications/models/notification_log_model.py:47
+#, fuzzy
+#| msgid "Allocation Type"
+msgid "Notification Type"
+msgstr "Tipe Allocation"
+
+#: fcm_notifications/models/notification_log_model.py:48
+msgid "Type of notification sent"
+msgstr "Tipe notifikasi yang dikirim"
+
+#: fcm_notifications/models/notification_log_model.py:52
+msgid "Title"
+msgstr "Judul"
+
+#: fcm_notifications/models/notification_log_model.py:52
+#, fuzzy
+#| msgid "Allocation Details"
+msgid "Notification title"
+msgstr "Detail Allocation"
+
+#: fcm_notifications/models/notification_log_model.py:56
+msgid "Body"
+msgstr "Isi"
+
+#: fcm_notifications/models/notification_log_model.py:56
+msgid "Notification message body"
+msgstr "Isi pesan notifikasi"
+
+#: fcm_notifications/models/notification_log_model.py:62
+msgid "Data"
+msgstr "Data"
+
+#: fcm_notifications/models/notification_log_model.py:63
+#, fuzzy
+#| msgid "Additional Information"
+msgid "Additional data sent with notification"
+msgstr "Informasi Additional"
+
+#: fcm_notifications/models/notification_log_model.py:68
+msgid "Sent At"
+msgstr "Dikirim Pada"
+
+#: fcm_notifications/models/notification_log_model.py:69
+msgid "When the notification was sent"
+msgstr "Kapan notifikasi dikirim"
+
+#: fcm_notifications/models/notification_log_model.py:76
+msgid "Sent"
+msgstr "Terkirim"
+
+#: fcm_notifications/models/notification_log_model.py:77
+msgid "Failed"
+msgstr "Gagal"
+
+#: fcm_notifications/models/notification_log_model.py:78
+msgid "Partial Success"
+msgstr "Sukses Sebagian"
+
+#: fcm_notifications/models/notification_log_model.py:82
+msgid "Delivery status of the notification"
+msgstr "Status pengiriman notifikasi"
+
+#: fcm_notifications/models/notification_log_model.py:88
+#, fuzzy
+#| msgid "Responsi"
+msgid "FCM Response"
+msgstr "Responsi"
+
+#: fcm_notifications/models/notification_log_model.py:89
+msgid "Response from FCM service"
+msgstr "Respons dari layanan FCM"
+
+#: fcm_notifications/models/notification_log_model.py:94
+#, fuzzy
+#| msgid "Permission Count"
+msgid "Devices Count"
+msgstr "Jumlah Izin"
+
+#: fcm_notifications/models/notification_log_model.py:95
+msgid "Number of devices notification was sent to"
+msgstr "Jumlah perangkat yang dikirim notifikasi"
+
+#: fcm_notifications/models/notification_log_model.py:100
+#, fuzzy
+#| msgid "Permission Count"
+msgid "Success Count"
+msgstr "Jumlah Izin"
+
+#: fcm_notifications/models/notification_log_model.py:101
+msgid "Number of successful deliveries"
+msgstr "Jumlah pengiriman yang berhasil"
+
+#: fcm_notifications/models/notification_log_model.py:106
+msgid "Failure Count"
+msgstr "Jumlah Kegagalan"
+
+#: fcm_notifications/models/notification_log_model.py:107
+msgid "Number of failed deliveries"
+msgstr "Jumlah pengiriman yang gagal"
+
+#: fcm_notifications/models/notification_log_model.py:112
+msgid "Is Read"
+msgstr "Sudah Dibaca"
+
+#: fcm_notifications/models/notification_log_model.py:113
+msgid "Whether the user has read this notification"
+msgstr "Apakah pengguna telah membaca notifikasi ini"
+
+#: fcm_notifications/models/notification_log_model.py:119
+msgid "Notification Log"
+msgstr "Log Notifikasi"
+
+#: fcm_notifications/models/notification_log_model.py:120
+msgid "Notification Logs"
+msgstr "Log Notifikasi"
+
+#: fcm_notifications/services/fcm_service_v2.py:276
+msgid "Test notification from Lab Management"
+msgstr "Notifikasi tes dari Manajemen Lab"
+
+#: fcm_notifications/services/fcm_service_v2.py:278
+msgid "Test Notification"
+msgstr "Notifikasi Tes"
+
+#: fcm_notifications/services/fcm_service_v2.py:441
+#, python-brace-format
+msgid "Your {activity_type} is starting soon at {time}. {detail}"
+msgstr "{activity_type} Anda akan segera dimulai pada {time}. {detail}"
+
+#: fcm_notifications/services/fcm_service_v2.py:453
+#, fuzzy, python-brace-format
+#| msgid "Your {booking_type} on {date} at {time} has been approved"
+msgid "Your {activity_type} scheduled for {time} has been cancelled."
+msgstr "Pemesanan {booking_type} Anda pada {date} pukul {time} telah disetujui"
+
+#: fcm_notifications/services/fcm_service_v2.py:456
+#, python-brace-format
+msgid "Your {activity_type} has been rescheduled to {time}."
+msgstr "{activity_type} Anda telah dijadwalkan ulang ke {time}."
+
+#: fcm_notifications/services/fcm_service_v2.py:460
+#, fuzzy, python-brace-format
+#| msgid "Your {booking_type} on {date} at {time} has been approved"
+msgid "Your {activity_type} at {time} has been modified."
+msgstr "Pemesanan {booking_type} Anda pada {date} pukul {time} telah disetujui"
+
+#: fcm_notifications/services/fcm_service_v2.py:626
+msgid "🏢 You have a room booking"
+msgstr "🏢 Anda memiliki pemesanan ruangan"
+
+#: fcm_notifications/services/fcm_service_v2.py:627
+#, fuzzy, python-brace-format
+#| msgid "Booking Start Time"
+msgid "{booking_type} at {time}"
+msgstr "Booking Waktu Start"
+
+#: fcm_notifications/services/fcm_service_v2.py:632
+#: fcm_notifications/services/fcm_service_v2.py:676
+msgid "📝 Detail"
+msgstr "📝 Detail"
+
+#: fcm_notifications/services/fcm_service_v2.py:636
+msgid "💪 Good luck with your presentation!"
+msgstr "💪 Semangat presentasi!"
+
+#: fcm_notifications/services/fcm_service_v2.py:638
+msgid "🤝 Have a productive meeting!"
+msgstr "🤝 Semoga rapat berjalan lancar!"
+
+#: fcm_notifications/services/fcm_service_v2.py:640
+msgid "✨ Have a great session!"
+msgstr "✨ Semoga sesi berjalan dengan baik!"
+
+#: fcm_notifications/services/fcm_service_v2.py:644
+msgid "📚 You have a course session"
+msgstr "📚 Anda memiliki sesi kuliah"
+
+#: fcm_notifications/services/fcm_service_v2.py:645
+#, python-brace-format
+msgid "{course_title} at {time}"
+msgstr "{course_title} pada {time}"
+
+#: fcm_notifications/services/fcm_service_v2.py:650
+msgid "📖 Session"
+msgstr "📖 Sesi"
+
+#: fcm_notifications/services/fcm_service_v2.py:653
+msgid "⏰ Don't be late!"
+msgstr "⏰ Jangan terlambat!"
+
+#: fcm_notifications/services/fcm_service_v2.py:657
+msgid "🧪 You have a lab activity"
+msgstr "🧪 Anda memiliki aktivitas lab"
+
+#: fcm_notifications/services/fcm_service_v2.py:658
+#: fcm_notifications/services/fcm_service_v2.py:671
+#, python-brace-format
+msgid "{activity_type} at {time}"
+msgstr "{activity_type} pada {time}"
+
+#: fcm_notifications/services/fcm_service_v2.py:663
+msgid "🔬 Description"
+msgstr "🔬 Deskripsi"
+
+#: fcm_notifications/services/fcm_service_v2.py:666
+msgid "🔬 Ready to experiment!"
+msgstr "🔬 Siap bereksperimen!"
+
+#: fcm_notifications/services/fcm_service_v2.py:670
+msgid "📅 You have a scheduled activity"
+msgstr "📅 Anda memiliki aktivitas terjadwal"
+
+#: fcm_notifications/services/fcm_service_v2.py:679
+msgid "🚀 You got this!"
+msgstr "�� Kamu pasti bisa!"
+
+#: fcm_notifications/services/fcm_service_v2.py:830
+msgid "🏢 New room booking request"
+msgstr "🏢 Permintaan pemesanan ruangan baru"
+
+#: fcm_notifications/services/fcm_service_v2.py:832
+#, python-brace-format
+msgid "{booker_name} requested {booking_type} on {date} at {time}"
+msgstr "{booker_name} meminta {booking_type} pada {date} pukul {time}"
+
+#: fcm_notifications/services/fcm_service_v2.py:841
+msgid "📝 Purpose"
+msgstr "📝 Tujuan"
+
+#: fcm_notifications/services/fcm_service_v2.py:843
+msgid "🔍 Please review and approve/reject"
+msgstr "🔍 Silakan review dan approve/reject"
+
+#: fcm_notifications/services/fcm_service_v2.py:847
+msgid "✅ Room booking approved!"
+msgstr "✅ Pemesanan ruangan disetujui!"
+
+#: fcm_notifications/services/fcm_service_v2.py:849
+#, python-brace-format
+msgid "Your {booking_type} on {date} at {time} has been approved"
+msgstr "Pemesanan {booking_type} Anda pada {date} pukul {time} telah disetujui"
+
+#: fcm_notifications/services/fcm_service_v2.py:853
+msgid "📝 Note"
+msgstr "📝 Catatan"
+
+#: fcm_notifications/services/fcm_service_v2.py:855
+msgid "🎉 You can now use the room!"
+msgstr "🎉 Anda sekarang dapat menggunakan ruangan!"
+
+#: fcm_notifications/services/fcm_service_v2.py:859
+msgid "❌ Room booking rejected"
+msgstr "❌ Pemesanan ruangan ditolak"
+
+#: fcm_notifications/services/fcm_service_v2.py:861
+#, python-brace-format
+msgid "Your {booking_type} on {date} at {time} has been rejected"
+msgstr "Pemesanan {booking_type} Anda pada {date} pukul {time} telah ditolak"
+
+#: fcm_notifications/services/fcm_service_v2.py:865
+msgid "📝 Reason"
+msgstr "📝 Alasan"
+
+#: fcm_notifications/services/fcm_service_v2.py:867
+msgid "💡 Please check for conflicts or contact lab staff"
+msgstr "💡 Silakan periksa konflik atau hubungi staf lab"
+
+#: fcm_notifications/services/fcm_service_v2.py:977
+msgid "🕐 Your duty starts soon"
+msgstr "🕐 Tugas Anda akan segera dimulai"
+
+#: fcm_notifications/services/fcm_service_v2.py:978
+#, python-brace-format
+msgid "Duty schedule on {date} at {time}"
+msgstr "Jadwal tugas pada {date} pukul {time}"
+
+#: fcm_notifications/services/fcm_service_v2.py:982
+msgid "👨‍💼 Time to assist students!"
+msgstr "👨‍💼 Waktunya membantu mahasiswa!"
+
+#: fcm_notifications/services/fcm_service_v2.py:985
+msgid "⏰ Duty ending soon"
+msgstr "⏰ Tugas akan segera berakhir"
+
+#: fcm_notifications/services/fcm_service_v2.py:986
+#, python-brace-format
+msgid "Your duty on {date} ends at {end_time}"
+msgstr "Tugas Anda pada {date} berakhir pukul {end_time}"
+
+#: fcm_notifications/services/fcm_service_v2.py:990
+msgid "📊 Don't forget to complete your tasks!"
+msgstr "📊 Jangan lupa selesaikan tugas Anda!"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:71
+#, fuzzy
+#| msgid "Duty Start Date"
+msgid "From Date"
+msgstr "Tanggal Mulai Piket"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:72
+msgid "Filter visits from this date"
+msgstr "Filter kunjungan dari tanggal ini"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:84
+#, fuzzy
+#| msgid "Duty End Date"
+msgid "To Date"
+msgstr "Tanggal Selesai Piket"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:85
+msgid "Filter visits until this date"
+msgstr "Filter kunjungan sampai tanggal ini"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:98
+#: shared/export/base_export_form.py:64
+msgid "Filter by specific month"
+msgstr "Filter by specific month"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:110
+#: guest_visit/admins/forms/guest_visit_export_form.py:113
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:89
+#: shared/export/base_export_form.py:75 shared/export/base_export_form.py:78
+msgid "Year"
+msgstr "Tahun"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:114
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:93
+#: shared/export/base_export_form.py:79
+msgid "Filter by specific year"
+msgstr "Filter berdasarkan tahun tertentu"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:118
+msgid "All Identity Types"
+msgstr "Semua Jenis Identitas"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:126
+#: guest_visit/admins/guest_visit_resource.py:39
+#: guest_visit/models/guest_visit_model.py:60
+msgid "Identity Type"
+msgstr "Tipe Identity"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:127
+#, fuzzy
+#| msgid "Visitor Identity Type"
+msgid "Filter by visitor identity type"
+msgstr "Jenis Identitas Pengunjung"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:137
+#, fuzzy
+#| msgid "Users"
+msgid "All Users"
+msgstr "Pengguna"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:152
+#, fuzzy
+#| msgid "User who created this record"
+msgid "Filter by user who created the visit record"
+msgstr "Pengguna yang membuat catatan ini"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:160
+#: shared/export/base_export_form.py:87
+#: templates/admin/base_export_form.html:641
+#: templates/admin/guest_visit/export_form.html:282
+msgid "Export Format"
+msgstr "Export Format"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:161
+#: shared/export/base_export_form.py:88
+msgid "Choose the export file format"
+msgstr "Choose the export file format"
+
+#: guest_visit/admins/forms/guest_visit_export_form.py:172
+msgid "Visit end date must be after start date"
+msgstr "Tanggal selesai kunjungan harus setelah tanggal mulai"
+
+#: guest_visit/admins/guest_visit_admin.py:113
+#: guest_visit/admins/guest_visit_admin.py:142
+msgid "Visitor Information"
+msgstr "Informasi Pengunjung"
+
+#: guest_visit/admins/guest_visit_admin.py:122
+#: guest_visit/admins/guest_visit_admin.py:151
+msgid ""
+"Select registered user OR fill manual entry fields (name is required for "
+"manual entry)"
+msgstr ""
+
+#: guest_visit/admins/guest_visit_admin.py:127
+#: guest_visit/admins/guest_visit_admin.py:156
+msgid "Visit Details"
+msgstr "Detail Kunjungan"
+
+#: guest_visit/admins/guest_visit_admin.py:186
+msgid "Visitor"
+msgstr "Pengunjung"
+
+#: guest_visit/admins/guest_visit_admin.py:194
+#: guest_visit/admins/guest_visit_resource.py:52
+#: guest_visit/models/guest_visit_model.py:92
+#: room_booking/admins/room_booking_resource.py:19
+#: room_booking/models/room_booking_model.py:140
+msgid "Purpose"
+msgstr "Tujuan"
+
+#: guest_visit/admins/guest_visit_admin.py:245
+#: guest_visit/admins/guest_visit_admin.py:249
+msgid "Restore Selected Guest Visits"
+msgstr "Pulihkan Kunjungan Tamu Terpilih"
+
+#: guest_visit/admins/guest_visit_admin.py:257
+#: guest_visit/admins/guest_visit_admin.py:261
+msgid "Delete Selected Guest Visits"
+msgstr "Hapus Kunjungan Tamu Terpilih"
+
+#: guest_visit/admins/guest_visit_resource.py:35
+#: guest_visit/models/guest_visit_model.py:51
+msgid "Visitor Name"
+msgstr "Nama Visitor"
+
+#: guest_visit/admins/guest_visit_resource.py:43
+#: guest_visit/models/guest_visit_model.py:68
+msgid "Identity Number"
+msgstr "Nomor Identity"
+
+#: guest_visit/admins/guest_visit_resource.py:46
+#: guest_visit/models/guest_visit_model.py:75
+msgid "Visit Date"
+msgstr "Tanggal Visit"
+
+#: guest_visit/admins/views/guest_visit_export_view.py:125
+#: templates/admin/guest_visit/guestvisitmodel/export_form.html:5
+msgid "Export Guest Visits with Filters"
+msgstr "Export Guest Visits with Filters"
+
+#: guest_visit/admins/views/guest_visit_export_view.py:126
+#: guest_visit/apps.py:8 guest_visit/models/guest_visit_model.py:99
+#: templates/admin/guest_visit/export_form.html:179
+msgid "Guest Visit"
+msgstr "Kunjungan Tamu"
+
+#: guest_visit/admins/views/guest_visit_export_view.py:128
+#: templates/admin/guest_visit/guestvisitmodel/export_form.html:11
+msgid ""
+"Export guest visit data with customizable filters and field selection. This "
+"includes visitor information, visit details, and host assignments."
+msgstr ""
+"Ekspor data kehadiran sesi kelas dengan filter dan pilihan bidang yang dapat "
+"disesuaikan. Ini termasuk informasi kelas, detail sesi, data siswa, dan "
+"status kehadiran."
+
+#: guest_visit/models/guest_visit_model.py:42
+msgid "Registered Visitor"
+msgstr "Registered Visitor"
+
+#: guest_visit/models/guest_visit_model.py:43
+msgid "Select if visitor is a registered user in the system"
+msgstr "Select if visitor is a registered user di the system"
+
+#: guest_visit/models/guest_visit_model.py:52
+msgid "Name of the visitor (required if not a registered user)"
+msgstr "Name of the visitor (required if not a registered user)"
+
+#: guest_visit/models/guest_visit_model.py:61
+msgid "Type of identity number (optional)"
+msgstr "Type of identity number (optional)"
+
+#: guest_visit/models/guest_visit_model.py:69
+msgid "Identity number (optional)"
+msgstr "Identity number (optional)"
+
+#: guest_visit/models/guest_visit_model.py:76
+msgid "Date of the visit"
+msgstr "Date of the visit"
+
+#: guest_visit/models/guest_visit_model.py:81
+msgid "Start time of the visit"
+msgstr "Start time of the visit"
+
+#: guest_visit/models/guest_visit_model.py:88
+msgid "End time of the visit (optional)"
+msgstr "End time of the visit (optional)"
+
+#: guest_visit/models/guest_visit_model.py:93
+msgid "Purpose of the visit"
+msgstr "Purpose of the visit"
+
+#: guest_visit/models/guest_visit_model.py:100
+#: templates/admin/guest_visit/export_form.html:180
+msgid "Guest Visits"
+msgstr "Kunjungan Tamu"
+
+#: guest_visit/models/guest_visit_model.py:119
+msgid "Either select a registered user or provide visitor name"
+msgstr "Either select a registered user or provide visitor name"
+
+#: guest_visit/models/guest_visit_model.py:126
+msgid "Identity number required when identity type is selected"
+msgstr "Identity number required when identity type is selected"
+
+#: guest_visit/models/guest_visit_model.py:130
+msgid "Identity type required when identity number is provided"
+msgstr "Identity type required when identity number is provided"
+
+#: guest_visit/models/guest_visit_model.py:135
+msgid "End time must be after start time"
+msgstr "End time harus after start time"
+
+#: lab_allocation/admins/lab_allocation_admin.py:42
+msgid ""
+"Allocation days must be selected when creating bulk allocations with an end "
+"date."
+msgstr ""
+
+#: lab_allocation/admins/lab_allocation_admin.py:49
+msgid ""
+"End date must be provided when allocation days are selected for bulk "
+"generation."
+msgstr ""
+
+#: lab_allocation/admins/lab_allocation_admin.py:88
+msgid "New Lab Allocation"
+msgstr "New Lab Allocation"
+
+#: lab_allocation/admins/lab_allocation_admin.py:98
+msgid "Please fill all field at this section for creating schedule."
+msgstr "Please fill all field di this sectipada untuk creating schedule."
+
+#: lab_allocation/admins/lab_allocation_admin.py:103
+msgid "Bulk Generation (Optional)"
+msgstr "Bulk Generatipada (Optional)"
+
+#: lab_allocation/admins/lab_allocation_admin.py:111
+msgid "Fill end_date and select days to create multiple allocations at once."
+msgstr "Fill end_date and select days ke create multiple allocations di once."
+
+#: lab_allocation/admins/lab_allocation_admin.py:119
+msgid "Allocation Information"
+msgstr "Informasi Allocation"
+
+#: lab_allocation/admins/lab_allocation_admin.py:152
+#: lab_schedule/admins/lab_schedule_admin.py:175
+msgid "Details"
+msgstr "Detail"
+
+#: lab_allocation/admins/lab_allocation_admin.py:267
+#: lab_allocation/admins/lab_allocation_admin.py:271
+msgid "Restore Selected Allocations"
+msgstr "Restore Selected Allocations"
+
+#: lab_allocation/admins/lab_allocation_admin.py:279
+#: lab_allocation/admins/lab_allocation_admin.py:283
+msgid "Delete Selected Allocations"
+msgstr "Delete Selected Allocations"
+
+#: lab_allocation/apps.py:10 lab_allocation/models/lab_allocation_model.py:97
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:98
+msgid "Lab Allocation"
+msgstr "Lab Allocation"
+
+#: lab_allocation/models/lab_allocation_model.py:50
+msgid "Allocation Date"
+msgstr "Tanggal Allocation"
+
+#: lab_allocation/models/lab_allocation_model.py:51
+msgid "Date when the lab allocation is scheduled"
+msgstr "Date when the lab allocatipada is scheduled"
+
+#: lab_allocation/models/lab_allocation_model.py:54
+msgid "Allocation Start Time"
+msgstr "Allocatipada Waktu Start"
+
+#: lab_allocation/models/lab_allocation_model.py:55
+msgid "Start time of the lab allocation"
+msgstr "Start time of the lab allocation"
+
+#: lab_allocation/models/lab_allocation_model.py:58
+msgid "Allocation End Time"
+msgstr "Allocatipada Waktu End"
+
+#: lab_allocation/models/lab_allocation_model.py:59
+msgid "End time of the lab allocation"
+msgstr "End time of the lab allocation"
+
+#: lab_allocation/models/lab_allocation_model.py:66
+msgid "Allocation Type"
+msgstr "Tipe Allocation"
+
+#: lab_allocation/models/lab_allocation_model.py:67
+msgid "Type of laboratory allocation (maintenance, preparation, etc.)"
+msgstr "Type of laboratory allocatipada (maintenance, preparation, etc.)"
+
+#: lab_allocation/models/lab_allocation_model.py:73
+msgid "Allocation Details"
+msgstr "Detail Allocation"
+
+#: lab_allocation/models/lab_allocation_model.py:74
+msgid "Detailed description of the lab allocation"
+msgstr "Detailed descriptipada of the lab allocation"
+
+#: lab_allocation/models/lab_allocation_model.py:80
+msgid "Allocation End Date"
+msgstr "Allocatipada Tanggal End"
+
+#: lab_allocation/models/lab_allocation_model.py:82
+msgid ""
+"Leave empty for single allocation. Fill to create multiple allocations until "
+"this date."
+msgstr ""
+
+#: lab_allocation/models/lab_allocation_model.py:90
+msgid "Allocation Days"
+msgstr "Allocatipada Days"
+
+#: lab_allocation/models/lab_allocation_model.py:91
+msgid "Select days pattern for allocation generation"
+msgstr "Select days pattern untuk allocatipada generation"
+
+#: lab_allocation/models/lab_allocation_model.py:98
+msgid "Lab Allocations"
+msgstr "Lab Allocations"
+
+#: lab_schedule/admins/admin_config.py:50 lab_schedule/apps.py:10
+msgid "Lab Schedule Management"
+msgstr "Lab Manajemen Schedule"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:66
+msgid "Schedule Date From"
+msgstr "Tanggal Schedule From"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:67
+msgid "Filter schedules from this date"
+msgstr "Filter schedules dari this date"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:73
+msgid "Schedule Date To"
+msgstr "Tanggal Schedule To"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:74
+msgid "Filter schedules until this date"
+msgstr "Filter schedules until this date"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:79
+msgid "Schedule Month"
+msgstr "Schedule Month"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:92
+msgid "Schedule Year"
+msgstr "Schedule Year"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:100
+#: room_booking/models/room_booking_model.py:198
+msgid "Room Booking"
+msgstr "Room Booking"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:102
+#: lab_schedule/admins/lab_schedule_resource.py:85
+#: lab_schedule/models/lab_schedule_model.py:64
+msgid "Source Model"
+msgstr "Source Model"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:112
+msgid "Schedule end date must be after start date"
+msgstr "Schedule end date harus after start date"
+
+#: lab_schedule/admins/forms/lab_schedule_export_form.py:121
+msgid "Invalid source model choice."
+msgstr "Invalid source model choice."
+
+#: lab_schedule/admins/lab_schedule_admin.py:119
+msgid "Schedule Information"
+msgstr "Informasi Schedule"
+
+#: lab_schedule/admins/lab_schedule_admin.py:131
+msgid "Source Information"
+msgstr "Informasi Source"
+
+#: lab_schedule/admins/lab_schedule_admin.py:138
+msgid ""
+"Information about the original booking that created this schedule entry."
+msgstr ""
+
+#: lab_schedule/admins/lab_schedule_resource.py:60
+#: lab_schedule/models/lab_schedule_model.py:83
+msgid "Activity Type"
+msgstr "Tipe Activity"
+
+#: lab_schedule/admins/lab_schedule_resource.py:65
+#: lab_schedule/models/lab_schedule_model.py:48
+msgid "Schedule Date"
+msgstr "Tanggal Schedule"
+
+#: lab_schedule/admins/lab_schedule_resource.py:80
+#: lab_schedule/models/lab_schedule_model.py:90
+msgid "Activity Detail"
+msgstr "Activity Detail"
+
+#: lab_schedule/admins/lab_schedule_resource.py:90
+#: lab_schedule/models/lab_schedule_model.py:73
+msgid "Source ID"
+msgstr "Source ID"
+
+#: lab_schedule/admins/views/lab_schedule_export_view.py:116
+msgid "Export Lab Schedules with Filters"
+msgstr "Export Lab Schedules with Filters"
+
+#: lab_schedule/admins/views/lab_schedule_export_view.py:119
+msgid ""
+"Export laboratory schedule data with customizable filters and field "
+"selection. This includes data from all lab booking sources: allocations, "
+"course sessions, and room bookings."
+msgstr ""
+
+#: lab_schedule/models/lab_schedule_dashboard_model.py:22
+msgid "Lab Schedule Dashboard"
+msgstr "Lab Schedule Dashboard"
+
+#: lab_schedule/models/lab_schedule_model.py:49
+msgid "Date when the lab activity is scheduled"
+msgstr "Date when the lab activity is scheduled"
+
+#: lab_schedule/models/lab_schedule_model.py:53
+msgid "Start time of the lab activity"
+msgstr "Start time of the lab activity"
+
+#: lab_schedule/models/lab_schedule_model.py:57
+msgid "End time of the lab activity"
+msgstr "End time of the lab activity"
+
+#: lab_schedule/models/lab_schedule_model.py:66
+msgid ""
+"Type of booking that created this entry (e.g., 'LabAllocation', "
+"'CourseSession')"
+msgstr ""
+
+#: lab_schedule/models/lab_schedule_model.py:75
+msgid "ID of the original booking record (supports both UUID and integer)"
+msgstr "ID of the original booking record (supports both UUID and integer)"
+
+#: lab_schedule/models/lab_schedule_model.py:84
+msgid "Type of activity from the source model"
+msgstr "Type of activity dari the source model"
+
+#: lab_schedule/models/lab_schedule_model.py:91
+msgid "Detailed description from the source model"
+msgstr "Detailed descriptipada dari the source model"
+
+#: lab_schedule/models/lab_schedule_model.py:98
+msgid "Lab Schedules"
+msgstr "Jadwal Lab"
+
+#: room_booking/admins/room_booking_admin.py:127
+#: room_booking/admins/room_booking_admin.py:210
+msgid "Booking Information"
+msgstr "Informasi Booking"
+
+#: room_booking/admins/room_booking_admin.py:141
+#: room_booking/admins/room_booking_admin.py:224
+msgid "Academic Details"
+msgstr "Detail Academic"
+
+#: room_booking/admins/room_booking_admin.py:154
+#: room_booking/admins/room_booking_admin.py:251
+msgid "Approval Information"
+msgstr "Informasi Approval"
+
+#: room_booking/admins/room_booking_admin.py:164
+#: room_booking/admins/room_booking_admin.py:261
+msgid "Additional Information"
+msgstr "Informasi Additional"
+
+#: room_booking/admins/room_booking_admin.py:192
+#: room_booking/admins/room_booking_resource.py:9
+#: room_booking/models/room_booking_model.py:125
+msgid "Booker"
+msgstr "Booker"
+
+#: room_booking/admins/room_booking_admin.py:237
+msgid "Approval Status"
+msgstr "Status Approval"
+
+#: room_booking/admins/room_booking_admin.py:317
+#: room_booking/admins/room_booking_admin.py:503
+#, fuzzy
+#| msgid "Approved"
+msgid "approved"
+msgstr "Disetujui"
+
+#: room_booking/admins/room_booking_admin.py:319
+#: room_booking/admins/room_booking_admin.py:505
+#, fuzzy
+#| msgid "Rejected"
+msgid "rejected"
+msgstr "Ditolak"
+
+#: room_booking/admins/room_booking_admin.py:321
+#: room_booking/admins/room_booking_admin.py:507
+#, python-brace-format
+msgid "Booking {status} by technician"
+msgstr "Pemesanan {status} oleh teknisi"
+
+#: room_booking/admins/room_booking_admin.py:366
+#, fuzzy
+#| msgid "Booking Approval Status"
+msgid "Booking approved by technician"
+msgstr "Booking Status Approval"
+
+#: room_booking/admins/room_booking_admin.py:376
+msgid "Approve Selected Bookings"
+msgstr "Approve Selected Bookings"
+
+#: room_booking/admins/room_booking_admin.py:392
+msgid "Booking rejected by technician"
+msgstr "Pemesanan ditolak oleh teknisi"
+
+#: room_booking/admins/room_booking_admin.py:402
+msgid "Reject Selected Bookings"
+msgstr "Reject Selected Bookings"
+
+#: room_booking/admins/room_booking_admin.py:474
+#, python-format
+msgid "%(name)s object with primary key %(key)r does not exist."
+msgstr "Objek %(name)s dengan primary key %(key)r tidak ada."
+
+#: room_booking/admins/room_booking_admin.py:516
+#, python-brace-format
+msgid "Room booking {status} successfully."
+msgstr "Pemesanan ruangan {status} berhasil."
+
+#: room_booking/admins/room_booking_resource.py:14
+#: room_booking/models/room_booking_model.py:132
+msgid "Booking Type"
+msgstr "Tipe Booking"
+
+#: room_booking/admins/room_booking_resource.py:24
+#: room_booking/models/room_booking_model.py:149
+msgid "Seminar Type"
+msgstr "Tipe Seminar"
+
+#: room_booking/admins/room_booking_resource.py:29
+#: room_booking/models/room_booking_model.py:157
+msgid "Research Title"
+msgstr "Research Title"
+
+#: room_booking/admins/room_booking_resource.py:34
+#: room_booking/models/room_booking_model.py:166
+msgid "Main Supervisor"
+msgstr "Madi Supervisor"
+
+#: room_booking/admins/room_booking_resource.py:39
+#: room_booking/models/room_booking_model.py:175
+msgid "Secondary Supervisor"
+msgstr "Secondary Supervisor"
+
+#: room_booking/admins/room_booking_resource.py:44
+#: room_booking/models/room_booking_model.py:183
+msgid "Examiner"
+msgstr "Examiner"
+
+#: room_booking/admins/room_booking_resource.py:49
+#: room_booking/models/room_booking_model.py:191
+msgid "Document Proof"
+msgstr "Document Proof"
+
+#: room_booking/admins/room_booking_resource.py:54
+#: room_booking/models/room_booking_model.py:79
+msgid "Booking Date"
+msgstr "Tanggal Booking"
+
+#: room_booking/admins/room_booking_resource.py:69
+#: room_booking/models/room_booking_model.py:96
+msgid "Booking Approval Status"
+msgstr "Booking Status Approval"
+
+#: room_booking/admins/room_booking_resource.py:74
+#: room_booking/models/room_booking_model.py:105
+msgid "Approved By User"
+msgstr "Approved By User"
+
+#: room_booking/admins/room_booking_resource.py:79
+#: room_booking/models/room_booking_model.py:111
+msgid "Approval Timestamp"
+msgstr "Waktu Approvalstamp"
+
+#: room_booking/admins/room_booking_resource.py:84
+#: room_booking/models/room_booking_model.py:117
+msgid "Approval Notes"
+msgstr "Approval Notes"
+
+#: room_booking/admins/room_booking_resource.py:140
+msgid "%d %B %Y, %H:%M"
+msgstr "%d %B %Y, %H:%M"
+
+#: room_booking/apps.py:8
+msgid "Room Booking Management"
+msgstr "Room Manajemen Booking"
+
+#: room_booking/models/room_booking_model.py:80
+msgid "Date when the room is booked"
+msgstr "Date when the room is booked"
+
+#: room_booking/models/room_booking_model.py:83
+msgid "Booking Start Time"
+msgstr "Booking Waktu Start"
+
+#: room_booking/models/room_booking_model.py:84
+msgid "Start time of the room booking"
+msgstr "Start time of the room booking"
+
+#: room_booking/models/room_booking_model.py:87
+msgid "Booking End Time"
+msgstr "Booking Waktu End"
+
+#: room_booking/models/room_booking_model.py:88
+msgid "End time of the room booking"
+msgstr "End time of the room booking"
+
+#: room_booking/models/room_booking_model.py:97
+msgid "Current approval status of the room booking"
+msgstr "Current approval status of the room booking"
+
+#: room_booking/models/room_booking_model.py:106
+msgid "User who approved or rejected this booking"
+msgstr "User who approved or rejected this booking"
+
+#: room_booking/models/room_booking_model.py:112
+msgid "Timestamp when the booking was approved or rejected"
+msgstr "Timestamp when the booking was approved or rejected"
+
+#: room_booking/models/room_booking_model.py:118
+msgid "Notes from approver/rejector explaining the decision"
+msgstr "Notes dari approver/rejector explaining the decision"
+
+#: room_booking/models/room_booking_model.py:126
+msgid "User who created this room booking"
+msgstr "User who created this room booking"
+
+#: room_booking/models/room_booking_model.py:133
+msgid "Type of booking - determines required fields"
+msgstr "Type of booking - determines required fields"
+
+#: room_booking/models/room_booking_model.py:141
+msgid "Purpose or reason for booking the room (optional)"
+msgstr "Purpose or reaspada untuk booking the room (optional)"
+
+#: room_booking/models/room_booking_model.py:150
+msgid "Type of seminar (required for seminar bookings)"
+msgstr "Type of seminar (required untuk seminar bookings)"
+
+#: room_booking/models/room_booking_model.py:158
+msgid "Title of the research/thesis (required for seminar bookings)"
+msgstr "Title of the research/thesis (required untuk seminar bookings)"
+
+#: room_booking/models/room_booking_model.py:168
+msgid "Name and details of the main supervisor (required for seminar bookings)"
+msgstr "Nama dan detail pembimbing utama (wajib untuk pemesanan seminar)"
+
+#: room_booking/models/room_booking_model.py:176
+msgid "Name and details of the secondary supervisor (optional)"
+msgstr "Name and details of the secondary supervisor (optional)"
+
+#: room_booking/models/room_booking_model.py:184
+msgid "Name and details of the examiner (required for seminar bookings)"
+msgstr "Name and details of the examiner (required untuk seminar bookings)"
+
+#: room_booking/models/room_booking_model.py:192
+msgid "Upload supporting documents (PDF)"
+msgstr "Upload supporting documents (PDF)"
+
+#: room_booking/models/room_booking_model.py:199
+msgid "Room Bookings"
+msgstr "Pemesanan Ruangan"
+
+#: room_booking/models/room_booking_model.py:239
+msgid "Students and assistants can only create seminar bookings. "
+msgstr "Students and assistants can only create seminar bookings. "
+
+#: room_booking/models/room_booking_model.py:246
+msgid "Research title is required for seminar bookings."
+msgstr "Research title wajib diisi untuk seminar bookings."
+
+#: room_booking/models/room_booking_model.py:250
+msgid "Seminar type is required for seminar bookings."
+msgstr "Seminar type wajib diisi untuk seminar bookings."
+
+#: room_booking/models/room_booking_model.py:254
+msgid "Main supervisor is required for seminar bookings."
+msgstr "Madi supervisor wajib diisi untuk seminar bookings."
+
+#: room_booking/models/room_booking_model.py:257
+msgid "Examiner is required for seminar bookings."
+msgstr "Examiner wajib diisi untuk seminar bookings."
+
+#: room_booking/models/room_booking_model.py:327
+msgid "Cannot approve booking: Schedule conflicts with existing lab activity "
+msgstr "Cannot approve booking: Schedule conflicts with existing lab activity "
+
+#: shared/apps.py:12
+msgid "Shared Utilities"
+msgstr "Utilitas Bersama"
+
+#: shared/export/base_export_form.py:38
+msgid "Excel (.xlsx)"
+msgstr "Excel (.xlsx)"
+
+#: shared/export/base_export_form.py:39
+msgid "CSV"
+msgstr "CSV"
+
+#: shared/export/base_export_form.py:40
+msgid "JSON"
+msgstr "JSON"
+
+#: shared/export/base_export_form.py:47
+msgid "Created From"
+msgstr "Created From"
+
+#: shared/export/base_export_form.py:48
+msgid "Filter records created from this date"
+msgstr "Filter records created dari this date"
+
+#: shared/export/base_export_form.py:54
+msgid "Created To"
+msgstr "Created To"
+
+#: shared/export/base_export_form.py:55
+msgid "Filter records created until this date"
+msgstr "Filter records created until this date"
+
+#: shared/export/base_export_form.py:115
+msgid "Fields to Export"
+msgstr "Fields ke Export"
+
+#: shared/export/base_export_form.py:116
+msgid "Select which fields to include in the export"
+msgstr "Select which fields ke include di the export"
+
+#: shared/export/base_export_form.py:138
+msgid "End date must be after start date"
+msgstr "End date harus after start date"
+
+#: shared/export/base_export_form.py:145
+msgid "Please select at least one field to export"
+msgstr "Please select di least one field ke export"
+
+#: shared/export/base_export_view.py:76
+msgid "You don't have permission to export this data"
+msgstr "You don't have permissipada ke export this data"
+
+#: shared/export/base_export_view.py:99
+msgid "An error occurred during export"
+msgstr "An error occurred during export"
+
+#: shared/export/base_export_view.py:121
+msgid "Please correct the form errors and try again"
+msgstr "Please correct the form errors and try again"
+
+#: shared/middleware/error_handling_middleware.py:75
+msgid "An unexpected error occurred. Please try again later."
+msgstr "An unexpected error occurred. Please try agadi later."
+
+#: shared/rest/views/i18n_test_view.py:40
+msgid "Data retrieved successfully"
+msgstr "Data retrieved successfully"
+
+#: shared/rest/views/i18n_test_view.py:41
+msgid "Welcome to Laboratory Management System"
+msgstr "Welcome ke Manajemen Laboratory System"
+
+#: shared/rest/views/i18n_test_view.py:42
+msgid "An error occurred while processing your request"
+msgstr "An error occurred while processing your request"
+
+#: shared/rest/views/i18n_test_view.py:56
+msgid "Translation test completed successfully"
+msgstr "Translatipada test completed successfully"
+
+#: shared/rest/views/i18n_test_view.py:72
+msgid "Language information retrieved successfully"
+msgstr "Language informatipada retrieved successfully"
+
+#: shared/rest/views/i18n_test_view.py:83
+msgid "Set Accept-Language header in your request"
+msgstr "Set Accept-Language header di your request"
+
+#: shared/rest/views/i18n_test_view.py:84
+msgid "Add ?lang=en or ?lang=id to the URL"
+msgstr "Add ?lang=en or ?lang=id ke the URL"
+
+#: shared/services/duty_otp_service.py:73
+msgid "OTP must be exactly 6 digits"
+msgstr "OTP harus exactly 6 digits"
+
+#: shared/services/duty_otp_service.py:76
+msgid "OTP must contain only numbers"
+msgstr "OTP must contadi only numbers"
+
+#: shared/services/duty_otp_service.py:81
+msgid "No active OTP found. Please get a new OTP."
+msgstr "No active OTP found. Please get a new OTP."
+
+#: shared/services/duty_otp_service.py:85
+msgid "Invalid OTP code"
+msgstr "Invalid OTP code"
+
+#: shared/services/duty_otp_service.py:91
+msgid "OTP already used"
+msgstr "OTP already used"
+
+#: shared/services/duty_otp_service.py:93
+msgid "OTP validated successfully"
+msgstr "OTP validated successfully"
+
+#: shared/utils/admin_active_deactive_utils.py:174
+#: shared/utils/admin_active_deactive_utils.py:248
+msgid "Only superusers can perform this action."
+msgstr "Only superusers can perform this action."
+
+#: shared/utils/admin_approval_utils.py:226
+#: shared/utils/admin_approval_utils.py:299
+msgid "Only staff members can perform this action."
+msgstr "Only staff members can perform this action."
+
+#: shared/utils/date_utils.py:81
+msgid "Date Joined"
+msgstr "Tanggal Bergabung"
+
+#: shared/utils/date_utils.py:82
+msgid "Last Login"
+msgstr "Login Terakhir"
+
+#: shared/utils/date_utils.py:83
+#, fuzzy
+#| msgid "Duty Start Date"
+msgid "Start Date"
+msgstr "Tanggal Mulai Piket"
+
+#: shared/utils/date_utils.py:84
+#, fuzzy
+#| msgid "Duty End Date"
+msgid "End Date"
+msgstr "Tanggal Selesai Piket"
+
+#: shared/utils/date_utils.py:98
+#, fuzzy
+#| msgid "Date and time when this record was created."
+msgid "Date and time when this record was created"
+msgstr "Tanggal dan waktu ketika catatan ini dibuat."
+
+#: shared/utils/date_utils.py:99
+#, fuzzy
+#| msgid "Date and time when this record was last updated."
+msgid "Date and time when this record was last updated"
+msgstr "Tanggal dan waktu ketika catatan ini terakhir diperbarui."
+
+#: shared/utils/date_utils.py:100
+#, fuzzy
+#| msgid "Date when the session is scheduled"
+msgid "Date when the user joined the system"
+msgstr "Tanggal ketika sesi dijadwalkan"
+
+#: shared/utils/date_utils.py:101
+#, fuzzy
+#| msgid "End time of the course session"
+msgid "Date and time of the user's last login"
+msgstr "Waktu selesai sesi kelas"
+
+#: shared/utils/date_utils.py:102
+#, fuzzy
+#| msgid "Start time of the lab allocation"
+msgid "Start date of the schedule or allocation"
+msgstr "Start time of the lab allocation"
+
+#: shared/utils/date_utils.py:103
+#, fuzzy
+#| msgid "End time of the lab allocation"
+msgid "End date of the schedule or allocation"
+msgstr "End time of the lab allocation"
+
+#: shared/utils/date_utils.py:104
+#, fuzzy
+#| msgid "Start time of the lab allocation"
+msgid "Start time of the schedule or allocation"
+msgstr "Start time of the lab allocation"
+
+#: shared/utils/date_utils.py:105
+#, fuzzy
+#| msgid "End time of the lab allocation"
+msgid "End time of the schedule or allocation"
+msgstr "End time of the lab allocation"
+
+#: shared/utils/enhanced_export_mixins.py:90
+#: templates/admin/custom_auth/customusermodel/export_form.html:10
+#: templates/admin/lab_schedule/labschedulemodel/export_form.html:10
+msgid "Export with Filters"
+msgstr "Export with Filters"
+
+#: shared/utils/enhanced_export_mixins.py:103
+msgid "Only laboratory employees can import data"
+msgstr "Hanya pegawai laboratorium yang dapat mengimpor data"
+
+#: shared/utils/enhanced_export_mixins.py:121
+#, python-brace-format
+msgid "Only laboratory employees can perform {action}"
+msgstr "Only laboratory employees can perform {action}"
+
+#: shared/utils/enhanced_export_mixins.py:143
+#, python-brace-format
+msgid "Restore Selected {models}"
+msgstr "Restore Selected {models}"
+
+#: shared/utils/enhanced_export_mixins.py:155
+#, python-brace-format
+msgid "Delete Selected {models}"
+msgstr "Delete Selected {models}"
+
+#: shared/utils/enhanced_export_mixins.py:177
+msgid "No items needed to be processed."
+msgstr "No items needed ke be processed."
+
+#: shared/utils/enhanced_export_mixins.py:180
+#, python-brace-format
+msgid "Error during bulk operation: {error}"
+msgstr "Error during bulk operation: {error}"
+
+#: shared/utils/i18n_utils.py:117
+msgid "Record created successfully"
+msgstr "Record created successfully"
+
+#: shared/utils/i18n_utils.py:118
+msgid "Record updated successfully"
+msgstr "Record updated successfully"
+
+#: shared/utils/i18n_utils.py:119
+msgid "Record deleted successfully"
+msgstr "Record deleted successfully"
+
+#: shared/utils/i18n_utils.py:120
+msgid "Request approved successfully"
+msgstr "Request approved successfully"
+
+#: shared/utils/i18n_utils.py:121
+msgid "Request rejected successfully"
+msgstr "Request rejected successfully"
+
+#: shared/utils/permission_config_utils.py:170
+#: shared/utils/permission_config_utils.py:190
+#: shared/utils/permission_config_utils.py:208
+#: shared/utils/permission_config_utils.py:264
+#: shared/utils/permission_config_utils.py:294
+#: shared/utils/permission_config_utils.py:315
+#: shared/utils/permission_config_utils.py:335
+msgid "Custom permission check failed"
+msgstr "Custom permissipada check failed"
+
+#: shared/utils/permission_config_utils.py:200
+msgid "Insufficient permissions to access this resource"
+msgstr "Insufficient permissions ke access this resource"
+
+#: shared/utils/permission_config_utils.py:301
+msgid "Admin strict mode: Cannot access other users' data"
+msgstr "Admdi strict mode: Cannot access other users' data"
+
+#: shared/utils/permission_config_utils.py:341
+msgid "You can only access your own data or need higher privileges"
+msgstr "You can only access your own data or need higher privileges"
+
+#: shared/utils/permission_config_utils.py:375
+msgid "Insufficient permissions for this admin action"
+msgstr "Insufficient permissions untuk this admdi action"
+
+#: shared/utils/permission_config_utils.py:417
+msgid "You can only modify your own data or need higher privileges"
+msgstr "You can only modify your own data or need higher privileges"
+
+#: shared/utils/permission_config_utils.py:439
+#: shared/utils/permission_config_utils.py:911
+msgid "Only Laboratory Head can access this resource"
+msgstr "Only Laboratory Head can access this resource"
+
+#: shared/utils/permission_config_utils.py:447
+msgid "Only Laboratory Technician can access this resource"
+msgstr "Only Laboratory Technician can access this resource"
+
+#: shared/utils/permission_config_utils.py:455
+msgid "Only Laboratory Assistant can access this resource"
+msgstr "Only Laboratory Assistant can access this resource"
+
+#: shared/utils/permission_config_utils.py:462
+msgid "Only Students can access this resource"
+msgstr "Only Students can access this resource"
+
+#: shared/utils/permission_config_utils.py:469
+msgid "Only Lecturers can access this resource"
+msgstr "Only Lecturers can access this resource"
+
+#: shared/utils/permission_config_utils.py:481
+msgid "Only laboratory staff can access this resource"
+msgstr "Only laboratory staff can access this resource"
+
+#: shared/utils/permission_config_utils.py:492
+msgid "Only teaching staff can access this resource"
+msgstr "Only teaching staff can access this resource"
+
+#: shared/utils/permission_config_utils.py:499
+msgid "You can only access your own data"
+msgstr "You can only access your own data"
+
+#: shared/utils/permission_config_utils.py:507
+msgid "Only data owner or Laboratory Head can access this resource"
+msgstr "Only data owner or Laboratory Head can access this resource"
+
+#: shared/utils/permission_config_utils.py:520
+msgid "Only data owner or laboratory staff can access this resource"
+msgstr "Only data owner or laboratory staff can access this resource"
+
+#: shared/utils/permission_config_utils.py:532
+msgid "Only data owner or teaching staff can access this resource"
+msgstr "Only data owner or teaching staff can access this resource"
+
+#: shared/utils/permission_config_utils.py:545
+#: shared/utils/permission_config_utils.py:947
+msgid "Only Laboratory Head can perform this admin action"
+msgstr "Only Laboratory Head can perform this admdi action"
+
+#: shared/utils/permission_config_utils.py:553
+msgid "Only Laboratory Technician can perform this admin action"
+msgstr "Only Laboratory Technician can perform this admdi action"
+
+#: shared/utils/permission_config_utils.py:565
+msgid "Only laboratory staff can perform this admin action"
+msgstr "Only laboratory staff can perform this admdi action"
+
+#: shared/utils/permission_config_utils.py:583
+msgid "You can only modify your own data in admin"
+msgstr "You can only modify your own data di admin"
+
+#: shared/utils/permission_config_utils.py:591
+msgid "Only data owner or Laboratory Head can modify this data"
+msgstr "Only data owner or Laboratory Head can modify this data"
+
+#: shared/utils/permission_config_utils.py:599
+msgid "Only data owner or Laboratory Technician can modify this data"
+msgstr "Only data owner or Laboratory Technician can modify this data"
+
+#: shared/utils/permission_config_utils.py:611
+msgid "Only data owner or laboratory staff can modify this data"
+msgstr "Only data owner or laboratory staff can modify this data"
+
+#: shared/utils/permission_config_utils.py:802
+msgid "Insufficient hierarchy level to access this resource"
+msgstr "Insufficient hierarchy level ke access this resource"
+
+#: shared/utils/permission_config_utils.py:832
+#: shared/utils/permission_config_utils.py:890
+msgid "You cannot manage this user due to hierarchy restrictions"
+msgstr "You cannot manage this user due ke hierarchy restrictions"
+
+#: shared/utils/permission_config_utils.py:862
+msgid "Insufficient hierarchy level for this admin action"
+msgstr "Insufficient hierarchy level untuk this admdi action"
+
+#: shared/utils/permission_config_utils.py:918
+msgid "Only Laboratory Technician or higher can access this resource"
+msgstr "Only Laboratory Technician or higher can access this resource"
+
+#: shared/utils/permission_config_utils.py:925
+msgid "Only Laboratory Assistant or higher can access this resource"
+msgstr "Only Laboratory Assistant or higher can access this resource"
+
+#: shared/utils/permission_config_utils.py:932
+msgid "Only Student or higher can access this resource"
+msgstr "Only Student or higher can access this resource"
+
+#: shared/utils/permission_config_utils.py:939
+msgid "Authentication required to access this resource"
+msgstr "Authenticatipada required ke access this resource"
+
+#: shared/utils/permission_config_utils.py:954
+msgid "Only Laboratory Technician or higher can perform this admin action"
+msgstr "Only Laboratory Technician or higher can perform this admdi action"
+
+#: shared/utils/permission_config_utils.py:961
+msgid "Only Laboratory Assistant or higher can perform this admin action"
+msgstr "Only Laboratory Assistant or higher can perform this admdi action"
+
+#: shared/utils/permission_config_utils.py:968
+msgid "Only Student or higher can perform this admin action"
+msgstr "Only Student or higher can perform this admdi action"
+
+#: shared/utils/permission_config_utils.py:975
+msgid "Authentication required for this admin action"
+msgstr "Authenticatipada required untuk this admdi action"
+
+#: templates/admin/base_export_form.html:4
+msgid "Django site admin"
+msgstr "Django site admin"
+
+#: templates/admin/base_export_form.html:508
+msgid "Please correct the errors below:"
+msgstr "Please correct the errors below:"
+
+#: templates/admin/base_export_form.html:520
+msgid ""
+"Configure your export settings below and click 'Generate Export' to download "
+"your data."
+msgstr ""
+
+#: templates/admin/base_export_form.html:525
+msgid "Cancel"
+msgstr "Batal"
+
+#: templates/admin/base_export_form.html:529
+#: templates/admin/base_export_form.html:836
+msgid "Generate Export"
+msgstr "Generate Export"
+
+#: templates/admin/base_export_form.html:540
+msgid "Date Filtering Options"
+msgstr "Date Filtering Options"
+
+#: templates/admin/base_export_form.html:542
+msgid ""
+"Use these filters to export data based on creation date. Leave empty to "
+"export all records."
+msgstr ""
+
+#: templates/admin/base_export_form.html:600
+msgid "Additional Filters"
+msgstr "Additional Filters"
+
+#: templates/admin/base_export_form.html:604
+msgid "No additional filters available"
+msgstr "No additional filters available"
+
+#: templates/admin/base_export_form.html:611
+#: templates/admin/guest_visit/export_form.html:261
+msgid "Field Selection"
+msgstr "Field Selection"
+
+#: templates/admin/base_export_form.html:633
+msgid "All available fields will be exported"
+msgstr "All available fields akan exported"
+
+#: templates/admin/base_export_form.html:712
+msgid "No fields selected - all available fields will be exported."
+msgstr "No fields selected - all available fields akan exported."
+
+#: templates/admin/base_export_form.html:717
+msgid "No format selected - default format will be used."
+msgstr "No formdi selected - default format akan used."
+
+#: templates/admin/base_export_form.html:724
+msgid "Generate export with current settings"
+msgstr "Generate export with current settings"
+
+#: templates/admin/base_export_form.html:733
+msgid "Generating..."
+msgstr "Generating..."
+
+#: templates/admin/base_export_form.html:737
+msgid "Export is being generated, please wait..."
+msgstr "Export is being generated, please wait..."
+
+#: templates/admin/base_export_form.html:808
+msgid "Export generated successfully! Download should start automatically."
+msgstr "Export generated successfully! Download should start automatically."
+
+#: templates/admin/base_export_form.html:815
+msgid "Export failed. Please check your form inputs and try again."
+msgstr "Export failed. Please check your form inputs and try again."
+
+#: templates/admin/base_export_form.html:817
+msgid "Unexpected response from server. Please try again."
+msgstr "Unexpected response dari server. Please try again."
+
+#: templates/admin/base_export_form.html:828
+msgid "Export failed due to a network error. Please try again."
+msgstr "Export failed due ke a network error. Please try again."
+
+#: templates/admin/custom_auth/customusermodel/export_form.html:7
+#: templates/admin/guest_visit/export_form.html:178
+#: templates/admin/lab_schedule/labschedulemodel/export_form.html:7
+msgid "Home"
+msgstr "Home"
+
+#: templates/admin/guest_visit/export_form.html:181
+#: templates/admin/guest_visit/export_form.html:293
+#, fuzzy
+#| msgid "Export Format"
+msgid "Export Data"
+msgstr "Export Format"
+
+#: templates/admin/guest_visit/export_form.html:188
+#, fuzzy
+#| msgid "Export Guest Visits with Filters"
+msgid "Export Guest Visit Data"
+msgstr "Export Guest Visits with Filters"
+
+#: templates/admin/guest_visit/export_form.html:189
+msgid "Select filters and fields to export guest visit data."
+msgstr "Pilih filter dan kolom untuk mengekspor data kunjungan tamu."
+
+#: templates/admin/guest_visit/export_form.html:197
+#, fuzzy
+#| msgid "Visit Date Filters"
+msgid "Date Filters"
+msgstr "Tanggal Visit Filters"
+
+#: templates/admin/guest_visit/export_form.html:238
+#, fuzzy
+#| msgid "Visitor & Host Filters"
+msgid "Visitor Filters"
+msgstr "Visitor & Host Filters"
+
+#: templates/admin/guest_visit/export_form.html:263
+#, fuzzy
+#| msgid "Select which fields to include in the export"
+msgid "Select which fields to include in the export:"
+msgstr "Select which fields ke include di the export"
+
+#: templates/admin/guest_visit/guestvisitmodel/export_form.html:100
+msgid "Visit Date Filters"
+msgstr "Tanggal Visit Filters"
+
+#: templates/admin/guest_visit/guestvisitmodel/export_form.html:142
+#, fuzzy
+#| msgid "Visitor & Host Filters"
+msgid "Visitor & Created By Filters"
+msgstr "Visitor & Host Filters"
+
+#: templates/admin/lab_schedule/labschedulemodel/change_list.html:7
+msgid "Export"
+msgstr "Ekspor"
+
+#, fuzzy
+#~| msgid "End date must be after start date."
+#~ msgid "Value must be an iterable."
+#~ msgstr "Tanggal akhir harus setelah tanggal mulai."
+
+#, fuzzy
+#~| msgid "Group is required"
+#~ msgid "required"
+#~ msgstr "Grup wajib diisi"
+
+#, fuzzy, python-brace-format
+#~| msgid "Invalid date value."
+#~ msgid "Invalid value: {message}"
+#~ msgstr "Nilai tanggal tidak valid."
+
+#, fuzzy
+#~| msgid "Session Description"
+#~ msgid "Missing option"
+#~ msgstr "Deskripsi Sesi"
+
+#, fuzzy
+#~| msgid "Visitor Information"
+#~ msgid "Repeat for confirmation"
+#~ msgstr "Informasi Pengunjung"
+
+#, fuzzy
+#~| msgid "Statistics"
+#~ msgid "Static Files"
+#~ msgstr "Statistik"
+
+#, fuzzy
+#~| msgid "Authentication"
+#~ msgid "Syndication"
+#~ msgstr "Autentikasi"
+
+#, fuzzy
+#~| msgid "Invalid date value."
+#~ msgid "Enter a valid value."
+#~ msgstr "Nilai tanggal tidak valid."
+
+#, fuzzy
+#~| msgid "December"
+#~ msgid "Decimal number"
+#~ msgstr "Desember"
+
+#, fuzzy
+#~| msgid "Presentation"
+#~ msgid "Duration"
+#~ msgstr "Presentasi"
+
+#, fuzzy
+#~| msgid "Face Image"
+#~ msgid "Image"
+#~ msgstr "Gambar Wajah"
+
+#, fuzzy
+#~| msgid "First Name is required"
+#~ msgid "This field is required."
+#~ msgstr "Nama depan wajib diisi"
+
+#, fuzzy
+#~| msgid "Invalid date value."
+#~ msgid "Enter a valid date."
+#~ msgstr "Nilai tanggal tidak valid."
+
+#, fuzzy
+#~| msgid "Invalid date value."
+#~ msgid "Enter a valid date/time."
+#~ msgstr "Nilai tanggal tidak valid."
+
+#, fuzzy, python-format
+#~| msgid "Please select at least one field to export"
+#~ msgid "Please submit at least %(num)d form."
+#~ msgid_plural "Please submit at least %(num)d forms."
+#~ msgstr[0] "Please select di least one field ke export"
+
+#, fuzzy, python-format
+#~| msgid "Please correct the errors below:"
+#~ msgid "Please correct the duplicate data for %(field)s."
+#~ msgstr "Please correct the errors below:"
+
+#, fuzzy
+#~| msgid "Please correct the errors below:"
+#~ msgid "Please correct the duplicate values below."
+#~ msgstr "Please correct the errors below:"
+
+#, fuzzy
+#~| msgid "Month"
+#~ msgid "Mon"
+#~ msgstr "Month"
+
+#, fuzzy
+#~| msgid "Tuesday"
+#~ msgid "Tue"
+#~ msgstr "Selasa"
+
+#, fuzzy
+#~| msgid "Friday"
+#~ msgid "Fri"
+#~ msgstr "Jumat"
+
+#, fuzzy
+#~| msgid "Status"
+#~ msgid "Sat"
+#~ msgstr "Status"
+
+#, fuzzy
+#~| msgid "Sunday"
+#~ msgid "Sun"
+#~ msgstr "Minggu"
+
+#, fuzzy
+#~| msgid "Seminar"
+#~ msgid "mar"
+#~ msgstr "Seminar"
+
+#, fuzzy
+#~| msgid "May"
+#~ msgid "may"
+#~ msgstr "Mei"
+
+#, fuzzy
+#~| msgid "March"
+#~ msgctxt "abbrev. month"
+#~ msgid "March"
+#~ msgstr "Maret"
+
+#, fuzzy
+#~| msgid "April"
+#~ msgctxt "abbrev. month"
+#~ msgid "April"
+#~ msgstr "April"
+
+#, fuzzy
+#~| msgid "May"
+#~ msgctxt "abbrev. month"
+#~ msgid "May"
+#~ msgstr "Mei"
+
+#, fuzzy
+#~| msgid "June"
+#~ msgctxt "abbrev. month"
+#~ msgid "June"
+#~ msgstr "Juni"
+
+#, fuzzy
+#~| msgid "July"
+#~ msgctxt "abbrev. month"
+#~ msgid "July"
+#~ msgstr "Juli"
+
+#, fuzzy
+#~| msgid "January"
+#~ msgctxt "alt. month"
+#~ msgid "January"
+#~ msgstr "Januari"
+
+#, fuzzy
+#~| msgid "February"
+#~ msgctxt "alt. month"
+#~ msgid "February"
+#~ msgstr "Februari"
+
+#, fuzzy
+#~| msgid "March"
+#~ msgctxt "alt. month"
+#~ msgid "March"
+#~ msgstr "Maret"
+
+#, fuzzy
+#~| msgid "April"
+#~ msgctxt "alt. month"
+#~ msgid "April"
+#~ msgstr "April"
+
+#, fuzzy
+#~| msgid "May"
+#~ msgctxt "alt. month"
+#~ msgid "May"
+#~ msgstr "Mei"
+
+#, fuzzy
+#~| msgid "June"
+#~ msgctxt "alt. month"
+#~ msgid "June"
+#~ msgstr "Juni"
+
+#, fuzzy
+#~| msgid "July"
+#~ msgctxt "alt. month"
+#~ msgid "July"
+#~ msgstr "Juli"
+
+#, fuzzy
+#~| msgid "August"
+#~ msgctxt "alt. month"
+#~ msgid "August"
+#~ msgstr "Agustus"
+
+#, fuzzy
+#~| msgid "September"
+#~ msgctxt "alt. month"
+#~ msgid "September"
+#~ msgstr "September"
+
+#, fuzzy
+#~| msgid "October"
+#~ msgctxt "alt. month"
+#~ msgid "October"
+#~ msgstr "Oktober"
+
+#, fuzzy
+#~| msgid "November"
+#~ msgctxt "alt. month"
+#~ msgid "November"
+#~ msgstr "November"
+
+#, fuzzy
+#~| msgid "December"
+#~ msgctxt "alt. month"
+#~ msgid "December"
+#~ msgstr "Desember"
+
+#, fuzzy
+#~| msgid "Expired"
+#~ msgid "Expires"
+#~ msgstr "Kedaluwarsa"
+
+#~ msgid "Visit Date From"
+#~ msgstr "Tanggal Kunjungan Dari"
+
+#~ msgid "Visit Date To"
+#~ msgstr "Tanggal Kunjungan Sampai"
+
+#~ msgid "Visit Month"
+#~ msgstr "Bulan Kunjungan"
+
+#~ msgid "Visit Year"
+#~ msgstr "Tahun Kunjungan"
+
+#~ msgid "All Hosts"
+#~ msgstr "Semua Host"
+
+#~ msgid "Host User"
+#~ msgstr "Pengguna Host"
+
+#~ msgid "Seed room bookings from JSON data files"
+#~ msgstr "Seed room bookings dari JSON data files"
+
+#~ msgid "Clear existing bookings before seeding"
+#~ msgstr "Clear existing bookings before seeding"
+
+#~ msgid "Number of sample bookings to generate if no JSON data"
+#~ msgstr "Number of sample bookings ke generate if no JSON data"
+
+#~ msgid "🚀 Starting room booking seeding..."
+#~ msgstr "🚀 Starting room booking seeding..."
+
+#, python-format
+#~ msgid "🗑️ Deactivated %d existing bookings"
+#~ msgstr "🗑️ Deactivated %d existing bookings"
+
+#~ msgid "Invalid attendance status."
+#~ msgstr "Status kehadiran tidak valid."
+
+#~ msgid "Student number to mark attendance for"
+#~ msgstr "Nomor mahasiswa untuk menandai kehadiran"
+
+#~ msgid "Student with number '{}' not found"
+#~ msgstr "Mahasiswa dengan nomor '{}' tidak ditemukan"
+
+#~ msgid "Upload a face photo for attendance purposes."
+#~ msgstr "Unggah foto wajah untuk keperluan absensi."
+
+#~ msgid "Face Uploaded"
+#~ msgstr "Wajah Terunggah"
+
+#~ msgid "Source Duty Schedule"
+#~ msgstr "Jadwal Piket Sumber"
+
+#~ msgid "The bulk schedule that generated this attendance record"
+#~ msgstr "Jadwal massal yang menghasilkan catatan kehadiran ini"
+
+#~ msgid "Teaching Assistant"
+#~ msgstr "Asisten Mengajar"
+
+#~ msgid "The assistant assigned to this duty"
+#~ msgstr "Asisten yang ditugaskan untuk piket ini"
+
+#~ msgid "Date of the duty assignment"
+#~ msgstr "Tanggal penugasan piket"
+
+#~ msgid "Scheduled Start Time"
+#~ msgstr "Waktu Mulai Terjadwal"
+
+#~ msgid "Scheduled start time for the duty"
+#~ msgstr "Waktu mulai terjadwal untuk piket"
+
+#~ msgid "Scheduled End Time"
+#~ msgstr "Waktu Selesai Terjadwal"
+
+#~ msgid "Scheduled end time for the duty"
+#~ msgstr "Waktu selesai terjadwal untuk piket"
+
+#~ msgid "Actual time when assistant clocked in"
+#~ msgstr "Waktu aktual ketika asisten clock in"
+
+#~ msgid "Actual time when assistant clocked out"
+#~ msgstr "Waktu aktual ketika asisten clock out"
+
+#~ msgid "Clock In Method"
+#~ msgstr "Metode Clock In"
+
+#~ msgid "Method used for clock in (manual or face_recognition)"
+#~ msgstr "Metode yang digunakan untuk clock in (manual atau pengenalan wajah)"
+
+#~ msgid "Clock Out Method"
+#~ msgstr "Metode Clock Out"
+
+#~ msgid "Method used for clock out (manual or face_recognition)"
+#~ msgstr ""
+#~ "Metode yang digunakan untuk clock out (manual atau pengenalan wajah)"
+
+#~ msgid "Clock In Location"
+#~ msgstr "Lokasi Clock In"
+
+#~ msgid "Location data for clock in including coordinates and verification"
+#~ msgstr "Data lokasi untuk clock in termasuk koordinat dan verifikasi"
+
+#~ msgid "Clock Out Location"
+#~ msgstr "Lokasi Clock Out"
+
+#~ msgid "Location data for clock out including coordinates and verification"
+#~ msgstr "Data lokasi untuk clock out termasuk koordinat dan verifikasi"
+
+#~ msgid "Current status of the attendance record"
+#~ msgstr "Status saat ini dari catatan kehadiran"
+
+#~ msgid "Optional notes for manual clock-in"
+#~ msgstr "Catatan opsional untuk clock-in manual"
+
+#~ msgid "Optional location data with latitude and longitude"
+#~ msgstr "Data lokasi opsional dengan latitude dan longitude"
+
+#~ msgid "Location must be a JSON object"
+#~ msgstr "Lokasi harus berupa objek JSON"
+
+#~ msgid "Both latitude and longitude are required"
+#~ msgstr "Latitude dan longitude keduanya wajib diisi"
+
+#~ msgid "Optional notes for manual clock-out"
+#~ msgstr "Catatan opsional untuk clock-out manual"
+
+#~ msgid "Host"
+#~ msgstr "Host"
+
+#~ msgid "Signature"
+#~ msgstr "Signature"
+
+#~ msgid "Signature/Paraf"
+#~ msgstr "Signature/Paraf"
+
+#~ msgid "Visitor signature or paraf (optional)"
+#~ msgstr "Visitor signature or paraf (optional)"
+
+#~ msgid "Laboratory assistant who registered this visit"
+#~ msgstr "Laboratory assistant who registered this visit"
+
+#~ msgid "🔚 Time to wrap up!"
+#~ msgstr "🔚 Waktunya menyelesaikan!"

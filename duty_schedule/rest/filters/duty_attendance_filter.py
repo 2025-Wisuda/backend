@@ -25,13 +25,13 @@ class DutyAttendanceFilter(django_filters.FilterSet):
     with optimized field selection for common mobile app use cases.
     """
 
-    attendance_status = django_filters.MultipleChoiceFilter(
-        field_name="attendance_status",
+    status = django_filters.MultipleChoiceFilter(
+        field_name="status",
         choices=AttendanceStatus.choices(),
         help_text="Filter by attendance status",
     )
-    duty_date = django_filters.DateFilter(
-        field_name="duty_date",
+    date = django_filters.DateFilter(
+        field_name="date",
         lookup_expr="exact",
         help_text="Filter by specific duty date (YYYY-MM-DD format)",
     )
@@ -39,6 +39,6 @@ class DutyAttendanceFilter(django_filters.FilterSet):
     class Meta:
         model = DutyAttendanceModel
         fields = [
-            "attendance_status",
-            "duty_date",
+            "status",
+            "date",
         ]

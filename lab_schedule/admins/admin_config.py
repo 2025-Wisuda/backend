@@ -1,8 +1,7 @@
 """
-Custom Django admin configuration for Lab Schedule Management section.
+Admin interface organization - groups Lab Schedule, Lab Allocation, and Room Booking models under unified section.
 
-This module provides custom admin site configuration to group
-LabSchedule, LabAllocation, and RoomBooking models under a single section.
+Consolidates lab schedule management into single admin section for better UX.
 """
 
 from django.contrib import admin
@@ -10,20 +9,16 @@ from django.utils.translation import gettext_lazy as _
 
 
 class LabScheduleManagementAdminConfig:
-    """Configuration class for Lab Schedule Management admin section."""
+    """Unified admin section configuration for lab schedule management."""
 
     @staticmethod
     def configure_admin():
-        """
-        Configure admin to group LabSchedule, LabAllocation, and RoomBooking models.
-
-        Override the admin site's get_app_list method to customize app grouping.
-        """
+        """Override admin site's get_app_list method to customize app grouping."""
         # Store original get_app_list method
         original_get_app_list = admin.site.get_app_list
 
         def custom_get_app_list(request, app_label=None):
-            """Custom app list that groups related lab scheduling models."""
+            """Merge Lab Allocation and Room Booking models into lab_schedule app for unified view."""
             app_list = original_get_app_list(request, app_label)
 
             lab_schedule_app = None
@@ -54,7 +49,7 @@ class LabScheduleManagementAdminConfig:
                 # Update app display name
                 lab_schedule_app["name"] = _("Lab Schedule Management")
 
-                # Remove original app entries
+                # Remove original app entries to avoid duplication
                 app_list = [
                     app
                     for app in app_list
@@ -67,5 +62,4 @@ class LabScheduleManagementAdminConfig:
         admin.site.get_app_list = custom_get_app_list
 
 
-# Apply admin grouping configuration
 LabScheduleManagementAdminConfig.configure_admin()

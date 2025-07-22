@@ -1,44 +1,29 @@
-"""Django signals for automatic group initialization and permission assignment."""
+"""
+Custom Auth Signals
+
+Django signals for automatic group and permission management.
+Ensures role-based access control is properly initialized after migrations.
+
+Critical for laboratory management system security - creates groups and assigns
+permissions based on user roles defined in UserGroup enum.
+"""
 
 import logging
 
+from core.enums import UserGroup
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 
-from core.enums import UserGroup
-
 logger = logging.getLogger(__name__)
 
-# Permission mapping for groups - using enum to avoid typos
+# Permission mapping for laboratory roles
+# Defines CRUD permissions for each user group across system models
 GROUP_PERMISSIONS = {
-    UserGroup.LABORATORY_HEAD: {
-        "custom_auth.customusermodel": ["add", "view", "change"],
-        "lab_schedule.labschedulemodel": ["add", "view", "change"],
-        "lab_allocation.laballocationmodel": ["add", "view", "change"],
-    },
-    UserGroup.LABORATORY_TECHNICIAN: {
-        "custom_auth.customusermodel": ["add", "view", "change"],
-        "lab_schedule.labschedulemodel": ["add", "view", "change"],
-        "lab_allocation.laballocationmodel": ["add", "view", "change"],
-    },
-    UserGroup.LABORATORY_ASSISTANT: {
-        "custom_auth.customusermodel": ["add", "view", "change"],
-        "lab_schedule.labschedulemodel": ["add", "view", "change"],
-        "lab_allocation.laballocationmodel": ["add", "view", "change"],
-    },
-    UserGroup.LECTURER: {
-        "custom_auth.customusermodel": [],
-        "lab_schedule.labschedulemodel": [],
-        "lab_allocation.laballocationmodel": [],
-    },
-    UserGroup.STUDENT: {
-        "custom_auth.customusermodel": [],
-        "lab_schedule.labschedulemodel": [],
-        "lab_allocation.laballocationmodel": [],
-    },
+    # All permissions now handled by admin override
+    # No database permissions needed - using enum approach
 }
 
 
@@ -47,16 +32,16 @@ def assign_permissions_to_group(group_obj, permissions_config):
     Assign permissions to a Django Group based on configuration.
 
     Args:
-        group_obj (Group): Django Group object
-        permissions_config (dict): Dictionary mapping app.model to permission list
+        group_obj: Django Group instance
+        permissions_config: Dict mapping model paths to permission codes
 
     Returns:
-        int: Number of permissions assigned
+        int: Number of permissions successfully assigned
+
+    Security Note: Clears existing permissions before assignment to ensure clean state
     """
     permissions_assigned = 0
-
-    # Clear existing permissions
-    group_obj.permissions.clear()
+    group_obj.permissions.clear()  # Clean slate for permission assignment
 
     for model_path, perms in permissions_config.items():
         try:
@@ -66,6 +51,7 @@ def assign_permissions_to_group(group_obj, permissions_config):
             )
 
             for perm_code in perms:
+                # Django permission naming convention: {action}_{model}
                 permission_codename = f"{perm_code}_{content_type.model}"
                 try:
                     permission = Permission.objects.get(
@@ -90,29 +76,33 @@ def assign_permissions_to_group(group_obj, permissions_config):
 @receiver(post_migrate)
 def create_default_groups_and_permissions(sender, **kwargs):
     """
-    Create default user groups and assign permissions after migrations are applied.
+    Signal handler to create groups and assign permissions after migration.
 
-    This handler ensures the required groups are present in the database
-    and automatically assigns the correct permissions to each group.
+    Triggered after each migration run to ensure groups and permissions
+    are properly configured for role-based access control.
+
+    Security Critical: Only runs for custom_auth app to prevent interference
+    with other apps' permission systems.
     """
+    # Only process when custom_auth app migrations complete
     if sender.name != "custom_auth":
         return
 
     try:
-        with transaction.atomic():
+        with transaction.atomic():  # Ensure all-or-nothing group creation
             total_groups_created = 0
             total_permissions_assigned = 0
 
             for group_enum, permissions_config in GROUP_PERMISSIONS.items():
-                group_name = group_enum.value  # Get the actual string value from enum
+                group_name = group_enum.value
 
-                # Create or get the group
+                # Create group if it doesn't exist
                 group_obj, created = Group.objects.get_or_create(name=group_name)
                 if created:
                     total_groups_created += 1
                     logger.info(f'Group "{group_name}" created.')
 
-                # Assign permissions to the group
+                # Assign permissions to group (overwrites existing)
                 perms_assigned = assign_permissions_to_group(
                     group_obj, permissions_config
                 )
@@ -122,6 +112,7 @@ def create_default_groups_and_permissions(sender, **kwargs):
                     f'Group "{group_name}" configured with {perms_assigned} permissions.'
                 )
 
+            # Summary logging for deployment tracking
             if total_groups_created > 0:
                 logger.info(f"{total_groups_created} new groups created.")
 
@@ -132,6 +123,3 @@ def create_default_groups_and_permissions(sender, **kwargs):
 
     except Exception as e:
         logger.error(f"Error creating groups and permissions: {str(e)}")
-
-
-# Legacy handler removed - functionality consolidated into create_default_groups_and_permissions

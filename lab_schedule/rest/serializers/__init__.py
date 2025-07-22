@@ -1,6 +1,7 @@
+"""Lab schedule serializers for aggregator data and availability checking."""
+
 from .lab_schedule_serializer import (
     AvailableTimeSlotSerializer,
-    LabScheduleAvailabilitySerializer,
     LabScheduleDetailSerializer,
     LabScheduleListSerializer,
 )
@@ -8,6 +9,5 @@ from .lab_schedule_serializer import (
 __all__ = [
     "LabScheduleListSerializer",
     "LabScheduleDetailSerializer",
-    "LabScheduleAvailabilitySerializer",
     "AvailableTimeSlotSerializer",
 ]

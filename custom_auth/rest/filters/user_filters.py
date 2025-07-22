@@ -1,7 +1,8 @@
 """
-Django filters for user-related API endpoints.
+User Filters
 
-Provides simple filtering capabilities for user ViewSet using django-filter.
+Django-filters configuration for user list filtering in REST API.
+Provides group-based filtering with enum validation.
 """
 
 import django_filters
@@ -14,18 +15,25 @@ User = get_user_model()
 
 class UserFilter(django_filters.FilterSet):
     """
-    Simple filter set for User model.
+    FilterSet for user queryset filtering.
 
-    Provides basic filtering by group only.
-    Search functionality is handled by DRF SearchFilter.
+    Filters:
+    - group: Filter users by their assigned user group (enum-validated) - supports single selection
+    - groups: Filter users by multiple user groups (enum-validated) - supports multiple selection
     """
 
     group = django_filters.ChoiceFilter(
         field_name="group",
         choices=UserGroup.choices(),
-        help_text="Filter by user group",
+        help_text="Filter by single user group",
+    )
+    
+    groups = django_filters.MultipleChoiceFilter(
+        field_name="group",
+        choices=UserGroup.choices(),
+        help_text="Filter by multiple user groups (comma-separated)",
     )
 
     class Meta:
         model = User
-        fields = ["group"]
+        fields = ["group", "groups"]

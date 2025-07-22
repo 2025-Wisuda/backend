@@ -1,21 +1,37 @@
+"""
+Custom User Model
+
+Extended Django AbstractUser model with laboratory-specific fields and role-based validation.
+Supports both student and staff users with appropriate identifier requirements.
+
+Key Features:
+- UUID primary key for enhanced security
+- Role-based validation (student_number for students, employee_number for staff)
+- Face recognition integration for attendance
+- Audit trail with created_by/updated_by tracking
+- Profile image support
+"""
+
 import uuid
 
+from core.enums import UserGroup
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from core.enums import UserGroup
-
 
 class CustomUserModel(AbstractUser):
     """
-    Custom model for custom user with laboratory-specific fields.
+    Extended user model for laboratory management system.
 
-    - Stores group as a string value (name) from UserGroup enum.
-    - Role-based group (e.g., student, staff) using `UserGroup` enum
-    - Audit fields: created_by/at, updated_by/at
-    - Validation logic in `clean()` method to enforce group-based constraints
+    Extends Django's AbstractUser with laboratory-specific fields including
+    role-based identifiers, face recognition support, and audit tracking.
+
+    Validation Rules:
+    - Staff groups require employee_number, no student_number
+    - Student groups require student_number, no employee_number
+    - Group field is mandatory for all users
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -43,15 +59,7 @@ class CustomUserModel(AbstractUser):
         verbose_name=_("Group"),
         help_text=_("Select the user's role in the laboratory."),
     )
-    face_image_url = models.ImageField(
-        _("Face Image"),
-        upload_to="faces/",
-        null=True,
-        blank=True,
-        help_text=_("Upload a face photo for attendance purposes."),
-    )
-    face_uploaded = models.BooleanField(_("Face Uploaded"), default=False)
-    avatar_url = models.ImageField(
+    avatar = models.ImageField(
         _("Avatar"),
         upload_to="avatars/",
         null=True,
@@ -98,6 +106,18 @@ class CustomUserModel(AbstractUser):
         db_table = "custom_user"
 
     def clean(self):
+        """
+        Model validation with role-based identifier requirements.
+
+        Critical validation rules:
+        - Staff groups MUST have employee_number, NO student_number
+        - Student groups MUST have student_number, NO employee_number
+        - Group field is mandatory for all users
+        - Identifier fields are auto-trimmed and normalized
+
+        This validation prevents data inconsistency and ensures proper
+        user categorization for laboratory access control.
+        """
         super().clean()
         from django.core.exceptions import ValidationError
 
@@ -110,11 +130,13 @@ class CustomUserModel(AbstractUser):
                 }
             )
 
+        # Normalize identifier fields - critical for uniqueness constraints
         if self.student_number is not None:
             self.student_number = self.student_number.strip() or None
         if self.employee_number is not None:
             self.employee_number = self.employee_number.strip() or None
 
+        # Role-based validation - prevents invalid identifier combinations
         if UserGroup.is_staff_group(self.group):
             if not self.employee_number:
                 raise ValidationError(

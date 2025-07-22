@@ -1,8 +1,8 @@
 """
-Custom Django admin configuration for User Management section.
+Admin Configuration
 
-This module provides custom admin site configuration to group
-User and Group models under a single "User Management" section.
+Central configuration for custom authentication admin interface.
+Handles admin site registration and app list customization for user management.
 """
 
 from django.contrib import admin
@@ -15,15 +15,22 @@ from .user_admin import UserAdmin
 
 
 class UserManagementAdminConfig:
-    """Configuration class for User Management admin section."""
+    """
+    Configuration class for user management admin interface.
+
+    Responsibilities:
+    - Register custom admin classes
+    - Configure admin site layout
+    - Manage app list organization for better UX
+    """
 
     @staticmethod
     def configure_admin():
         """
-        Configure admin to display Users and Groups under same section.
+        Register custom admin classes with enhanced functionality.
 
-        This method sets up the admin interface to group User and Group
-        models under the "User Management" section for better organization.
+        Safely unregisters existing models and registers custom implementations
+        with enhanced features like export, audit trails, and role-based access.
         """
         try:
             admin.site.unregister(Group)
@@ -41,13 +48,14 @@ class UserManagementAdminConfig:
     @staticmethod
     def get_app_list(request, app_label=None):
         """
-        Custom app list to group User and Group models.
+        Customize admin app list for better organization.
 
-        This method customizes the admin app list to display
-        Users and Groups under the same application section.
+        Consolidates Group management under custom_auth app
+        to provide unified user management interface.
         """
         app_list = admin.site.get_app_list(request)
 
+        # Move Group models from 'auth' app to 'custom_auth' app for better organization
         for app in app_list:
             if app.get("app_label") == "custom_auth":
                 for other_app in app_list:

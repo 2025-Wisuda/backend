@@ -1,10 +1,7 @@
 from django.contrib.auth import get_user_model
-from jsonschema import ValidationError
 from rest_framework import serializers
 
 from core import BookingType, UserGroup
-from core.validators.schedule_validator import ScheduleValidator
-from lab_schedule.models.lab_schedule_model import LabScheduleModel
 
 from ...models import RoomBookingModel
 
@@ -28,16 +25,16 @@ class RoomBookingDetailSerializer(serializers.ModelSerializer):
             "booker_identifier",
             "booking_type",
             "purpose",
-            "booking_date",
-            "booking_start_time",
-            "booking_end_time",
+            "date",
+            "start_time",
+            "end_time",
             "seminar_type",
             "research_title",
             "supervisor_main",
             "supervisor_secondary",
             "examiner",
             "document_proof",
-            "booking_approval_status",
+            "approval_status",
             "approved_by_user",
             "approval_timestamp",
             "approval_notes",
@@ -46,9 +43,10 @@ class RoomBookingDetailSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "id",
+            "booker",
             "booker_name",
             "booker_identifier",
-            "booking_approval_status",
+            "approval_status",
             "approved_by_user",
             "approval_timestamp",
             "approval_notes",
@@ -64,27 +62,31 @@ class RoomBookingDetailSerializer(serializers.ModelSerializer):
         """
         Apply the same conditional validation logic as the model
         """
-        # Get the user (booker)
-        booker = data.get("booker", getattr(self.instance, "booker", None))
+        # Get the user (booker) - for create operations, it will be set by the view
+        # For update operations, it should already exist on the instance
+        booker = data.get("booker")
+        if not booker and self.instance:
+            booker = self.instance.booker
+
         booking_type = data.get(
             "booking_type", getattr(self.instance, "booking_type", None)
         )
 
-        if not booker:
-            raise serializers.ValidationError("Booker is required")
-
         if not booking_type:
             raise serializers.ValidationError("Booking type is required")
 
-        # Check if user can make this type of booking
-        user_group = booker.group
-        if UserGroup.is_student_group(user_group):
-            if booking_type not in BookingType.student_allowed_types():
-                raise serializers.ValidationError(
-                    {
-                        "booking_type": f"Students and assistants can only create seminar bookings"
-                    }
-                )
+        # For create operations, we can't validate user permissions here since booker
+        # is set by the view after serializer validation. The view will handle this.
+        if booker:
+            # Check if user can make this type of booking
+            user_group = booker.group
+            if UserGroup.is_student_group(user_group):
+                if booking_type not in BookingType.student_allowed_types():
+                    raise serializers.ValidationError(
+                        {
+                            "booking_type": f"Students and assistants can only create seminar bookings"
+                        }
+                    )
 
         # Conditional field validation for seminar bookings
         if booking_type == BookingType.SEMINAR.value:
@@ -145,10 +147,10 @@ class RoomBookingListSerializer(serializers.ModelSerializer):
             "booking_type",
             "seminar_type",
             "research_title",
-            "booking_date",
-            "booking_start_time",
-            "booking_end_time",
-            "booking_approval_status",
+            "date",
+            "start_time",
+            "end_time",
+            "approval_status",
             "created_at",
         ]
 
@@ -158,10 +160,10 @@ class RoomBookingListSerializer(serializers.ModelSerializer):
             "booking_type",
             "seminar_type",
             "research_title",
-            "booking_date",
-            "booking_start_time",
-            "booking_end_time",
-            "booking_approval_status",
+            "date",
+            "start_time",
+            "end_time",
+            "approval_status",
             "created_at",
         ]
 
@@ -177,31 +179,17 @@ class RoomBookingApprovalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RoomBookingModel
-        fields = ["booking_approval_status", "approval_notes"]
+        fields = ["approval_notes"]
 
     def validate(self, data):
-        approval_status = data.get("booking_approval_status")
         approval_notes = data.get("approval_notes")
-
-        if approval_status == "rejected" and not approval_notes:
+        
+        # approval_notes is optional, but if provided should not be empty
+        if approval_notes is not None and not approval_notes.strip():
             raise serializers.ValidationError(
                 {
-                    "approval_notes": "Approval notes are required when rejecting a booking"
+                    "approval_notes": "Approval notes cannot be empty"
                 }
-            )
-
-        validator = ScheduleValidator(
-            instance=isinstance,
-            model_class=LabScheduleModel,
-            date_field="booking_date",
-            start_time_field="booking_start_time",
-            end_time_field="booking_end_time",
-        )
-        try:
-            validator.validate()
-        except ValidationError as e:
-            raise serializers.ValidationError(
-                e.message_dict if hasattr(e, "message_dict") else e.messages
             )
 
         return data

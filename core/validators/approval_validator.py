@@ -200,7 +200,7 @@ class ApprovalValidator:
 
             if approval_status in requires_timestamp and not approval_timestamp:
                 # Auto-set timestamp if not provided
-                setattr(self.instance, "approval_timestamp", timezone.now())
+                setattr(self.instance, "approval_timestamp", timezone.localtime())
 
     def validate_approval_permissions(self, user=None):
         """
@@ -282,7 +282,7 @@ class ApprovalValidator:
             return
 
         today = date.today()
-        now = timezone.now()
+        now = timezone.localtime()
 
         # Auto-expire validation - only for system use
         if approval_status == ApprovalStatus.EXPIRED.value:
@@ -353,7 +353,7 @@ class ApprovalValidator:
                 scheduled_end_datetime = timezone.make_aware(
                     datetime.combine(scheduled_date, end_time)
                 )
-                if timezone.now() < scheduled_end_datetime:
+                if timezone.localtime() < scheduled_end_datetime:
                     raise ValidationError(
                         {
                             self.approval_status_field: _(
@@ -387,7 +387,7 @@ class ApprovalValidator:
             return False
 
         today = date.today()
-        now = timezone.now()
+        now = timezone.localtime()
 
         # Check if it's past the scheduled date
         if scheduled_date < today:
@@ -418,6 +418,6 @@ class ApprovalValidator:
 
         # Set approval timestamp if field exists
         if hasattr(self.instance, "approval_timestamp"):
-            setattr(self.instance, "approval_timestamp", timezone.now())
+            setattr(self.instance, "approval_timestamp", timezone.localtime())
 
         return True

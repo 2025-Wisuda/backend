@@ -1,0 +1,160 @@
+{% extends "admin/base_export_form.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Export Guest Visits with Filters" %} | {{ title }}
+{% endblock %}
+
+{% block export_description %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        {% trans "Export guest visit data with customizable filters and field selection. This includes visitor information, visit details, and host assignments." %}
+    </div>
+{% endblock %}
+
+{% block additional_filters %}
+<style>
+    .filter-section {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .filter-section h4 {
+        color: #333;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #417690;
+    }
+    
+    .filter-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .filter-col {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .date-filters {
+        border-left: 4px solid #417690;
+    }
+    
+    .visitor-filters {
+        border-left: 4px solid #28a745;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 13px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 13px;
+        background: #fff;
+        box-sizing: border-box;
+        min-height: 40px;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #417690;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(65,118,144,0.1);
+    }
+    
+    .form-text {
+        font-size: 11px;
+        color: #666;
+        margin-top: 3px;
+        font-style: italic;
+    }
+    
+    @media (max-width: 768px) {
+        .filter-row {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+</style>
+
+<div class="filter-section date-filters">
+    <h4>{% trans "Visit Date Filters" %}</h4>
+    
+    <div class="filter-row">
+        <div class="filter-col">
+            <div class="form-group">
+                {{ form.visit_date_from.label_tag }}
+                {{ form.visit_date_from }}
+                {% if form.visit_date_from.help_text %}
+                <small class="form-text">{{ form.visit_date_from.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="filter-col">
+            <div class="form-group">
+                {{ form.visit_date_to.label_tag }}
+                {{ form.visit_date_to }}
+                {% if form.visit_date_to.help_text %}
+                <small class="form-text">{{ form.visit_date_to.help_text }}</small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="filter-row">
+        <div class="filter-col">
+            <div class="form-group">
+                {{ form.visit_month.label_tag }}
+                {{ form.visit_month }}
+            </div>
+        </div>
+        
+        <div class="filter-col">
+            <div class="form-group">
+                {{ form.visit_year.label_tag }}
+                {{ form.visit_year }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="filter-section visitor-filters">
+    <h4>{% trans "Visitor & Created By Filters" %}</h4>
+    
+    <div class="filter-row">
+        <div class="filter-col">
+            <div class="form-group">
+                {{ form.visitor_identity_type.label_tag }}
+                {{ form.visitor_identity_type }}
+            </div>
+        </div>
+        
+        <div class="filter-col">
+            <div class="form-group">
+                {{ form.host_user.label_tag }}
+                {{ form.host_user }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

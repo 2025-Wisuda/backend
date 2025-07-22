@@ -14,6 +14,6 @@ app_name = "room_bookings"
 
 router = SimpleRouter(trailing_slash=False)
 
-router.register(r"room_bookings", RoomBookingViewSet, basename="room_bookings")
+router.register(r"room-bookings", RoomBookingViewSet, basename="room_bookings")
 
 urlpatterns = router.urls

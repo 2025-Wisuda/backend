@@ -1,8 +1,8 @@
 """
-Authentication URLs for custom_auth app.
+Authentication URLs
 
-Provides URLs for authentication-related endpoints including
-login, logout, refresh token, and change password.
+URL routing for authentication endpoints including JWT token management.
+Integrates with Django REST Framework SimpleJWT for token-based authentication.
 """
 
 from django.urls import path

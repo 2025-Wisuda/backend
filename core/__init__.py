@@ -6,6 +6,8 @@ from .enums import (
     BookingType,
     BulkDays,
     DaysEnum,
+    SessionStatus,
+    SessionType,
     UserGroup,
     VisitorIdentityType,
 )
@@ -23,6 +25,7 @@ __all__ = [
     "BookingType",
     "BulkDays",
     "AllocationType",
+    "SessionType",
     "ScheduleValidator",
     "AttendanceStatusValidator",
     "AttendanceLocationValidator",
@@ -33,4 +36,5 @@ __all__ = [
     "AttendanceStatus",
     "DaysEnum",
     "VisitorIdentityType",
+    "SessionStatus",
 ]

@@ -33,7 +33,7 @@ class LabOperatingHoursConstant:
         booking_time = time(14, 30)  # 2:30 PM
         if (LabOperatingHoursConstant.START_TIME <= booking_time <=
             LabOperatingHoursConstant.END_TIME):
-            print("Booking time is valid")
+            logger.info("Booking time is valid")
     """
 
     START_TIME = time(7, 30)  # 7:30 AM - Laboratory opening time

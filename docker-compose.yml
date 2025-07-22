@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: lab_management_db
+      MYSQL_USER: labuser
+      MYSQL_PASSWORD: labpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: .
+    ports:
+      - "8899:8899"
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=production-secret-key-change-this
+      - ALLOWED_HOSTS=backend.2025wisuda.me,ai.2025wisuda.me,167.71.212.171,localhost
+      - DB_ENGINE=django.db.backends.mysql
+      - DB_NAME=lab_management_db
+      - DB_USER=labuser
+      - DB_PASSWORD=labpassword
+      - DB_HOST=db
+      - DB_PORT=3306
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - FACE_RECOGNITION_WS_URL=wss://ai.2025wisuda.me/ws/backend-communication/
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./logs:/app/logs
+      - ./media:/app/media
+    restart: unless-stopped
+      
+volumes:
+  db_data:
+  redis_data:

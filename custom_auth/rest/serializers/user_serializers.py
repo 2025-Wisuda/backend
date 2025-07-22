@@ -1,13 +1,8 @@
 """
-User API serializers with basic Django validation.
+User Serializers
 
-Provides serializers for different user API endpoints with proper validation
-using Django's built-in validators for simplicity and reliability.
-
-Key Features:
-- Django built-in validation for emails and images
-- Read-only field protection for sensitive data
-- Optimized field selection for different use cases (list vs detail)
+Serializers for user data operations with role-based field access control.
+Provides different serialization levels for list, detail, and profile views.
 """
 
 from django.contrib.auth import get_user_model
@@ -19,13 +14,13 @@ User = get_user_model()
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """
-    Serializer for user profile management.
+    Serializer for user profile operations (self-management).
 
     Features:
-    - Comprehensive field coverage for profile updates
-    - Read-only protection for sensitive system fields
-    - Django built-in validation for emails and images
-    - Image upload handling with basic validation
+    - Read-only fields for sensitive data (group, staff status, ID numbers)
+    - Image validation for avatar field
+    - Email validation
+    - Audit trail support
     """
 
     class Meta:
@@ -38,10 +33,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "last_name",
             "student_number",
             "employee_number",
-            "face_image_url",
-            "face_uploaded",
-            "avatar_url",
-            "is_active",
+            "avatar",
             "is_staff",
             "date_joined",
             "last_login",
@@ -51,8 +43,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only_fields = [
             "student_number",
             "employee_number",
-            "face_uploaded",
-            "is_active",
             "is_staff",
             "date_joined",
             "last_login",
@@ -60,12 +50,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         ]
 
     def validate_email(self, value):
-        """
-        Validate email using Django's built-in validator.
-
-        Uses Django's standard email validation for consistency
-        and reliability.
-        """
         if value:
             try:
                 validate_email(value)
@@ -73,25 +57,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(str(e))
         return value
 
-    def validate_avatar_url(self, value):
-        """
-        Validate avatar image using Django's built-in validator.
-
-        Uses Django's validate_image_file_extension for proper image validation.
-        """
-        if value:
-            try:
-                validate_image_file_extension(value)
-            except Exception as e:
-                raise serializers.ValidationError(str(e))
-        return value
-
-    def validate_face_image_url(self, value):
-        """
-        Validate face image using Django's built-in validator.
-
-        Uses Django's validate_image_file_extension for proper image validation.
-        """
+    def validate_avatar(self, value):
         if value:
             try:
                 validate_image_file_extension(value)
@@ -100,11 +66,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return value
 
     def save(self, **kwargs):
-        """
-        Save the user instance with proper audit trail.
-
-        Handles the updated_by field for audit purposes.
-        """
         updated_by = kwargs.pop("updated_by", None)
         instance = super().save(**kwargs)
 
@@ -117,10 +78,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     """
-    Serializer for user list with essential fields.
+    Lightweight serializer for user list views.
 
-    Optimized for list endpoints with minimal fields to improve
-    performance and reduce payload size for pagination.
+    Includes essential fields for listing and search operations.
+    Optimized for performance with minimal field set.
     """
 
     class Meta:
@@ -132,17 +93,17 @@ class UserListSerializer(serializers.ModelSerializer):
             "last_name",
             "student_number",
             "employee_number",
-            "avatar_url",
+            "avatar",
             "group",
         ]
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """
-    Serializer for detailed user information.
+    Comprehensive serializer for user detail views.
 
-    Provides comprehensive user details for individual user views
-    while excluding sensitive information like passwords.
+    Includes extended user information for detailed inspection.
+    Used by admin and detail endpoints.
     """
 
     class Meta:
@@ -154,9 +115,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "last_name",
             "student_number",
             "employee_number",
-            "is_active",
             "date_joined",
             "last_login",
-            "avatar_url",
+            "avatar",
             "group",
         ]

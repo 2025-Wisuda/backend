@@ -60,9 +60,14 @@ class ResponsePresenter:
         Returns:
             Response: Success response with 200 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="success",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             data=data,
             status_code=status.HTTP_200_OK,
         )
@@ -80,9 +85,14 @@ class ResponsePresenter:
         Returns:
             Response: Success response with 201 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="success",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             data=data,
             status_code=status.HTTP_201_CREATED,
         )
@@ -117,9 +127,15 @@ class ResponsePresenter:
         Returns:
             Response: Error response with 400 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            # If formatting fails due to missing keys, use the original message
+            formatted_message = _(message)
+        
         return cls.build_response(
             status_value="error",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             errors=errors,
             status_code=status.HTTP_400_BAD_REQUEST,
         )
@@ -159,9 +175,14 @@ class ResponsePresenter:
         Returns:
             Response: Error response with 403 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="error",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             status_code=status.HTTP_403_FORBIDDEN,
         )
 
@@ -177,9 +198,14 @@ class ResponsePresenter:
         Returns:
             Response: Error response with 404 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="error",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             status_code=status.HTTP_404_NOT_FOUND,
         )
 
@@ -195,9 +221,14 @@ class ResponsePresenter:
         Returns:
             Response: Error response with 409 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="error",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             status_code=status.HTTP_409_CONFLICT,
         )
 
@@ -213,9 +244,14 @@ class ResponsePresenter:
         Returns:
             Response: Error response with 429 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="error",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
         )
 
@@ -231,9 +267,14 @@ class ResponsePresenter:
         Returns:
             Response: Error response with 500 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="error",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -249,8 +290,13 @@ class ResponsePresenter:
         Returns:
             Response: Error response with 503 status
         """
+        try:
+            formatted_message = _(message).format(**kwargs)
+        except KeyError:
+            formatted_message = _(message)
+            
         return cls.build_response(
             status_value="error",
-            message=_(message).format(**kwargs),
+            message=formatted_message,
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         )

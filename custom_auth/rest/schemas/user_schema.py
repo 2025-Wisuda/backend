@@ -1,13 +1,12 @@
 """
-API schema definitions for user endpoints.
+User API Schemas
 
-This module defines OpenAPI schema decorators for user-related API endpoints
-including user listing, details, and profile management using drf-spectacular.
+OpenAPI schema definitions for user management endpoints.
+Provides comprehensive documentation for user CRUD operations and profile management.
 """
 
-from drf_spectacular.utils import OpenApiParameter, extend_schema
-
 from core.enums import UserGroup
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from shared.schemas import ResponseSchema
 
 from ..serializers import (
@@ -49,14 +48,14 @@ user_list_schema = extend_schema(
     tags=["User"],
 )
 
-user_detail_schema = extend_schema(
-    responses=ResponseSchema.get_response_schema(
-        UserDetailSerializer, name="UserDetailResponse"
-    ),
-    summary="Retrieve user details",
-    description="Get detailed information about a specific user including their groups and permissions.",
-    tags=["User"],
-)
+# user_detail_schema = extend_schema(
+#     responses=ResponseSchema.get_response_schema(
+#         UserDetailSerializer, name="UserDetailResponse"
+#     ),
+#     summary="Retrieve user details",
+#     description="Get detailed information about a specific user including their groups and permissions.",
+#     tags=["User"],
+# )
 
 user_profile_schema = extend_schema(
     responses=ResponseSchema.get_response_schema(
@@ -64,5 +63,15 @@ user_profile_schema = extend_schema(
     ),
     summary="Retrieve user profile",
     description="Get the profile information of the currently authenticated user.",
+    tags=["User"],
+)
+
+update_user_profile_schema = extend_schema(
+    request=UserProfileSerializer,
+    responses=ResponseSchema.get_response_schema(
+        UserProfileSerializer, name="UpdateUserProfileResponse"
+    ),
+    summary="Update user profile",
+    description="Update the profile information of the currently authenticated user. Only provided fields will be updated.",
     tags=["User"],
 )

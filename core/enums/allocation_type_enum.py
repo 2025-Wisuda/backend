@@ -21,12 +21,6 @@ class AllocationType(str, Enum):
     REGULAR_CLASS = "Kelas Reguler"
     MAINTENANCE = "Pemeliharaan"
     EQUIPMENT_SETUP = "Persiapan Alat"
-    CLEANING = "Pembersihan"
-    INVENTORY = "Inventaris"
-    CALIBRATION = "Kalibrasi"
-    REPAIR = "Perbaikan"
-    PREPARATION = "Persiapan Lab"
-    INSPECTION = "Inspeksi"
     OTHER = "Lainnya"
 
     @classmethod
@@ -44,11 +38,5 @@ class AllocationType(str, Enum):
             self.REGULAR_CLASS: _("Regular Class"),
             self.MAINTENANCE: _("Maintenance"),
             self.EQUIPMENT_SETUP: _("Equipment Setup"),
-            self.CLEANING: _("Cleaning"),
-            self.INVENTORY: _("Inventory"),
-            self.CALIBRATION: _("Calibration"),
-            self.REPAIR: _("Repair"),
-            self.PREPARATION: _("Lab Preparation"),
-            self.INSPECTION: _("Inspection"),
             self.OTHER: _("Other"),
         }[self]

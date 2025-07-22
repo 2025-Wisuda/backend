@@ -18,7 +18,7 @@ Usage:
     from core.validators import ScheduleValidator
     
     class MyScheduleModel(BaseModel):
-        schedule_date = models.DateField()
+        date = models.DateField()
         start_time = models.TimeField()
         end_time = models.TimeField()
         
@@ -32,7 +32,7 @@ Usage:
     
     # Custom field names example:
     class CustomScheduleModel(BaseModel):
-        booking_date = models.DateField()
+        date = models.DateField()
         begin_time = models.TimeField()
         finish_time = models.TimeField()
         
@@ -41,7 +41,7 @@ Usage:
             validator = ScheduleValidator(
                 instance=self,
                 model_class=CustomScheduleModel,
-                date_field="booking_date",
+                date_field="date",
                 start_time_field="begin_time",
                 end_time_field="finish_time"
             )
@@ -50,7 +50,7 @@ Usage:
     # With custom conflict filtering:
     class RoomBooking(BaseModel):
         room = models.ForeignKey(Room, on_delete=models.CASCADE)
-        schedule_date = models.DateField()
+        date = models.DateField()
         start_time = models.TimeField()
         end_time = models.TimeField()
         
@@ -88,7 +88,7 @@ class ScheduleValidator:
         self,
         instance,
         model_class,
-        date_field="schedule_date",
+        date_field="date",
         start_time_field="start_time",
         end_time_field="end_time",
         pk_field="pk",
@@ -99,7 +99,7 @@ class ScheduleValidator:
         Args:
             instance: model instance to validate
             model_class: model class for querying conflicts (primary model)
-            date_field: name of the date field on the model (default 'schedule_date')
+            date_field: name of the date field on the model (default 'date')
             start_time_field: name of the start time field (default 'start_time')
             end_time_field: name of the end time field (default 'end_time')
             pk_field: name of primary key field (default 'pk')
@@ -269,7 +269,7 @@ class ScheduleValidator:
     ):
         """Check conflicts within a specific model class."""
         # Get the field mappings for this model class
-        date_field = getattr(model_class, "SCHEDULE_DATE_FIELD", "schedule_date")
+        date_field = getattr(model_class, "SCHEDULE_DATE_FIELD", "date")
         start_field = getattr(model_class, "START_TIME_FIELD", "start_time")
         end_field = getattr(model_class, "END_TIME_FIELD", "end_time")
 
@@ -292,4 +292,22 @@ class ScheduleValidator:
 
     def _check_cross_model_conflicts(self, model_class, date_val, start_time, end_time):
         """Check conflicts in cross-model classes."""
-        return self._check_model_conflicts(model_class, date_val, start_time, end_time)
+        # Get the field mappings for this model class
+        date_field = getattr(model_class, "SCHEDULE_DATE_FIELD", "date")
+        start_field = getattr(model_class, "START_TIME_FIELD", "start_time")
+        end_field = getattr(model_class, "END_TIME_FIELD", "end_time")
+
+        qs = model_class.objects.filter(**{date_field: date_val})
+
+        # Apply conflict filter for cross-model classes (e.g., LabScheduleModel exclusions)
+        if callable(self.conflict_filter):
+            qs = self.conflict_filter(qs)
+
+        qs = qs.filter(
+            **{
+                f"{start_field}__lt": end_time,
+                f"{end_field}__gt": start_time,
+            }
+        )
+
+        return qs.exists()

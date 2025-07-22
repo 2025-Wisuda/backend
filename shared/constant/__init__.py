@@ -34,14 +34,14 @@ Usage Examples:
     
     if (LabOperatingHoursConstant.START_TIME <= booking_time <= 
         LabOperatingHoursConstant.END_TIME):
-        print("Booking time is within lab operating hours")
+        logger.info("Booking time is within lab operating hours")
     else:
-        print("Booking time is outside lab operating hours")
+        logger.warning("Booking time is outside lab operating hours")
     
     # Display operating hours in UI
     start_time = LabOperatingHoursConstant.START_TIME.strftime('%H:%M')
     end_time = LabOperatingHoursConstant.END_TIME.strftime('%H:%M')
-    print(f"Lab operates from {start_time} to {end_time}")
+    logger.info(f"Lab operates from {start_time} to {end_time}")
 
 Integration with Business Logic:
     from shared.constant import LabOperatingHoursConstant

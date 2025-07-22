@@ -16,17 +16,11 @@ class BookingType(str, Enum):
 
     Different booking types have different requirements:
     - SEMINAR: Full academic details required (for students/assistants)
-    - GENERAL: Basic booking info only (for staff/faculty)
     - CLASS: Course-related booking (for staff/faculty)
-    - MEETING: Meeting room booking (for staff/faculty)
-    - EVENT: Special event booking (for staff/faculty)
     """
 
     SEMINAR = "Seminar"
-    GENERAL = "Umum"
     CLASS = "Kelas Reguler"
-    MEETING = "Rapat"
-    EVENT = "Acara"
 
     @classmethod
     def choices(cls):
@@ -41,10 +35,7 @@ class BookingType(str, Enum):
         """
         return {
             self.SEMINAR: _("Seminar"),
-            self.GENERAL: _("General"),
             self.CLASS: _("Regular Class"),
-            self.MEETING: _("Meeting"),
-            self.EVENT: _("Event"),
         }[self]
 
     @classmethod
@@ -59,7 +50,7 @@ class BookingType(str, Enum):
     def staff_allowed_types(cls):
         """
         Return booking types allowed for staff and faculty.
-        Staff can book for any purpose with minimal required fields.
+        Staff can book for any purpose.
         """
         return [item.value for item in cls]
 

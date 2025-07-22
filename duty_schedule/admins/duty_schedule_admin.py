@@ -1,16 +1,26 @@
 """
 Django admin configuration for Duty Schedule management.
 
-Provides streamlined admin interface for duty schedule management with 
+Provides streamlined admin interface for duty schedule management with
 mandatory bulk generation capabilities for creating duty attendance records.
+
+Role-based permissions:
+- Superuser: view, add, change, delete/restore/regenerate actions, no export/import
+- Kepala Laboratorium: view only, no actions, no export/import
+- Teknisi: view, add, change, delete action, no export/import
+- Asisten: no access
 """
 
+from core.enums import UserGroup
 from django import forms
 from django.contrib import admin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext_lazy as _
-
-from shared.utils import create_activate_action, create_deactivate_action
+from shared.utils import (
+    AuditFieldMixin,
+    create_activate_action,
+    create_deactivate_action,
+)
 from shared.utils.permission_config_utils import admin_laboratory_employee_only
 
 from ..models import DutyScheduleModel
@@ -27,27 +37,28 @@ class DutyScheduleAdminForm(forms.ModelForm):
 
 
 @admin.register(DutyScheduleModel)
-class DutyScheduleAdmin(admin.ModelAdmin):
+class DutyScheduleAdmin(AuditFieldMixin, admin.ModelAdmin):
     form = DutyScheduleAdminForm
 
     list_display = [
-        "duty_days",
+        "days",
         "time_display",
         "assistants_count",
         "generation_status",
     ]
 
     list_filter = [
-        "duty_start_date",
+        "start_date",
         "is_generated",
-        "duty_days",
+        "days",
+        "is_active",
     ]
 
     search_fields = [
-        "duty_days",
-        "duty_assistants__username",
-        "duty_assistants__first_name",
-        "duty_assistants__last_name",
+        "days",
+        "laboratory_assistants__username",
+        "laboratory_assistants__first_name",
+        "laboratory_assistants__last_name",
     ]
 
     readonly_fields = (
@@ -59,20 +70,20 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         "updated_at",
     )
 
-    ordering = ["-duty_start_date", "-duty_start_time"]
-    date_hierarchy = "duty_start_date"
+    ordering = ["-start_date", "-start_time"]
+    date_hierarchy = "start_date"
 
     add_fieldsets = (
         (
             _("New Duty Schedule"),
             {
                 "fields": (
-                    "duty_start_date",
-                    "duty_end_date",
-                    "duty_days",
-                    "duty_assistants",
-                    "duty_start_time",
-                    "duty_end_time",
+                    "start_date",
+                    "end_date",
+                    "days",
+                    "laboratory_assistants",
+                    "start_time",
+                    "end_time",
                 ),
                 "description": _(
                     "Please fill all fields in this section for creating duty schedule."
@@ -86,12 +97,12 @@ class DutyScheduleAdmin(admin.ModelAdmin):
             _("Duty Schedule Information"),
             {
                 "fields": (
-                    "duty_start_date",
-                    "duty_end_date",
-                    "duty_days",
-                    "duty_assistants",
-                    "duty_start_time",
-                    "duty_end_time",
+                    "start_date",
+                    "end_date",
+                    "days",
+                    "laboratory_assistants",
+                    "start_time",
+                    "end_time",
                 )
             },
         ),
@@ -121,21 +132,23 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         ),
     )
 
-    filter_horizontal = ("duty_assistants",)
+    filter_horizontal = ("laboratory_assistants",)
 
     def time_display(self, obj):
         """Display formatted time range."""
-        if obj.duty_start_time and obj.duty_end_time:
-            return f"{obj.duty_start_time.strftime('%H:%M')} - {obj.duty_end_time.strftime('%H:%M')}"
-        elif obj.duty_start_time:
-            return f"{obj.duty_start_time.strftime('%H:%M')} - "
+        if obj.start_time and obj.end_time:
+            return (
+                f"{obj.start_time.strftime('%H:%M')} - {obj.end_time.strftime('%H:%M')}"
+            )
+        elif obj.start_time:
+            return f"{obj.start_time.strftime('%H:%M')} - "
         return "-"
 
     time_display.short_description = _("Time")
 
     def assistants_count(self, obj):
         """Display number of assigned assistants."""
-        return obj.duty_assistants.count()
+        return obj.laboratory_assistants.count()
 
     assistants_count.short_description = _("Assistants")
 
@@ -148,20 +161,14 @@ class DutyScheduleAdmin(admin.ModelAdmin):
     generation_status.short_description = _("Status")
 
     def get_queryset(self, request):
-        """
-        Optimize queryset with select_related and prefetch_related.
-
-        For superuser, return all entries.
-        For others, return only active entries.
-        """
         qs = (
             super()
             .get_queryset(request)
             .select_related("created_by", "updated_by")
-            .prefetch_related("duty_assistants")
+            .prefetch_related("laboratory_assistants")
         )
 
-        if not request.user.is_superuser:
+        if not getattr(request.user, "is_superuser", False):
             qs = qs.filter(is_active=True)
 
         return qs
@@ -182,11 +189,8 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         return len(attendance_records)
 
     def save_model(self, request, obj, form, change):
-        """Set created_by/updated_by."""
-        if not change:
-            obj.created_by = request.user
-        obj.updated_by = request.user
-
+        """Audit fields handled by AuditFieldMixin."""
+        # Let AuditFieldMixin handle the audit fields
         super().save_model(request, obj, form, change)
 
     def save_related(self, request, form, formsets, change):
@@ -197,7 +201,7 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         obj = form.instance
 
         # Auto-generate attendance records for new duty schedules
-        if not change and obj.duty_end_date and obj.duty_days:
+        if not change and obj.end_date and obj.days:
             try:
                 created = self._create_bulk_duty_schedules(request, obj)
                 self.message_user(
@@ -205,8 +209,54 @@ class DutyScheduleAdmin(admin.ModelAdmin):
                     _(
                         "✅ Duty schedule created! Auto-generated {count} attendance records "
                         "for {assistants} assistants."
-                    ).format(count=created, assistants=obj.duty_assistants.count()),
+                    ).format(
+                        count=created, assistants=obj.laboratory_assistants.count()
+                    ),
                 )
+            except Exception as e:
+                self.message_user(
+                    request,
+                    _("❌ Error generating attendance records: {error}").format(
+                        error=str(e)
+                    ),
+                    level="error",
+                )
+
+        # Auto-generate attendance records for updated duty schedules (incremental)
+        elif change and obj.end_date and obj.days:
+            try:
+                # Use incremental generation - only create missing records
+                new_records, existing_count = obj.generate_missing_attendance_records(
+                    commit=True
+                )
+
+                if new_records:
+                    self.message_user(
+                        request,
+                        _(
+                            "🔄 Duty schedule updated! Created {new_count} new attendance records. "
+                            "{existing_count} existing records preserved for {assistants} assistants."
+                        ).format(
+                            new_count=len(new_records),
+                            existing_count=existing_count,
+                            assistants=obj.laboratory_assistants.count(),
+                        ),
+                    )
+                elif existing_count > 0:
+                    self.message_user(
+                        request,
+                        _(
+                            "ℹ️ Duty schedule updated! All {existing_count} attendance records already exist - no new records needed."
+                        ).format(existing_count=existing_count),
+                    )
+                else:
+                    self.message_user(
+                        request,
+                        _(
+                            "ℹ️ Duty schedule updated - no attendance records to generate."
+                        ),
+                    )
+
             except Exception as e:
                 self.message_user(
                     request,
@@ -226,7 +276,7 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         can_regenerate, message = obj.can_regenerate()
 
         if not can_regenerate:
-            raise ValidationError(message)
+            raise PermissionDenied(message)
 
         # Clear existing records
         obj.clear_attendance_records()
@@ -238,7 +288,12 @@ class DutyScheduleAdmin(admin.ModelAdmin):
 
     @admin_laboratory_employee_only
     def regenerate_attendance_records(self, request, queryset):
-        """Regenerate attendance records for selected duty schedules."""
+        """Regenerate attendance records for selected duty schedules - superuser only."""
+        if not request.user.is_superuser:
+            raise PermissionDenied(
+                _("Only superusers can regenerate attendance records.")
+            )
+
         if queryset.count() > 10:
             self.message_user(
                 request,
@@ -256,12 +311,12 @@ class DutyScheduleAdmin(admin.ModelAdmin):
             try:
                 records_count = self._regenerate_attendance_records(request, obj)
                 regenerated_count += records_count
-            except ValidationError as e:
+            except PermissionDenied as e:
                 error_count += 1
                 self.message_user(
                     request,
                     _("Error regenerating {title}: {error}").format(
-                        title=obj.duty_days, error=str(e)
+                        title=obj.days, error=str(e)
                     ),
                     level="warning",
                 )
@@ -270,7 +325,7 @@ class DutyScheduleAdmin(admin.ModelAdmin):
                 self.message_user(
                     request,
                     _("Unexpected error for {title}: {error}").format(
-                        title=obj.duty_days, error=str(e)
+                        title=obj.days, error=str(e)
                     ),
                     level="error",
                 )
@@ -287,21 +342,30 @@ class DutyScheduleAdmin(admin.ModelAdmin):
         "Regenerate Attendance Records (clears existing)"
     )
 
-    @admin_laboratory_employee_only
     def activate_duty_schedules(self, request, queryset):
-        """Restore selected duty schedules - restricted to lab employees."""
+        """Restore selected duty schedules - superuser only."""
+        if not request.user.is_superuser:
+            raise PermissionDenied(_("Only superusers can restore duty schedules."))
+
         activate_action = create_activate_action(
             model_name="duty schedule",
-            superuser_only=False,
+            superuser_only=True,
             verbose_name=_("Restore Selected Duty Schedules"),
         )
         return activate_action(self, request, queryset)
 
     activate_duty_schedules.short_description = _("Restore Selected Duty Schedules")
 
-    @admin_laboratory_employee_only
     def deactivate_duty_schedules(self, request, queryset):
-        """Delete selected duty schedules - restricted to lab employees."""
+        """Delete selected duty schedules - superuser and teknisi only."""
+        if not (
+            request.user.is_superuser
+            or request.user.group == UserGroup.LABORATORY_TECHNICIAN.value
+        ):
+            raise PermissionDenied(
+                _("Only superusers and technicians can delete duty schedules.")
+            )
+
         deactivate_action = create_deactivate_action(
             model_name="duty schedule",
             superuser_only=False,
@@ -312,18 +376,98 @@ class DutyScheduleAdmin(admin.ModelAdmin):
     deactivate_duty_schedules.short_description = _("Delete Selected Duty Schedules")
 
     def get_actions(self, request):
-        """Control actions - remove hard delete, keep soft delete."""
+        """
+        Return actions based on user role.
+        """
         actions = super().get_actions(request)
+
         if "delete_selected" in actions:
             del actions["delete_selected"]
+
+        if request.user.is_superuser:
+            actions["regenerate_attendance_records"] = self.get_action(
+                "regenerate_attendance_records"
+            )
+            actions["activate_duty_schedules"] = self.get_action(
+                "activate_duty_schedules"
+            )
+            actions["deactivate_duty_schedules"] = self.get_action(
+                "deactivate_duty_schedules"
+            )
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            actions["deactivate_duty_schedules"] = self.get_action(
+                "deactivate_duty_schedules"
+            )
+
         return actions
 
-    actions = [
-        "regenerate_attendance_records",
-        "activate_duty_schedules",
-        "deactivate_duty_schedules",
-    ]
+    actions = []  # Remove default actions, will be set by get_actions
 
     def has_delete_permission(self, request, obj=None):
         """No hard delete - only soft delete via actions."""
         return False
+
+    def _create_missing_duty_schedules(self, request, obj):
+        """
+        Generate only missing DutyAttendanceModel records for the duty schedule.
+
+        Uses incremental generation approach - only creates records that don't exist.
+        """
+        new_records, existing_count = obj.generate_missing_attendance_records(
+            commit=True
+        )
+        return len(new_records), existing_count
+
+    def has_module_permission(self, request):
+        """Control module access based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_HEAD.value:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        """Control view permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_add_permission(self, request):
+        """Control add permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """Control change permission based on user role."""
+        if request.user.is_superuser:
+            return True
+        elif request.user.group == UserGroup.LABORATORY_TECHNICIAN.value:
+            return True
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """No hard delete - only soft delete via actions."""
+        return False
+
+    def has_export_permission(self, request):
+        """No export permission for any role."""
+        return False
+
+    def has_import_permission(self, request):
+        """No import permission for any role."""
+        return False
+
+    def get_list_display_links(self, request, list_display):
+        """
+        Disable edit links for users without change permission.
+        """
+        if not self.has_change_permission(request):
+            return None
+        return super().get_list_display_links(request, list_display)

@@ -1,0 +1,66 @@
+[
+  {
+    "start_date": "2024-09-16",
+    "end_date": "2024-10-14",
+    "days": "Senin,Rabu,Jumat",
+    "start_time": "08:00:00",
+    "end_time": "12:00:00",
+    "assistant_count": 3
+  },
+  {
+    "start_date": "2024-09-17",
+    "end_date": "2024-10-15",
+    "days": "Selasa,Kamis",
+    "start_time": "13:00:00",
+    "end_time": "17:00:00",
+    "assistant_count": 2
+  },
+  {
+    "start_date": "2024-09-18",
+    "end_date": "2024-10-16",
+    "days": "Senin,Selasa,Rabu",
+    "start_time": "09:00:00",
+    "end_time": "15:00:00",
+    "assistant_count": 4
+  },
+  {
+    "start_date": "2024-09-19",
+    "end_date": "2024-10-17",
+    "days": "Kamis,Jumat",
+    "start_time": "10:00:00",
+    "end_time": "16:00:00",
+    "assistant_count": 2
+  },
+  {
+    "start_date": "2024-09-20",
+    "end_date": "2024-10-18",
+    "days": "Senin,Jumat",
+    "start_time": "07:30:00",
+    "end_time": "11:30:00",
+    "assistant_count": 3
+  },
+  {
+    "start_date": "2024-09-23",
+    "end_date": "2024-10-21",
+    "days": "Rabu,Jumat",
+    "start_time": "14:00:00",
+    "end_time": "18:00:00",
+    "assistant_count": 2
+  },
+  {
+    "start_date": "2024-09-24",
+    "end_date": "2024-10-22",
+    "days": "Selasa,Kamis,Sabtu",
+    "start_time": "08:30:00",
+    "end_time": "12:30:00",
+    "assistant_count": 3
+  },
+  {
+    "start_date": "2024-09-25",
+    "end_date": "2024-10-23",
+    "days": "Senin,Rabu",
+    "start_time": "15:00:00",
+    "end_time": "19:00:00",
+    "assistant_count": 2
+  }
+]

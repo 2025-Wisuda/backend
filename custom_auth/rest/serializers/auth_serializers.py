@@ -1,13 +1,8 @@
 """
-Authentication API serializers with Django built-in validation.
+Authentication Serializers
 
-Provides serializers for authentication operations with proper validation
-using Django's built-in password validators for consistency and reliability.
-
-Key Features:
-- Django built-in password validation for security requirements
-- Write-only fields for sensitive data protection
-- Standard Django password policy enforcement
+Serializers for authentication-related operations including password change and logout.
+Implements comprehensive validation for password security requirements.
 """
 
 from django.contrib.auth import get_user_model
@@ -21,45 +16,60 @@ class ChangePasswordSerializer(serializers.Serializer):
     """
     Serializer for password change operations.
 
-    Features:
-    - Write-only fields for password security
-    - Django built-in password validation for security requirements
-    - Required field validation for both old and new passwords
+    Validates:
+    - Current password correctness
+    - New password strength (Django validators)
+    - New password differs from current
     """
 
     old_password = serializers.CharField(write_only=True, required=True)
     new_password = serializers.CharField(write_only=True, required=True)
 
     def validate_new_password(self, value):
-        """
-        Validate new password using Django's built-in validators.
-
-        Ensures password meets Django's security requirements including:
-        - Minimum length requirements
-        - Character complexity requirements
-        - Common password checks
-        - User attribute similarity checks
-        """
         try:
             validate_password(value)
         except Exception as e:
             raise serializers.ValidationError(str(e))
         return value
 
+    def validate(self, attrs):
+        old_password = attrs.get("old_password")
+        new_password = attrs.get("new_password")
+
+        request = self.context.get("request")
+        if not request or not request.user:
+            raise serializers.ValidationError("User not found in request context.")
+
+        user = request.user
+
+        if not user.check_password(old_password):
+            raise serializers.ValidationError(
+                {"old_password": "Current password is incorrect."}
+            )
+
+        if old_password == new_password:
+            raise serializers.ValidationError(
+                {
+                    "new_password": "New password must be different from current password."
+                }
+            )
+
+        return attrs
+
 
 class AuthChangePasswordResponseSerializer(serializers.Serializer):
-    """Serializer for change password response."""
+    """Serializer for password change response data."""
 
     data = serializers.CharField()
 
 
 class LogoutRequestSerializer(serializers.Serializer):
-    """Serializer for logout request."""
+    """Serializer for logout request containing refresh token."""
 
     refresh_token = serializers.CharField(help_text="Refresh token to be blacklisted")
 
 
 class AuthLogoutResponseSerializer(serializers.Serializer):
-    """Serializer for logout response."""
+    """Serializer for logout response data."""
 
     data = serializers.CharField()

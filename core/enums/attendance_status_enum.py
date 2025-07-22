@@ -12,7 +12,7 @@ class AttendanceStatus(str, Enum):
     SCHEDULED -> PRESENT/ABSENT/LATE/EARLY_OUT
     """
 
-    SCHEDULED = "Terjadwal"
+    SCHEDULED = "Belum Hadir"
     PRESENT = "Hadir"
     ABSENT = "Tidak Hadir"
     LATE = "Terlambat"

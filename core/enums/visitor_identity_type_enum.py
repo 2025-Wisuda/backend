@@ -16,8 +16,10 @@ class VisitorIdentityType(str, Enum):
     Stores identity types in Indonesian for consistent DB storage.
     """
 
-    STUDENT_NUMBER = "Nomor Mahasiswa"
-    EMPLOYEE_NUMBER = "Nomor Pegawai"
+    STUDENT_NUMBER = "NPM"
+    EMPLOYEE_NUMBER = "NIP"
+    IDENTITY_NUMBER = "KTP"
+    OTHER = "Lainnya"
 
     @classmethod
     def choices(cls):

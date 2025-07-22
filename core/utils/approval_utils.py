@@ -174,7 +174,7 @@ def auto_update_expired_schedules(
     """
     from django.utils import timezone
 
-    current_time = timezone.now()
+    current_time = timezone.localtime()
     manager = ApprovalStatusManager()
 
     updated_count = 0

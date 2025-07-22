@@ -14,7 +14,7 @@ class ApprovalStatus(str, Enum):
     """
 
     PENDING = "Menunggu"
-    APPROVED = "Disejutui"
+    APPROVED = "Disetujui"
     REJECTED = "Ditolak"
     CANCELLED = "Dibatalkan"
     COMPLETED = "Selesai"

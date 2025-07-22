@@ -16,7 +16,7 @@ from shared.constant import LabOperatingHoursConstant
 
 
 def calculate_available_slots(
-    occupied_slots: List[Tuple[time, time]]
+    occupied_slots: List[Tuple[time, time]],
 ) -> Generator[Tuple[time, time], None, None]:
     """
     Calculate available time slots using generator pattern.
@@ -34,7 +34,7 @@ def calculate_available_slots(
     Example:
         occupied = [(time(9, 0), time(10, 0)), (time(14, 0), time(15, 0))]
         for start, end in calculate_available_slots(occupied):
-            print(f"Available: {start} - {end}")
+            logger.info(f"Available: {start} - {end}")
 
     Benefits:
         - Memory efficient for large datasets
@@ -65,7 +65,7 @@ def calculate_available_slots(
 
 
 def format_available_slots_for_api(
-    occupied_slots: List[Tuple[time, time]]
+    occupied_slots: List[Tuple[time, time]],
 ) -> List[dict]:
     """
     Format available slots for API response.
